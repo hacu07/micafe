@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">Mi Café</string>
+    <string name="ip_servidor">http://192.168.1.35:8081/micafe/php/</string>
     <string name="contrasenia">Contraseña</string>
     <string name="cedula">Cedula</string>
     <string name="login">Ingresar</string>
@@ -11,4 +12,6 @@
     <string name="numero_de_celular">Numero De Celular</string>
     <string name="registrarme">Registrarme</string>
     <string name="direccion_de_residencia">Direccion De Residencia</string>
+    <string name="departamento_residencia">Departamento Residencia</string>
+    <string name="municipio_de_residencia">Municipio Residencia</string>
 </resources>

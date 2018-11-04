@@ -2,6 +2,8 @@
 <resources>
     <color name="colorPrimary">#FFFFFF</color>
     <color name="colorPrimaryDark">#000000</color>
-    <color name="colorAccent">#303F9F</color>
+    <color name="colorAccent">#5B2434</color>
+    <color name="vinotinto">#5B2434</color>
+    <color name="amarillo">#D2930E</color>
     <color name="transparent">#00000000</color>
 </resources>

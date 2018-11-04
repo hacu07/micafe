@@ -22,7 +22,7 @@
         android:layout_marginTop="20dp"
         android:hint="@string/cedula"
         android:inputType="number"
-        android:textColor="@color/colorPrimary"
+        android:textColor="@color/colorPrimaryDark"
         android:textSize="30sp"
         android:textStyle="bold" />
 
@@ -33,7 +33,7 @@
         android:layout_marginTop="20dp"
         android:inputType="numberPassword"
         android:hint="@string/contrasenia"
-        android:textColor="@color/colorPrimary"
+        android:textColor="@color/colorPrimaryDark"
         android:textSize="30sp"
         android:textStyle="bold" />
 
