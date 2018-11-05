@@ -6,25 +6,18 @@ include("credenciales.php");
 /****** EJECUTAR SENTENCIAS ENVIADAS  ******************************************************
 * Segun la 'opc' = opcion enviada se ejecuta el metodo indicado
 *****************************************************************************/
-if (isset($_POST['opc'])) {
-	switch ($_POST['opc']) {
-		case 'consultarRoles':
+if (isset($_GET["opcion"])) {
+	$opcion = $_GET["opcion"];
+
+	switch($opcion) {
+		case "consultaroles":
 			consultarRoles();
 			break;
 	}
-} else {
-	/*$resultar["success"]=0;
-	$resultar["message"]='Ws no Retorna';
-	$json['micafe'][]=$resultar;
-	echo json_encode($json);*/
-	consultarRoles();
+}else{
+	echo "ERROR";
 }
 
-function consultarRoles()
-{
-	$sql = "SELECT * FROM roles";
-	leerRegistro($sql);
-}
 
 
 /****** LEER REGISTRO   ******************************************************
@@ -66,5 +59,10 @@ function actualizarRegistro($sql){
 
 }
 
+function consultarRoles()
+{
+	$sql = "SELECT * FROM roles";
+	leerRegistro($sql);
+}
 
 ?>

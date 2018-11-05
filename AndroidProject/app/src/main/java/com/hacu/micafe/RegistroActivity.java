@@ -65,8 +65,9 @@ public class RegistroActivity extends AppCompatActivity {
     }
 
     private void cargarWebServiceRoles() {
-        String url = getString(R.string.ip_servidor)+"apimicafe.php";
-        jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url,null, new Response.Listener<JSONObject>() {
+        String url = getString(R.string.ip_servidor)+"apimicafe.php?opcion=consultaroles";
+        Log.i("TAG",url);
+        jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url,null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 Roles rol = null;
@@ -77,7 +78,6 @@ public class RegistroActivity extends AppCompatActivity {
                         rol = new Roles();
                         JSONObject jsonObject = null;
                         jsonObject = json.getJSONObject(i);
-                        
                         rol.setId(jsonObject.optInt("id"));
                         rol.setRol(jsonObject.getString("rol"));
                         listaRolesBd.add(rol);
@@ -105,17 +105,9 @@ public class RegistroActivity extends AppCompatActivity {
             public void onErrorResponse(VolleyError error) {
                 error.printStackTrace();
                 imprimirMensaje("Error al conectar a la API");
+                Log.i("TAG","NO SE CONECTO A LA API");
             }
-        }){
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-
-                //Retornamos parametros
-                Map<String,String> parametros =  new HashMap<>();
-                parametros.put("opc","consultarRoles");
-                return parametros;
-            }
-        };
+        });
         //IMPORTANTE ESTA LINEA PARA EJECUTAR EL WEBSERVICE
         //request.add(stringRequest);
         jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 2, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
