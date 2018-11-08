@@ -13,9 +13,28 @@ if (isset($_GET["opcion"])) {
 		case "consultaroles":
 			consultarRoles();
 			break;
+		default:
+			$respuesta = array('micafe' => 'error al enviar opcion' );
+			echo json_encode($respuesta);
+			break;
 	}
-}else{
-	echo "ERROR";
+}else if (isset($_POST["opcion"])) {//enviados por el metodo POST
+	$opcion = $_POST["opcion"];
+
+
+	switch($opcion) {
+		case "registrousuario":
+			registrarUsuario($_POST["rol"],$_POST["nombre"],$_POST["tipodocumento"],$_POST["cedula"],$_POST["correo"],$_POST["contrasenia"],$_POST["celular"],$_POST["fechanacimiento"],$_POST["direccion"],$_POST["departamento"],$_POST["municipio"]);
+			break;
+		default:
+			$respuesta = array('micafe' => 'error al enviar opcion' );
+			echo json_encode($respuesta);
+			break;
+	}
+}
+else{
+	$respuesta = array('micafe' => 'Error! metodo no encontrado' );
+	echo json_encode($respuesta);
 }
 
 
@@ -63,6 +82,22 @@ function consultarRoles()
 {
 	$sql = "SELECT * FROM roles";
 	leerRegistro($sql);
+}
+
+function registrarUsuario($rol,$nombre,$tipodocumento,$cedula,$correo,$contrasenia,$celular,$fechanacimiento,$direccion,$departamento,$municipio){
+	switch ($rol) {
+		case 'Caficultor':
+			$idrol = 2;
+			break;
+		case 'Recolector':
+			$idrol = 3;
+			break;
+		case 'Comerciante':
+			$idrol = 4;
+			break;
+	}
+	$sql = "INSERT INTO usuarios(nombre,correo,contrasenia,tipodocumento,cedula,celular,fechanacimiento,direccion,departamento,municipio,idrol) values ('{$nombre}','{$correo}','{$contrasenia}','{$tipodocumento}','{$cedula}','{$celular}','{$fechanacimiento}','{$direccion}','{$departamento}','{$municipio}',{$idrol})";
+	actualizarRegistro($sql);
 }
 
 ?>

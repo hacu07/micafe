@@ -67,6 +67,46 @@
                 android:textColor="@color/colorPrimaryDark"
                 android:textSize="30sp"
                 android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:textStyle="bold"
+                android:text="Tipo De Documento"
+                android:inputType="number"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="30sp"
+                />
+
+
+            <RadioGroup
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <RadioButton
+                    android:id="@+id/radCC"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Cedula Ciudadania" />
+
+                <RadioButton
+                    android:id="@+id/radCE"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="Cedula Extranjeria" />
+
+                <RadioButton
+                    android:id="@+id/radTI"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Tarjeta Identidad" />
+
+            </RadioGroup>
+
+
             <EditText
                 android:id="@+id/reg_cedula"
                 android:layout_width="match_parent"
@@ -75,7 +115,7 @@
                 android:hint="@string/numero_de_cedula"
                 android:inputType="number"
                 android:textColor="@color/colorPrimaryDark"
-                android:textSize="30sp"
+                android:textSize="20sp"
                 android:textStyle="bold" />
             <EditText
                 android:id="@+id/reg_correo"
@@ -117,6 +157,7 @@
                 android:inputType="number"
                 android:textColor="@color/colorPrimaryDark"
                 android:textSize="30sp"
+                android:onClick="cargarFecha"
                  />
             <EditText
                 android:id="@+id/reg_direccion"
@@ -134,7 +175,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
                 android:hint="@string/departamento_residencia"
-                android:inputType="number"
+                android:inputType="text"
                 android:textColor="@color/colorPrimaryDark"
                 android:textSize="28sp"
                 android:textStyle="bold" />
@@ -152,6 +193,7 @@
     </ScrollView>
     <Button
         android:id="@+id/log_btnIngresar"
+        android:onClick="registrarUsuario"
         android:layout_width="match_parent"
         android:layout_weight="1"
         android:layout_height="0dp"
