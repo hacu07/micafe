@@ -47,11 +47,11 @@
                 <Spinner
                     android:id="@+id/reg_spiRoles"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_marginTop="5dp"
                     android:layout_weight="2"
-                    android:background="@color/colorPrimaryDark"
-                    android:textColor="@color/colorPrimaryDark"
+                    android:background="@color/vinotinto"
+                    android:textColor="@color/amarillo"
                     android:textSize="30sp"
                     android:textStyle="bold" />
 
@@ -89,20 +89,20 @@
                     android:id="@+id/radCC"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Cedula Ciudadania" />
+                    android:checked="true"
+                    android:text="Cedula Ciudadania"/>
 
                 <RadioButton
                     android:id="@+id/radCE"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:checked="true"
-                    android:text="Cedula Extranjeria" />
+                    android:text="Cedula Extranjeria"/>
 
                 <RadioButton
                     android:id="@+id/radTI"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Tarjeta Identidad" />
+                    android:text="Tarjeta Identidad"/>
 
             </RadioGroup>
 
@@ -147,18 +147,32 @@
                 android:textColor="@color/colorPrimaryDark"
                 android:textSize="30sp"
                 android:textStyle="bold" />
-            <TextView
-                android:id="@+id/reg_fechanacimiento"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:textStyle="bold"
-                android:text="Fecha De Nacimiento"
-                android:inputType="number"
-                android:textColor="@color/colorPrimaryDark"
-                android:textSize="30sp"
-                android:onClick="cargarFecha"
-                 />
+                android:orientation="horizontal"
+                android:weightSum="3">
+                <TextView
+                    android:id="@+id/reg_fechanacimiento"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:textStyle="bold"
+                    android:text="@string/fecha_de_nacimiento"
+                    android:inputType="number"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="30sp"
+                    android:onClick="cargarFecha"
+                    android:layout_weight="2"
+                    />
+                <ImageView
+                    android:src="@mipmap/ic_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:onClick="cargarFecha"/>
+            </LinearLayout>
+
             <EditText
                 android:id="@+id/reg_direccion"
                 android:layout_width="match_parent"
@@ -192,7 +206,7 @@
         </LinearLayout>
     </ScrollView>
     <Button
-        android:id="@+id/log_btnIngresar"
+        android:id="@+id/reg_btnRegistrar"
         android:onClick="registrarUsuario"
         android:layout_width="match_parent"
         android:layout_weight="1"

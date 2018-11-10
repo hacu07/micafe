@@ -1,5 +1,6 @@
 package com.hacu.micafe;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.ConnectivityManager;
@@ -10,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Spinner;
@@ -49,6 +51,7 @@ public class RegistroActivity extends AppCompatActivity implements DatePickerFra
     private String rolSeleccionado;
     //RequestQueue request;
     JsonObjectRequest jsonObjectRequest;
+    private ProgressDialog progreso;
 
     //Usado para el registro en la BD
     StringRequest stringRequest;
@@ -78,6 +81,7 @@ public class RegistroActivity extends AppCompatActivity implements DatePickerFra
     }
 
     private void cargarWebServiceRoles() {
+
         String url = getString(R.string.ip_servidor)+"apimicafe.php?opcion=consultaroles";
         Log.i("TAG",url);
         jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url,null, new Response.Listener<JSONObject>() {
@@ -127,6 +131,7 @@ public class RegistroActivity extends AppCompatActivity implements DatePickerFra
         //request.add(stringRequest);
         jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 2, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         VolleySingleton.getInstanciaVolley(getApplicationContext()).addToRequestQueue(jsonObjectRequest);
+
     }
 
     private void instanciarElementos() {
@@ -134,7 +139,7 @@ public class RegistroActivity extends AppCompatActivity implements DatePickerFra
         lblFechaNac = findViewById(R.id.reg_fechanacimiento);
         txtNombre = findViewById(R.id.reg_nombre);
         txtCedula = findViewById(R.id.reg_cedula);
-        txtCorreo = findViewById(R.id.reg_contrasenia);
+        txtCorreo = findViewById(R.id.reg_correo);
         txtContrasenia = findViewById(R.id.reg_contrasenia);
         txtCelular = findViewById(R.id.reg_celular);
         txtDireccion = findViewById(R.id.reg_direccion);
@@ -148,8 +153,8 @@ public class RegistroActivity extends AppCompatActivity implements DatePickerFra
     //lista a mostrar en el combo
     private void obtenerLista() {
         listaRolesSpi =  new ArrayList<String>();
-        listaRolesSpi.add("Seleccione");
-
+        listaRolesSpi.add("Seleccione aquí");
+        rolSeleccionado = "Seleccione aquí";
         for (int i = 1; i<listaRolesBd.size(); i++){
             //obtiene de la lista el id y nombre
             listaRolesSpi.add(listaRolesBd.get(i).getRol());
@@ -180,56 +185,93 @@ public class RegistroActivity extends AppCompatActivity implements DatePickerFra
 
     //Encargado de enviar los datos a la API para registrar a la BD con php
     public void registrarUsuario(View view) {
-        //Se obtienen los datos a enviar
-        final Usuarios usuarios = new Usuarios();
-        usuarios.setNombre(txtNombre.getText().toString());
-        usuarios.setTipodocumento(obtenerTipoDocumentoSeleccionado());
-        usuarios.setCedula(txtCedula.getText().toString());
-        usuarios.setCorreo(txtCorreo.getText().toString());
-        usuarios.setContrasenia(txtContrasenia.getText().toString());
-        usuarios.setCelular(txtCelular.getText().toString());
-        usuarios.setFechanacimiento(lblFechaNac.getText().toString());
-        usuarios.setDireccion(txtDireccion.getText().toString());
-        usuarios.setDepartamento(txtDepartamento.getText().toString());
-        usuarios.setMunicipio(txtMunicipio.getText().toString());
+        Button btnRegistro = findViewById(R.id.reg_btnRegistrar);
+        btnRegistro.setEnabled(false);
+        if (validarRegistro()==true){
+            //Se obtienen los datos a enviar
+            final Usuarios usuarios = new Usuarios();
+            usuarios.setNombre(txtNombre.getText().toString());
+            usuarios.setTipodocumento(obtenerTipoDocumentoSeleccionado());
+            usuarios.setCedula(txtCedula.getText().toString().trim());
+            usuarios.setCorreo(txtCorreo.getText().toString().trim());
+            usuarios.setContrasenia(txtContrasenia.getText().toString().trim());
+            usuarios.setCelular(txtCelular.getText().toString().trim());
+            usuarios.setFechanacimiento(lblFechaNac.getText().toString());
+            usuarios.setDireccion(txtDireccion.getText().toString());
+            usuarios.setDepartamento(txtDepartamento.getText().toString().trim());
+            usuarios.setMunicipio(txtMunicipio.getText().toString().trim());
 
-        String url = getString(R.string.ip_servidor)+"apimicafe.php";
-        Log.i("TAG",url);
+            String url = getString(R.string.ip_servidor)+"apimicafe.php";
+            Log.i("TAG",url);
 
-        stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                imprimirMensaje(response);
+            stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    switch (response){
+                        case "Actualizo":
+                            imprimirMensaje("Registro completo");
+                            limpiarCampos();
+                            break;
+                        case "Error":
+                            imprimirMensaje("No se registro, intente de nuevo. \n" + response);
+                            break;
+                    }
+
             }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                imprimirMensaje(error.toString());
-            }
-        }){
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String,String> parametros =  new HashMap<>();
-                String opcion = "registrousuario";
-                parametros.put("opcion",opcion);
-                parametros.put("rol",rolSeleccionado);
-                parametros.put("nombre",usuarios.getNombre());
-                parametros.put("tipodocumento",usuarios.getTipodocumento());
-                parametros.put("cedula",usuarios.getCedula());
-                parametros.put("correo",usuarios.getCorreo());
-                parametros.put("contrasenia",usuarios.getContrasenia());
-                parametros.put("celular",usuarios.getContrasenia());
-                parametros.put("fechanacimiento",usuarios.getFechanacimiento());
-                parametros.put("direccion",usuarios.getDireccion());
-                parametros.put("departamento",usuarios.getDepartamento());
-                parametros.put("municipio",usuarios.getMunicipio());
-                return parametros;
-            }
-        };
-        //IMPORTANTE ESTA LINEA PARA EJECUTAR EL WEBSERVICE
-        //request.add(stringRequest);
-        stringRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 2, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-        VolleySingleton.getInstanciaVolley(getApplicationContext()).addToRequestQueue(stringRequest);
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    //progreso.hide();
+                    imprimirMensaje(error.toString());
+                }
+            }){
+                @Override
+                protected Map<String, String> getParams() throws AuthFailureError {
+                    Map<String,String> parametros =  new HashMap<>();
+                    String opcion = "registrousuario";
+                    parametros.put("opcion",opcion);
+                    parametros.put("rol",rolSeleccionado);
+                    parametros.put("nombre",usuarios.getNombre());
+                    parametros.put("tipodocumento",usuarios.getTipodocumento());
+                    parametros.put("cedula",usuarios.getCedula());
+                    parametros.put("correo",usuarios.getCorreo());
+                    parametros.put("contrasenia",usuarios.getContrasenia());
+                    parametros.put("celular",usuarios.getContrasenia());
+                    parametros.put("fechanacimiento",usuarios.getFechanacimiento());
+                    parametros.put("direccion",usuarios.getDireccion());
+                    parametros.put("departamento",usuarios.getDepartamento());
+                    parametros.put("municipio",usuarios.getMunicipio());
+                    return parametros;
+                }
+            };
+            //IMPORTANTE ESTA LINEA PARA EJECUTAR EL WEBSERVICE
+            //request.add(stringRequest);
+            stringRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 2, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+            VolleySingleton.getInstanciaVolley(getApplicationContext()).addToRequestQueue(stringRequest);
+        }
+        btnRegistro.setEnabled(true);
+
+    }
+
+    private void limpiarCampos() {
+    }
+
+    private Boolean validarRegistro(){
+        if (rolSeleccionado.equals("Seleccione aquí")){
+            imprimirMensaje("Debe Seleccionar si es Caficultor, Recolector o Comerciante de café.");
+            return false;
+        }
+        //Evalua si los campos Nombre, Contrasenia, Cedula, Celular, Direccion, Departamento, Municipio estan vacios
+        if (txtNombre.getText().toString() == "" || txtContrasenia.getText().toString().isEmpty() || txtCedula.getText().toString().isEmpty() || txtCelular.getText()
+                .toString().isEmpty() || txtDireccion.getText().toString().isEmpty() || txtDepartamento.getText().toString().isEmpty() || txtMunicipio.getText().toString().isEmpty()){
+            imprimirMensaje("Faltan campos por llenar");
+            return false;
+        }
+        if (lblFechaNac.getText().toString().equals("Fecha De Nacimiento")){
+            imprimirMensaje("Seleccione la fecha de nacimiento");
+            return  false;
+        }
+        return true;
     }
 
     private String obtenerTipoDocumentoSeleccionado() {

@@ -13,6 +13,9 @@ if (isset($_GET["opcion"])) {
 		case "consultaroles":
 			consultarRoles();
 			break;
+		case 'iniciarsesion':
+			validarUsuario($_GET["usuario"],$_GET["contrasenia"]);
+			break;
 		default:
 			$respuesta = array('micafe' => 'error al enviar opcion' );
 			echo json_encode($respuesta);
@@ -67,14 +70,14 @@ function actualizarRegistro($sql){
 		include("credenciales.php");
 
 		if ($conexion->query($sql) === TRUE) {	
-			$respuesta = array('ok' => 'actualizo');
+			$respuesta = "Actualizo";
 
-		}else  {
+		}else{
 	
-			$respuesta = array('ok' => 'error' );
+			$respuesta = "Error";
 		}
 
-		echo json_encode($respuesta);
+		echo $respuesta;
 
 }
 
@@ -98,6 +101,12 @@ function registrarUsuario($rol,$nombre,$tipodocumento,$cedula,$correo,$contrasen
 	}
 	$sql = "INSERT INTO usuarios(nombre,correo,contrasenia,tipodocumento,cedula,celular,fechanacimiento,direccion,departamento,municipio,idrol) values ('{$nombre}','{$correo}','{$contrasenia}','{$tipodocumento}','{$cedula}','{$celular}','{$fechanacimiento}','{$direccion}','{$departamento}','{$municipio}',{$idrol})";
 	actualizarRegistro($sql);
+}
+
+function validarUsuario($usuario,$contrasenia)
+{
+	$sql = "SELECT * FROM usuarios WHERE cedula = {$usuario} AND contrasenia = {$contrasenia}";
+	leerRegistro($sql);
 }
 
 ?>
