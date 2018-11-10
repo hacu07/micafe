@@ -13,14 +13,21 @@ if (isset($_GET["opcion"])) {
 		case "consultaroles":
 			consultarRoles();
 			break;
+
 		case 'iniciarsesion':
 			validarUsuario($_GET["usuario"],$_GET["contrasenia"]);
 			break;
+
+		case 'validarinsercionreporte':
+			validarinsercionreporte($_GET["nombre"],$_GET["correo"],$_GET["contrasenia"],$_GET["tipodocumento"],$_GET["cedula"],$_GET["celular"],$_GET["fechanacimiento"],$_GET["direccion"],$_GET["departamento"],$_GET["municipio"],$_GET["rol"]);
+			break;
+
 		default:
 			$respuesta = array('micafe' => 'error al enviar opcion' );
 			echo json_encode($respuesta);
 			break;
 	}
+
 }else if (isset($_POST["opcion"])) {//enviados por el metodo POST
 	$opcion = $_POST["opcion"];
 
@@ -81,6 +88,24 @@ function actualizarRegistro($sql){
 
 }
 
+function validarinsercionreporte($nombre, $correo, $contrasenia, $tipodocumento, $cedula, $celular, $fechanacimiento, $direccion, $departamento, $municipio, $rol)
+{
+	switch ($rol) {
+		case 'Caficultor':
+			$idrol = 2;
+			break;
+		case 'Recolector':
+			$idrol = 3;
+			break;
+		case 'Comerciante':
+			$idrol = 4;
+			break;
+	}
+	$sql = "call sp_validarinsercionusuario('{$nombre}','{$correo}','{$contrasenia}','{$tipodocumento}','{$cedula}','{$celular}','{$fechanacimiento}','{$direccion}','{$departamento}','{$municipio}',{$idrol})";
+	
+	leerRegistro($sql);
+}
+
 function consultarRoles()
 {
 	$sql = "SELECT * FROM roles";
@@ -99,9 +124,10 @@ function registrarUsuario($rol,$nombre,$tipodocumento,$cedula,$correo,$contrasen
 			$idrol = 4;
 			break;
 	}
-	$sql = "INSERT INTO usuarios(nombre,correo,contrasenia,tipodocumento,cedula,celular,fechanacimiento,direccion,departamento,municipio,idrol) values ('{$nombre}','{$correo}','{$contrasenia}','{$tipodocumento}','{$cedula}','{$celular}','{$fechanacimiento}','{$direccion}','{$departamento}','{$municipio}',{$idrol})";
+	/*$sql = "INSERT INTO usuarios(nombre,correo,contrasenia,tipodocumento,cedula,celular,fechanacimiento,direccion,departamento,municipio,idrol) values ('{$nombre}','{$correo}','{$contrasenia}','{$tipodocumento}','{$cedula}','{$celular}','{$fechanacimiento}','{$direccion}','{$departamento}','{$municipio}',{$idrol})";*/
+	$sql = "call sp_validarinsercionusuario('{$nombre}','{$correo}','{$contrasenia}','{$tipodocumento}','{$cedula}','{$celular}','{$fechanacimiento}','{$direccion}','{$departamento}','{$municipio}',{$idrol});";
 	actualizarRegistro($sql);
-}
+	}
 
 function validarUsuario($usuario,$contrasenia)
 {

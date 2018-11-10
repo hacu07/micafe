@@ -57,7 +57,7 @@ public class RegistroActivity extends AppCompatActivity implements DatePickerFra
     private ProgressDialog progreso;
 
     //Usado para el registro en la BD
-    StringRequest stringRequest;
+    private StringRequest stringRequest;
 
 
     private static final String DIALOG_DATE = "RegistroActivity.DateDialog";
@@ -75,6 +75,7 @@ public class RegistroActivity extends AppCompatActivity implements DatePickerFra
         btnRegistro.setEnabled(false);
         if (validarRegistro()==true){
             //Se obtienen los datos a enviar
+            /*
             final Usuarios usuarios = new Usuarios();
             usuarios.setNombre(txtNombre.getText().toString().toUpperCase());
             usuarios.setTipodocumento(obtenerTipoDocumentoSeleccionado());
@@ -134,8 +135,75 @@ public class RegistroActivity extends AppCompatActivity implements DatePickerFra
             //request.add(stringRequest);
             stringRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 2, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
             VolleySingleton.getInstanciaVolley(getApplicationContext()).addToRequestQueue(stringRequest);
+            */
+            validarRegistroUsuario();
         }
         btnRegistro.setEnabled(true);
+    }
+
+    private void validarRegistroUsuario(){
+
+        final Usuarios usuarios = new Usuarios();
+        usuarios.setNombre(txtNombre.getText().toString().toUpperCase());
+        usuarios.setTipodocumento(obtenerTipoDocumentoSeleccionado());
+        usuarios.setCedula(txtCedula.getText().toString().trim());
+        usuarios.setCorreo(txtCorreo.getText().toString().trim());
+        usuarios.setContrasenia(txtContrasenia.getText().toString().trim());
+        usuarios.setCelular(txtCelular.getText().toString().trim());
+        usuarios.setFechanacimiento(lblFechaNac.getText().toString());
+        usuarios.setDireccion(txtDireccion.getText().toString().toUpperCase());
+        usuarios.setDepartamento(txtDepartamento.getText().toString().trim().toUpperCase());
+        usuarios.setMunicipio(txtMunicipio.getText().toString().trim().toUpperCase());
+
+        String url = getString(R.string.ip_servidor)+"apimicafe.php?opcion=validarinsercionreporte&nombre="+usuarios.getNombre()
+                +"&correo="+usuarios.getCorreo()
+                +"&contrasenia="+usuarios.getContrasenia()
+                +"&tipodocumento="+usuarios.getTipodocumento()
+                +"&cedula="+usuarios.getCedula()
+                +"&celular="+usuarios.getCelular()
+                +"&fechanacimiento="+usuarios.getFechanacimiento()
+                +"&direccion="+usuarios.getDireccion()
+                +"&departamento="+usuarios.getDepartamento()
+                +"&municipio="+usuarios.getMunicipio()
+                +"&rol="+rolSeleccionado;
+
+        url = url.replace(" ","%20");
+
+        Log.i("TAG",url);
+
+        jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                JSONArray json = response.optJSONArray("micafe");//Obtiene el json con la respuesta
+
+                //El key de la respuesta es "mensaje" se debe obtener este y publicar el mensaje
+                try {
+                    JSONObject jsonObject = json.getJSONObject(0);//toma la primera fila de la respuesta
+                    switch (jsonObject.optString("existen")){
+                        case "0"://Si es 0 es porque no encontro registros en la BD con ese numero de documento
+                            imprimirMensaje("Registro completo");
+                            limpiarCampos();
+                            mostrarLogin();
+                            break;
+                        case "1"://Encontro un registro en la BD con ese numero de documento de identidad
+                            imprimirMensaje("El numero de documento ya se encuentra registrado. \n No se puede registrar.");
+                            break;
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                imprimirMensaje(" Error en el webservice validarRegistroUsuario "+error.toString());
+            }
+        });
+        //IMPORTANTE ESTA LINEA PARA EJECUTAR EL WEBSERVICE
+        //request.add(stringRequest);
+        jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 2, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        VolleySingleton.getInstanciaVolley(getApplicationContext()).addToRequestQueue(jsonObjectRequest);
     }
 
     private void consultarRoles() {
@@ -150,6 +218,8 @@ public class RegistroActivity extends AppCompatActivity implements DatePickerFra
            imprimirMensaje("NO TIENE CONEXION A INTERNET");
         }
     }
+
+
 
     private void cargarWebServiceRoles() {
 
@@ -309,13 +379,13 @@ public class RegistroActivity extends AppCompatActivity implements DatePickerFra
     private String obtenerTipoDocumentoSeleccionado() {
         String tipoSeleccionado = null;
         if (radCC.isChecked()){
-            tipoSeleccionado = "Cedula Ciudadania";
+            tipoSeleccionado = "Cedula_Ciudadania";
         }
         if (radCE.isChecked()){
-            tipoSeleccionado = "Cedula Extranjeria";
+            tipoSeleccionado = "Cedula_Extranjeria";
         }
         if (radTI.isChecked()){
-            tipoSeleccionado = "Tarjeta Identidad";
+            tipoSeleccionado = "Tarjeta_Identidad";
         }
         return tipoSeleccionado;
     }
