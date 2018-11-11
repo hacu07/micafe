@@ -379,13 +379,13 @@ public class RegistroActivity extends AppCompatActivity implements DatePickerFra
     private String obtenerTipoDocumentoSeleccionado() {
         String tipoSeleccionado = null;
         if (radCC.isChecked()){
-            tipoSeleccionado = "Cedula_Ciudadania";
+            tipoSeleccionado = "Cedula Ciudadania";
         }
         if (radCE.isChecked()){
-            tipoSeleccionado = "Cedula_Extranjeria";
+            tipoSeleccionado = "Cedula Extranjeria";
         }
         if (radTI.isChecked()){
-            tipoSeleccionado = "Tarjeta_Identidad";
+            tipoSeleccionado = "Tarjeta Identidad";
         }
         return tipoSeleccionado;
     }

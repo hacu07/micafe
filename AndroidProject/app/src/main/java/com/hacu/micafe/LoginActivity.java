@@ -3,6 +3,7 @@ package com.hacu.micafe;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -40,8 +41,9 @@ public class LoginActivity extends AppCompatActivity {
 
     public void iniciarSesion(View view) {
         if (validarCamposRegistro()){
-            String url = getString(R.string.ip_servidor)+"apimicafe.php?opcion=iniciarsesion&usuario="+txtUsuario.getText().toString()+
-                    "&contrasenia="+txtContrasenia.getText().toString();
+            String url = getString(R.string.ip_servidor)+"apimicafe.php?opcion=iniciarsesion&usuario="+txtUsuario.getText().toString().trim()+
+                    "&contrasenia="+txtContrasenia.getText().toString().trim();
+            Log.i("TAG",url);
             jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
@@ -53,7 +55,25 @@ public class LoginActivity extends AppCompatActivity {
                             usuario = new Usuarios();
                             JSONObject jsonObject = null;
                             jsonObject = json.getJSONObject(i);
-                            imprimirMensaje("Bienvenido: "+jsonObject.optString("nombre"));
+
+                            //Asignar Valores a Objeto para enviar por bundle
+                            usuario.setId(jsonObject.optInt("id"));
+                            usuario.setNombre(jsonObject.optString("nombre"));
+                            usuario.setCorreo(jsonObject.optString("correo"));
+                            usuario.setContrasenia(jsonObject.optString("contrasenia"));
+                            usuario.setTipodocumento(jsonObject.optString("tipodocumento"));
+                            usuario.setCedula(jsonObject.optString("cedula"));
+                            usuario.setCelular(jsonObject.optString("celular"));
+                            usuario.setFechanacimiento(jsonObject.optString("fechanacimiento"));
+                            usuario.setDireccion(jsonObject.optString("direccion"));
+                            usuario.setDepartamento(jsonObject.optString("departamento"));
+                            usuario.setMunicipio(jsonObject.optString("municipio"));
+                            usuario.setUrlimagen(jsonObject.optString("urlimagen"));
+                            usuario.setIdrol(jsonObject.optInt("idrol"));
+
+                            imprimirMensaje("Hola "+ usuario.getNombre());
+
+                            mostrarModulo(usuario);
                         }
                     }catch (JSONException e){
                         e.printStackTrace();
@@ -63,7 +83,7 @@ public class LoginActivity extends AppCompatActivity {
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    imprimirMensaje("Error en webservice");
+                    imprimirMensaje("Usuario no encontrado");
                 }
             });
             //IMPORTANTE ESTA LINEA PARA EJECUTAR EL WEBSERVICE
@@ -71,6 +91,29 @@ public class LoginActivity extends AppCompatActivity {
             jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 2, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
             VolleySingleton.getInstanciaVolley(getApplicationContext()).addToRequestQueue(jsonObjectRequest);
         }
+    }
+
+    /* Segun el rol del usuario que ha iniciado sesion se llevara a su modulo correspondiente */
+    private void mostrarModulo(Usuarios usuario) {
+        imprimirMensaje("Usuario " + usuario.getId() );
+        Intent miIntent = null;
+
+        switch (usuario.getIdrol()){
+            case 2:
+                //intent para Caficultor
+                break;
+            case 3:
+                //intent para Recolector
+                break;
+            case 4:
+                //intent para Comerciante
+                break;
+        }
+
+        //obtiene bundle para enviar parametros
+        //inicia actividad
+
+        finish();
     }
 
     //Retorna un boolean true si todo esta bien, si no devuelve un false
