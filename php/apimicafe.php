@@ -124,7 +124,6 @@ function registrarUsuario($rol,$nombre,$tipodocumento,$cedula,$correo,$contrasen
 			$idrol = 4;
 			break;
 	}
-	/*$sql = "INSERT INTO usuarios(nombre,correo,contrasenia,tipodocumento,cedula,celular,fechanacimiento,direccion,departamento,municipio,idrol) values ('{$nombre}','{$correo}','{$contrasenia}','{$tipodocumento}','{$cedula}','{$celular}','{$fechanacimiento}','{$direccion}','{$departamento}','{$municipio}',{$idrol})";*/
 	$sql = "call sp_validarinsercionusuario('{$nombre}','{$correo}','{$contrasenia}','{$tipodocumento}','{$cedula}','{$celular}','{$fechanacimiento}','{$direccion}','{$departamento}','{$municipio}',{$idrol});";
 	actualizarRegistro($sql);
 	}

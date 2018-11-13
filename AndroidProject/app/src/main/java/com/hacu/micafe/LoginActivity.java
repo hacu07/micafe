@@ -13,6 +13,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.hacu.micafe.Caficultor.CaficultorActivity;
 import com.hacu.micafe.Modelo.Usuarios;
 import com.hacu.micafe.Modelo.VolleySingleton;
 
@@ -99,16 +100,23 @@ public class LoginActivity extends AppCompatActivity {
         Intent miIntent = null;
 
         switch (usuario.getIdrol()){
-            case 2:
-                //intent para Caficultor
+            case 2://intent para Caficultor
+                miIntent = new Intent(LoginActivity.this, CaficultorActivity.class);
                 break;
-            case 3:
-                //intent para Recolector
+
+            case 3://intent para Recolector
                 break;
-            case 4:
-                //intent para Comerciante
+
+            case 4://intent para Comerciante
                 break;
         }
+
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("usuario",usuario);
+        miIntent.putExtras(bundle);
+        startActivity(miIntent);
+
+
 
         //obtiene bundle para enviar parametros
         //inicia actividad

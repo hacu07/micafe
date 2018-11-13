@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_finca"
+            android:icon="@drawable/ic_finca"
+            android:title="Finca" />
+        <item
+            android:id="@+id/nav_gallery"
+            android:icon="@drawable/ic_menu_gallery"
+            android:title="Ofertas" />
+        <item
+            android:id="@+id/nav_slideshow"
+            android:icon="@drawable/ic_dinero"
+            android:title="Costos" />
+        <item
+            android:id="@+id/nav_manage"
+            android:icon="@drawable/ic_local_comercial"
+            android:title="Puntos De Venta" />
+        <item
+            android:id="@+id/nav_recolectores"
+            android:icon="@drawable/ic_personas"
+            android:title="Recolectores" />
+    </group>
+
+    <item android:title="Communicate">
+        <menu>
+            <item
+                android:id="@+id/nav_share"
+                android:icon="@drawable/ic_menu_share"
+                android:title="Perfil" />
+        </menu>
+    </item>
+
+</menu>
