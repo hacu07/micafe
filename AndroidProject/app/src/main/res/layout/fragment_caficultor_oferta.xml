@@ -1,0 +1,35 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.hacu.micafe.Caficultor.FragmentsCaf.CaficultorOfertaFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:weightSum="7">
+        <Button
+            android:id="@+id/cafofe_btnOferta"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:layout_height="0dp"
+            android:layout_margin="5dp"
+            android:textSize="30dp"
+            android:textStyle="bold"
+            android:background="@color/colorPrimary"
+            android:text="@string/crear_oferta"
+            android:textColor="@color/colorPrimaryDark"/>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/ofecaf_recyclerOfertas"
+            android:layout_weight="6"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:padding="5dp"/>
+
+    </LinearLayout>
+
+
+
+</FrameLayout>

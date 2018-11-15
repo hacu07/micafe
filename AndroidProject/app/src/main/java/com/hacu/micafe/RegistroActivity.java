@@ -3,8 +3,6 @@ package com.hacu.micafe;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.v7.app.AppCompatActivity;
@@ -19,16 +17,14 @@ import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ArrayAdapter;
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
-import com.hacu.micafe.Modelo.Roles;
+import com.hacu.micafe.Modelo.Rol;
 import com.hacu.micafe.Modelo.Usuarios;
 import com.hacu.micafe.Modelo.VolleySingleton;
 import com.hacu.micafe.Utilidades.DatePickerFragment;
@@ -40,8 +36,6 @@ import org.json.JSONObject;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 public class RegistroActivity extends AppCompatActivity implements DatePickerFragment.DateDialogListener{
     private Spinner comboRoles;
@@ -50,7 +44,7 @@ public class RegistroActivity extends AppCompatActivity implements DatePickerFra
     private Button btnRegistro;
     private EditText txtNombre,txtCedula,txtCorreo,txtContrasenia,txtCelular,txtDireccion,txtDepartamento,txtMunicipio;
     private ArrayList<String> listaRolesSpi;//Lista para insertar en el spiner
-    private ArrayList<Roles> listaRolesBd;//Lista con los datos de la BD
+    private ArrayList<Rol> listaRolesBd;//Lista con los datos de la BD
     private String rolSeleccionado;
     //RequestQueue request;
     private JsonObjectRequest jsonObjectRequest;
@@ -228,13 +222,13 @@ public class RegistroActivity extends AppCompatActivity implements DatePickerFra
         jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url,null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-                Roles rol = null;
+                Rol rol = null;
                 listaRolesBd = new ArrayList<>();
                 JSONArray json = response.optJSONArray("micafe");
 
                 try{
                     for (int i = 0; i<json.length(); i++){//Recorre acada elemento del json
-                        rol = new Roles();
+                        rol = new Rol();
                         JSONObject jsonObject = null;
                         jsonObject = json.getJSONObject(i);
                         rol.setId(jsonObject.optInt("id"));

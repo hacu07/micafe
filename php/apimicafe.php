@@ -21,6 +21,12 @@ if (isset($_GET["opcion"])) {
 		case 'validarinsercionreporte':
 			validarinsercionreporte($_GET["nombre"],$_GET["correo"],$_GET["contrasenia"],$_GET["tipodocumento"],$_GET["cedula"],$_GET["celular"],$_GET["fechanacimiento"],$_GET["direccion"],$_GET["departamento"],$_GET["municipio"],$_GET["rol"]);
 			break;
+		case 'consultarfincas':
+			consultarFincasCaficultor($_GET["caficultor"]);
+			break;
+		case 'consultarofertascaficultor':
+			consultarOfertasCaficultor($_GET["idadministrador"]);
+			break;
 
 		default:
 			$respuesta = array('micafe' => 'error al enviar opcion' );
@@ -30,11 +36,15 @@ if (isset($_GET["opcion"])) {
 
 }else if (isset($_POST["opcion"])) {//enviados por el metodo POST
 	$opcion = $_POST["opcion"];
-
-
 	switch($opcion) {
 		case "registrousuario":
 			registrarUsuario($_POST["rol"],$_POST["nombre"],$_POST["tipodocumento"],$_POST["cedula"],$_POST["correo"],$_POST["contrasenia"],$_POST["celular"],$_POST["fechanacimiento"],$_POST["direccion"],$_POST["departamento"],$_POST["municipio"]);
+			break;
+		case 'registrofinca':
+			registrarFinca($_POST["idadministrador"],$_POST["nombrefinca"],$_POST["departamento"],$_POST["municipio"],$_POST["corregimiento"],$_POST["vereda"],$_POST["hectareas"],$_POST["telefono"]);
+			break;
+		case 'registroferta':
+			registrarOferta($_POST["idadministrador"],$_POST["nombrefinca"],$_POST["idmodopago"],$_POST["valorpago"],$_POST["vacantes"],$_POST["diastrabajo"],$_POST["planta"],$_POST["servicios"]);
 			break;
 		default:
 			$respuesta = array('micafe' => 'error al enviar opcion' );
@@ -128,10 +138,36 @@ function registrarUsuario($rol,$nombre,$tipodocumento,$cedula,$correo,$contrasen
 	actualizarRegistro($sql);
 	}
 
-function validarUsuario($usuario,$contrasenia)
-{
+function validarUsuario($usuario,$contrasenia){
 	$sql = "SELECT * FROM usuarios WHERE cedula = {$usuario} AND contrasenia = {$contrasenia}";
 	leerRegistro($sql);
+}
+
+function registrarFinca($idadministrador,$nombrefinca,$departamento,$municipio,$corregimiento,$vereda,$hectareas,$telefono){
+	$sql = "INSERT INTO fincas(idadministrador,nombre,departamento,municipio,corregimiento,vereda,hectareas,telefono) values({$idadministrador},'{$nombrefinca}','{$departamento}','{$municipio}','{$corregimiento}','{$vereda}',{$hectareas},'{$telefono}')";
+	actualizarRegistro($sql);
+}
+
+function consultarFincasCaficultor($idCaficultor)
+{
+	$sql = "SELECT fincas.id, fincas.nombre FROM fincas WHERE fincas.idadministrador = {$idCaficultor}";
+	leerRegistro($sql);
+}
+
+function registrarOferta($idadministrador,$nombrefinca,$idmodopago,$valorpago,$vacantes,$diastrabajo,$planta,$servicios)
+{
+	$idFinca = "SELECT fincas.id FROM fincas WHERE fincas.nombre LIKE '{$nombrefinca}' AND fincas.idadministrador = '{$idadministrador}'";
+	$sql = "INSERT INTO ofertas(idfinca,idmodopago,valorpago,vacantes,diastrabajo,planta,servicios,fechacreacion) VALUES(({$idFinca}),{$idmodopago},{$valorpago},{$vacantes},{$diastrabajo},'{$planta}','{$servicios}', NOW())";
+	actualizarRegistro($sql); 
+}
+
+function consultarOfertasCaficultor($idadministrador)
+{
+	$sql = "SELECT ofertas.id, ofertas.fechacreacion, ofertas.vacantes FROM ofertas 
+	JOIN fincas ON  ofertas.idfinca = fincas.id 
+    JOIN usuarios ON fincas.idadministrador = usuarios.id
+    WHERE usuarios.id = {$idadministrador}";
+    leerRegistro($sql);
 }
 
 ?>

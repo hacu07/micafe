@@ -6,15 +6,15 @@ import java.io.Serializable;
  * Created by hacu1 on 04/11/2018.
  */
 
-public class Roles implements Serializable {
+public class Rol implements Serializable {
 
     private Integer id;
     private String rol;
 
-    public Roles() {
+    public Rol() {
     }
 
-    public Roles(Integer id, String rol) {
+    public Rol(Integer id, String rol) {
         this.id = id;
         this.rol = rol;
     }

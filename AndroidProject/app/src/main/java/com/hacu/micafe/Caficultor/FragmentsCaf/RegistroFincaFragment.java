@@ -1,16 +1,32 @@
 package com.hacu.micafe.Caficultor.FragmentsCaf;
 
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.hacu.micafe.Modelo.Finca;
+import com.hacu.micafe.Modelo.VolleySingleton;
 import com.hacu.micafe.R;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -36,14 +52,17 @@ public class RegistroFincaFragment extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment RegistroFincaFragment.
-     */
+
+    /*VARIABLES FRAGMENT*/
+    private EditText nombreFinca, departamento, municipio, corregimiento, vereda, hectareas, telefono;
+    private Button btnRegistrar;
+    //Usado para el registro en la BD
+    private JsonObjectRequest jsonObjectRequest;
+    private ProgressDialog progreso;
+    private StringRequest stringRequest;
+
+
+
     // TODO: Rename and change types and number of parameters
     public static RegistroFincaFragment newInstance(String param1, String param2) {
         RegistroFincaFragment fragment = new RegistroFincaFragment();
@@ -67,14 +86,97 @@ public class RegistroFincaFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View vista = inflater.inflate(R.layout.fragment_registro_finca, container, false);;
-        Button btnPrueba = vista.findViewById(R.id.btnprueba);
-        btnPrueba.setOnClickListener(new View.OnClickListener() {
+        instanciarElementos(vista);
+        btnRegistrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getContext(),"funciona",Toast.LENGTH_SHORT).show();
+                registrarFinca();
             }
         });
         return vista;
+    }
+
+    //Obtiene los datos ingresados en el formulario y los envia a  la api para ser cargados en la BD
+    private void registrarFinca() {
+        final Finca finca = new Finca();
+
+        finca.setNombre(nombreFinca.getText().toString());
+        finca.setDepartamento(departamento.getText().toString());
+        finca.setMunicipio(municipio.getText().toString());
+        finca.setCorregimiento(corregimiento.getText().toString());
+        finca.setVereda(vereda.getText().toString());
+        finca.setHectareas(Integer.parseInt(hectareas.getText().toString()));
+        finca.setTelefono(telefono.getText().toString());
+
+        String url = getString(R.string.ip_servidor)+"apimicafe.php";
+
+
+        stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                switch (response){
+                    case "Actualizo":
+                        imprimirMensaje("Registro completo");
+                        limpiarCampos();
+                        break;
+                    case "Error":
+                        imprimirMensaje("No se registro, intente de nuevo. \n" + response);
+                        break;
+                    default:
+                            imprimirMensaje(response);
+                            Log.i("TAG",response);
+                        break;
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                imprimirMensaje("Error en el webservice");
+            }
+        }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String,String> parametros =  new HashMap<>();
+                String opcion = "registrofinca";
+                parametros.put("opcion",opcion);
+                parametros.put("idadministrador",String.valueOf(getSession().getInt("id",0)));
+                parametros.put("nombrefinca",finca.getNombre());
+                parametros.put("departamento",finca.getDepartamento());
+                parametros.put("municipio",finca.getMunicipio());
+                parametros.put("corregimiento",finca.getCorregimiento());
+                parametros.put("vereda",finca.getVereda());
+                parametros.put("hectareas",String.valueOf(finca.getHectareas()));
+                parametros.put("telefono",finca.getTelefono());
+                return parametros;
+            }
+        };
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 2, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        VolleySingleton.getInstanciaVolley(getContext()).addToRequestQueue(stringRequest);
+    }
+
+    private void limpiarCampos() {
+        nombreFinca.setText("");
+        departamento.setText("");
+        municipio.setText("");
+        corregimiento.setText("");
+        vereda.setText("");
+        hectareas.setText("");
+        telefono.setText("");
+    }
+
+    private void imprimirMensaje(String mensaje) {
+        Toast.makeText(getContext(),mensaje,Toast.LENGTH_SHORT).show();
+    }
+
+    private void instanciarElementos(View vista) {
+        nombreFinca = vista.findViewById(R.id.regfin_nombre);
+        departamento = vista.findViewById(R.id.regfin_departamento);
+        municipio = vista.findViewById(R.id.regfin_municipio);
+        corregimiento = vista.findViewById(R.id.regfin_corregimiento);
+        vereda = vista.findViewById(R.id.regfin_vereda);
+        hectareas = vista.findViewById(R.id.regfin_hectareas);
+        telefono = vista.findViewById(R.id.regfin_telefono);
+        btnRegistrar = vista.findViewById(R.id.regfin_btnRegistrar);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -114,5 +216,10 @@ public class RegistroFincaFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    private SharedPreferences getSession(){
+        SharedPreferences preferences = this.getActivity().getSharedPreferences("sesion", Context.MODE_PRIVATE);
+        return preferences;
     }
 }

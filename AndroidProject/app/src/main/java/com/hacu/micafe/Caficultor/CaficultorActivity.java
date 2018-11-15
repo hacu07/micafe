@@ -20,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hacu.micafe.Caficultor.FragmentsCaf.CaficultorFincaFragment;
+import com.hacu.micafe.Caficultor.FragmentsCaf.CaficultorOfertaFragment;
 import com.hacu.micafe.Caficultor.Interfaces.IFragments;
 import com.hacu.micafe.Modelo.Usuarios;
 import com.hacu.micafe.R;
@@ -135,8 +136,9 @@ public class CaficultorActivity extends AppCompatActivity
         if (id == R.id.nav_finca) {
             fragMostrar = new CaficultorFincaFragment();
             fragmentSeleccionado = true;
-        } else if (id == R.id.nav_gallery) {
-
+        } else if (id == R.id.nav_ofertas) {
+            fragMostrar = new CaficultorOfertaFragment();
+            fragmentSeleccionado = true;
         } else if (id == R.id.nav_slideshow) {
 
         } else if (id == R.id.nav_manage) {

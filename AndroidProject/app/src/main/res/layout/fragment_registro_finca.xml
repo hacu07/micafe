@@ -4,22 +4,121 @@
     android:layout_height="match_parent"
     tools:context="com.hacu.micafe.Caficultor.FragmentsCaf.RegistroFincaFragment">
 
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:textStyle="bold"
-        android:text="Registro de Finca"
-        android:textAlignment="center"
-        android:inputType="number"
-        android:textColor="@color/colorPrimaryDark"
-        android:textSize="30sp"
-        />
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:weightSum="7">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="5dp"
+            android:textStyle="bold"
+            android:layout_weight="1"
+            android:text="Registro de Finca"
+            android:gravity="center"
+            android:inputType="number"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="30sp"
+            />
 
-    <Button
-        android:id="@+id/btnprueba"
-        android:text="Prueba"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="5">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:padding="5dp">
+
+                <EditText
+                    android:id="@+id/regfin_nombre"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:hint="@string/nombre_de_la_finca"
+                    android:inputType="text"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="30sp"
+                    android:textStyle="bold" />
+                <EditText
+                    android:id="@+id/regfin_departamento"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:hint="@string/departamento"
+                    android:inputType="text"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="30sp"
+                    android:textStyle="bold" />
+                <EditText
+                    android:id="@+id/regfin_municipio"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:hint="@string/municipio"
+                    android:inputType="text"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="30sp"
+                    android:textStyle="bold" />
+                <EditText
+                    android:id="@+id/regfin_corregimiento"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:hint="@string/corregimiento"
+                    android:inputType="text"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="30sp"
+                    android:textStyle="bold" />
+                <EditText
+                    android:id="@+id/regfin_vereda"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:hint="@string/vereda"
+                    android:inputType="text"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="30sp"
+                    android:textStyle="bold" />
+                <EditText
+                    android:id="@+id/regfin_hectareas"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:hint="@string/hectareas"
+                    android:inputType="number"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="30sp"
+                    android:textStyle="bold" />
+
+                <EditText
+                    android:id="@+id/regfin_telefono"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:hint="@string/telefono_de_contacto"
+                    android:inputType="number"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="30sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </ScrollView>
+
+        <Button
+            android:id="@+id/regfin_btnRegistrar"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:layout_height="0dp"
+            android:layout_margin="5dp"
+            android:textSize="30dp"
+            android:textStyle="bold"
+            android:background="@color/colorPrimary"
+            android:text="@string/btn_registrarme"
+            android:textColor="@color/colorPrimaryDark" />
+
+    </LinearLayout>
+
 
 </FrameLayout>

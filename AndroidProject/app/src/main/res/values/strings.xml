@@ -25,4 +25,17 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="crear_finca">Crear Finca</string>
+    <string name="nombre_de_la_finca">Nombre de la finca</string>
+    <string name="departamento">Departamento</string>
+    <string name="municipio">Municipio</string>
+    <string name="corregimiento">Corregimiento</string>
+    <string name="vereda">Vereda</string>
+    <string name="hectareas">Hectareas</string>
+    <string name="telefono_de_contacto">Telefono de contacto</string>
+    <string name="crear_oferta">Crear Oferta</string>
+    <string name="caracteristicas_de_la_planta">Caracteristicas de la planta</string>
+    <string name="servicios_a_los_recolectores">Servicios a los recolectores</string>
+    <string name="por_kilos">Por Kilos</string>
+    <string name="valor_del_pago">Valor del pago</string>
+    <string name="jornal">Jornal</string>
 </resources>

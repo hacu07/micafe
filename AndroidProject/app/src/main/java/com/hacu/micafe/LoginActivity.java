@@ -1,6 +1,8 @@
 package com.hacu.micafe;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -111,6 +113,9 @@ public class LoginActivity extends AppCompatActivity {
                 break;
         }
 
+        //Guardamos los datos del usuario que ha iniciado sesion en un sharedpreferences para usar desde otra clase de la app
+        guardarDatosUsuarioSesion(usuario);
+
         Bundle bundle = new Bundle();
         bundle.putSerializable("usuario",usuario);
         miIntent.putExtras(bundle);
@@ -122,6 +127,30 @@ public class LoginActivity extends AppCompatActivity {
         //inicia actividad
 
         finish();
+    }
+
+    //Guarda los datos en sharedpreferences para acceder desde alli por otra parte del codigo de la app
+    private void guardarDatosUsuarioSesion(Usuarios usuario) {
+        //MODO PRIVADO PARA SOLO ACCEDER DESDE LA APP -RECOMENDADO
+        SharedPreferences preferences = getSharedPreferences("sesion", Context.MODE_PRIVATE);
+
+        //se asigna los valores usando el editor
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putInt("login",1);//Si es 1 es porque hay una sesion iniciada
+        editor.putInt("id",usuario.getId());
+        editor.putString("nombre",usuario.getNombre());
+        editor.putString("correo",usuario.getCorreo());
+        editor.putString("tipodocumento",usuario.getTipodocumento());
+        editor.putString("cedula",usuario.getCedula());//
+        editor.putString("celular",usuario.getCelular());//
+        editor.putString("fechanacimiento",usuario.getFechanacimiento());//
+        editor.putString("direccion",usuario.getDireccion());//
+        editor.putString("departamento",usuario.getDepartamento());//
+        editor.putString("municipio",usuario.getMunicipio());//
+        editor.putString("urlimagen",usuario.getUrlimagen());//
+        editor.putInt("idrol",usuario.getIdrol());//
+        editor.commit();//crea archivo y
+        imprimirMensaje("Sharedpreferences almacenado");
     }
 
     //Retorna un boolean true si todo esta bien, si no devuelve un false
