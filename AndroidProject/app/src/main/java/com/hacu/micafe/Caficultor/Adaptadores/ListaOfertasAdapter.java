@@ -41,7 +41,7 @@ public class ListaOfertasAdapter extends RecyclerView.Adapter<ListaOfertasAdapte
     public void onBindViewHolder(@NonNull ListaOfertasHolder holder, int position) {
         holder.id.setText(String.valueOf(listOfertas.get(position).getId()));
         holder.finca.setText(listOfertas.get(position).getServicios());//se toma servicios para almacenar el nombre de la finca
-        holder.fechainicio.setText(listOfertas.get(position).getFechacreacion());//cambiar a fecha de inicio
+        holder.fechainicio.setText(listOfertas.get(position).getFechainicio());//cambiar a fecha de inicio
         holder.vacantes.setText(String.valueOf(listOfertas.get(position).getVacantes()));
     }
 

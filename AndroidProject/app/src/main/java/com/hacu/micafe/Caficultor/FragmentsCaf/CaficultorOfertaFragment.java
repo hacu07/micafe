@@ -106,7 +106,7 @@ public class CaficultorOfertaFragment extends Fragment {
                         JSONObject jsonObject = jsonArray.getJSONObject(i);
                         oferta.setId(jsonObject.optInt("id"));
                         oferta.setServicios(jsonObject.getString("nombre"));
-                        oferta.setFechacreacion(jsonObject.getString("fechacreacion"));//cambiar por fecha de inicio
+                        oferta.setFechainicio(jsonObject.getString("fechainicio"));//cambiar por fecha de inicio
                         oferta.setVacantes(jsonObject.getInt("vacantes"));
                         listaOfertas.add(oferta);
                     }

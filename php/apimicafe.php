@@ -44,7 +44,7 @@ if (isset($_GET["opcion"])) {
 			registrarFinca($_POST["idadministrador"],$_POST["nombrefinca"],$_POST["departamento"],$_POST["municipio"],$_POST["corregimiento"],$_POST["vereda"],$_POST["hectareas"],$_POST["telefono"]);
 			break;
 		case 'registroferta':
-			registrarOferta($_POST["idadministrador"],$_POST["nombrefinca"],$_POST["idmodopago"],$_POST["valorpago"],$_POST["vacantes"],$_POST["diastrabajo"],$_POST["planta"],$_POST["servicios"]);
+			registrarOferta($_POST["idadministrador"],$_POST["nombrefinca"],$_POST["idmodopago"],$_POST["valorpago"],$_POST["vacantes"],$_POST["diastrabajo"],$_POST["planta"],$_POST["servicios"],$_POST["fechainicio"]);
 			break;
 		default:
 			$respuesta = array('micafe' => 'error al enviar opcion' );
@@ -154,20 +154,20 @@ function consultarFincasCaficultor($idCaficultor)
 	leerRegistro($sql);
 }
 
-function registrarOferta($idadministrador,$nombrefinca,$idmodopago,$valorpago,$vacantes,$diastrabajo,$planta,$servicios)
+function registrarOferta($idadministrador,$nombrefinca,$idmodopago,$valorpago,$vacantes,$diastrabajo,$planta,$servicios,$fechainicio)
 {
 	$idFinca = "SELECT fincas.id FROM fincas WHERE fincas.nombre LIKE '{$nombrefinca}' AND fincas.idadministrador = '{$idadministrador}'";
-	$sql = "INSERT INTO ofertas(idfinca,idmodopago,valorpago,vacantes,diastrabajo,planta,servicios,fechacreacion) VALUES(({$idFinca}),{$idmodopago},{$valorpago},{$vacantes},{$diastrabajo},'{$planta}','{$servicios}', NOW())";
+	$sql = "INSERT INTO ofertas(idfinca,idmodopago,valorpago,vacantes,diastrabajo,planta,servicios,fechacreacion,fechainicio) VALUES(({$idFinca}),{$idmodopago},{$valorpago},{$vacantes},{$diastrabajo},'{$planta}','{$servicios}', NOW(),'{$fechainicio}')";
 	actualizarRegistro($sql); 
 }
 
 function consultarOfertasCaficultor($idadministrador)
 {
-	$sql = "SELECT ofertas.id, fincas.nombre , ofertas.fechacreacion, ofertas.vacantes FROM ofertas 
+	$sql = "SELECT ofertas.id, fincas.nombre , ofertas.fechainicio, ofertas.vacantes FROM ofertas 
 	JOIN fincas ON  ofertas.idfinca = fincas.id 
     JOIN usuarios ON fincas.idadministrador = usuarios.id
     WHERE usuarios.id = {$idadministrador} 
-    order by ofertas.fechacreacion asc"; //OJO cambiar a fecha de inicio
+    order by ofertas.fechainicio asc"; //OJO cambiar a fecha de inicio
     leerRegistro($sql);
 }
 

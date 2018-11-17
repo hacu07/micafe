@@ -1,5 +1,6 @@
 package com.hacu.micafe.Caficultor.FragmentsCaf;
 
+import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -14,7 +15,9 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -31,17 +34,21 @@ import com.hacu.micafe.Modelo.Finca;
 import com.hacu.micafe.Modelo.Oferta;
 import com.hacu.micafe.Modelo.VolleySingleton;
 import com.hacu.micafe.R;
+import com.hacu.micafe.Utilidades.DatePickerFragment;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 
-public class RegistroOfertaFragment extends Fragment {
+public class RegistroOfertaFragment extends Fragment implements DatePickerFragment.DateDialogListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -55,6 +62,7 @@ public class RegistroOfertaFragment extends Fragment {
     /* OBJETOS DEL FRAGMENT */
     private Spinner comboFincas;
     private RadioButton radKilos, radJornal;
+    private TextView fechainicio;
     private EditText valorPago, vacantes, diasTrabajo, planta, servicios;
     private ArrayList<String> listaFincasSpi;//Lista para insertar en el spiner
     private ArrayList<Finca> listaFincaBd;//Lista con los datos de la BD
@@ -65,6 +73,8 @@ public class RegistroOfertaFragment extends Fragment {
 
     //Usado para el registro en la BD
     private StringRequest stringRequest;
+
+    private static final String DIALOG_DATE = "RegistroOfertaFragment.DateDialog";
 
     private OnFragmentInteractionListener mListener;
 
@@ -94,17 +104,32 @@ public class RegistroOfertaFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View vista = inflater.inflate(R.layout.fragment_registro_oferta, container, false);
+        final View vista = inflater.inflate(R.layout.fragment_registro_oferta, container, false);
         instanciarElementos(vista);
         cargarComboFincas();
 
         Button btnRegistrarOferta = vista.findViewById(R.id.regofe_btnRegistrarOferta);
+        ImageView btnCalendario =  vista.findViewById(R.id.regofe_btnfecha);
+
+        fechainicio.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                cargarFecha();
+            }
+        });
+        btnCalendario.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                cargarFecha();
+            }
+        });
         btnRegistrarOferta.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 registrarOferta();
             }
         });
+
         return vista;
     }
 
@@ -118,6 +143,7 @@ public class RegistroOfertaFragment extends Fragment {
         oferta.setDiasTrabajo(Integer.parseInt(diasTrabajo.getText().toString()));
         oferta.setPlanta(planta.getText().toString());
         oferta.setServicios(servicios.getText().toString());
+        oferta.setFechainicio(fechainicio.getText().toString());
 
         String url = getString(R.string.ip_servidor)+"apimicafe.php";
 
@@ -158,6 +184,7 @@ public class RegistroOfertaFragment extends Fragment {
                 parametros.put("diastrabajo",String.valueOf(oferta.getDiasTrabajo()));
                 parametros.put("planta",oferta.getPlanta());
                 parametros.put("servicios",oferta.getServicios());
+                parametros.put("fechainicio",oferta.getFechainicio());
                 return parametros;
             }
         };
@@ -245,6 +272,7 @@ public class RegistroOfertaFragment extends Fragment {
         diasTrabajo = vista.findViewById(R.id.regofe_diastrabajo);
         planta = vista.findViewById(R.id.regofe_planta);
         servicios = vista.findViewById(R.id.regofe_servicios);
+        fechainicio = vista.findViewById(R.id.regofe_fechaninicio);
     }
 
     private SharedPreferences getSession(){
@@ -278,6 +306,43 @@ public class RegistroOfertaFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    //Metodo para desplegar el DateChooser
+    /*
+    public void cargarFecha() {
+        DatePickerFragment dialog = new DatePickerFragment();
+        dialog.show(getActivity().getFragmentManager(),DIALOG_DATE);
+    }*/
+
+
+    private void cargarFecha(){
+        final Calendar calendario = Calendar.getInstance();
+        int yy = calendario.get(Calendar.YEAR);
+        int mm = calendario.get(Calendar.MONTH);
+        int dd = calendario.get(Calendar.DAY_OF_MONTH);
+
+        DatePickerDialog datePicker = new DatePickerDialog(getActivity(), new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                String fecha = String.valueOf(year) +"-"+String.valueOf(monthOfYear) +"-"+String.valueOf(dayOfMonth);
+                fechainicio.setText(fecha);
+            }
+        }, yy, mm, dd);
+
+        datePicker.show();
+    }
+
+    @Override
+    public void onFinishDialog(Date date) {
+        //Asigna la fecha seleccionada en el DatePicker a la etiqueta de fecha de nacimiento
+        fechainicio.setText(formatDate(date));
+    }
+
+    private String formatDate(Date date) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String hireDate = sdf.format(date);
+        return hireDate;
     }
 
 
