@@ -105,6 +105,7 @@ public class CaficultorOfertaFragment extends Fragment {
                         oferta = new Oferta();
                         JSONObject jsonObject = jsonArray.getJSONObject(i);
                         oferta.setId(jsonObject.optInt("id"));
+                        oferta.setServicios(jsonObject.getString("nombre"));
                         oferta.setFechacreacion(jsonObject.getString("fechacreacion"));//cambiar por fecha de inicio
                         oferta.setVacantes(jsonObject.getInt("vacantes"));
                         listaOfertas.add(oferta);
@@ -112,6 +113,23 @@ public class CaficultorOfertaFragment extends Fragment {
 
                     ListaOfertasAdapter adapter = new ListaOfertasAdapter(listaOfertas);
                     recyclerOfertas.setAdapter(adapter);
+                    adapter.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            //Se obtiene el id de la oferta para consultar a detalle en el siguiente fragment
+                            int idOfertaSeleccionado = listaOfertas.get(recyclerOfertas.getChildAdapterPosition(view)).getId();
+                            String nombreFinca = listaOfertas.get(recyclerOfertas.getChildAdapterPosition(view)).getServicios();
+                            imprimirMensaje("Ha seleccionado la oferta #"+idOfertaSeleccionado);
+                            Bundle parametrosEnvio = new Bundle();
+                            parametrosEnvio.putInt("idOferta",idOfertaSeleccionado);
+                            parametrosEnvio.putString("nombreFinca",nombreFinca);
+
+                            Fragment fragDetalleOferta = new DetalleOfertaCafFragment();
+                            fragDetalleOferta.setArguments(parametrosEnvio);
+                            getFragmentManager().beginTransaction().replace(R.id.content_caficultor,fragDetalleOferta).commit();
+                        }
+                    });
+
                 }catch (JSONException e){
                     e.printStackTrace();
                     imprimirMensaje("Error al cargar listado de ofertas - RESPONSE ");

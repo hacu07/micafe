@@ -16,11 +16,12 @@ public class Oferta {
     private String servicios;
     private int ventaTotal;
     private String fechacreacion;
+    private String fechainicio;
 
     public Oferta() {
     }
 
-    public Oferta(int id, int idAdministrador, int idFinca, int idModoPago, int valorPago, int vacantes, int diasTrabajo, String planta, String servicios, int ventaTotal, String fechacreacion) {
+    public Oferta(int id, int idAdministrador, int idFinca, int idModoPago, int valorPago, int vacantes, int diasTrabajo, String planta, String servicios, int ventaTotal, String fechacreacion, String fechainicio) {
         this.id = id;
         this.idAdministrador = idAdministrador;
         this.idFinca = idFinca;
@@ -32,6 +33,7 @@ public class Oferta {
         this.servicios = servicios;
         this.ventaTotal = ventaTotal;
         this.fechacreacion = fechacreacion;
+        this.fechainicio = fechainicio;
     }
 
     public int getIdAdministrador() {
@@ -120,5 +122,13 @@ public class Oferta {
 
     public void setFechacreacion(String fechacreacion) {
         this.fechacreacion = fechacreacion;
+    }
+
+    public String getFechainicio() {
+        return fechainicio;
+    }
+
+    public void setFechainicio(String fechainicio) {
+        this.fechainicio = fechainicio;
     }
 }

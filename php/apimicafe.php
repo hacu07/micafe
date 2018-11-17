@@ -163,10 +163,11 @@ function registrarOferta($idadministrador,$nombrefinca,$idmodopago,$valorpago,$v
 
 function consultarOfertasCaficultor($idadministrador)
 {
-	$sql = "SELECT ofertas.id, ofertas.fechacreacion, ofertas.vacantes FROM ofertas 
+	$sql = "SELECT ofertas.id, fincas.nombre , ofertas.fechacreacion, ofertas.vacantes FROM ofertas 
 	JOIN fincas ON  ofertas.idfinca = fincas.id 
     JOIN usuarios ON fincas.idadministrador = usuarios.id
-    WHERE usuarios.id = {$idadministrador}";
+    WHERE usuarios.id = {$idadministrador} 
+    order by ofertas.fechacreacion asc"; //OJO cambiar a fecha de inicio
     leerRegistro($sql);
 }
 

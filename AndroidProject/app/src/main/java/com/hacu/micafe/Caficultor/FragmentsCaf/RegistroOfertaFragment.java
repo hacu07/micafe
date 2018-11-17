@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -200,7 +201,9 @@ public class RegistroOfertaFragment extends Fragment {
                         public void onItemSelected(AdapterView<?> parent, View view, int position, long l) {
                             imprimirMensaje("Finca Seleccionada: "+parent.getItemAtPosition(position).toString().toUpperCase() );
                             ((TextView) parent.getChildAt(0)).setTextColor(getActivity().getResources().getColor(R.color.amarillo));
+                            ((TextView) parent.getChildAt(0)).setGravity(Gravity.CENTER);
                             fincaSeleccionada = parent.getItemAtPosition(position).toString();
+
                         }
 
                         @Override
@@ -252,8 +255,6 @@ public class RegistroOfertaFragment extends Fragment {
     private void imprimirMensaje(String mensaje){
         Toast.makeText(getContext(),mensaje,Toast.LENGTH_SHORT).show();
     }
-
-
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
