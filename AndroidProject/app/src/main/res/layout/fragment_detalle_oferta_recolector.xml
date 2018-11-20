@@ -1,0 +1,344 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.hacu.micafe.Recolector.Fragments.DetalleOfertaRecolectorFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:weightSum="7"
+        android:orientation="vertical"
+        android:padding="5dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+            <TextView
+                android:textStyle="bold"
+                android:textColor="@color/colorPrimaryDark"
+                android:layout_weight="1"
+                android:textSize="30dp"
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:text="Informacion De Oferta"
+                />
+            <TextView
+                android:id="@+id/detoferec_id"
+                android:textStyle="bold"
+                android:textColor="@color/colorPrimaryDark"
+                android:layout_weight="1"
+                android:textSize="30dp"
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:text="###"
+                />
+
+        </LinearLayout>
+
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="5">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <TextView
+                    android:textStyle="bold"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="20dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="Fecha Inicio"
+                    />
+                <TextView
+                    android:id="@+id/detoferec_fechainicio"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="20dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="aaaa-MM-dd"
+                    android:layout_marginBottom="10dp"
+                    />
+
+                <TextView
+                    android:textStyle="bold"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="20dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="Modo de Pago"
+                    />
+                <TextView
+                    android:id="@+id/detoferec_modopago"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="20dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="jornal - por kilos"
+                    android:layout_marginBottom="10dp"
+                    />
+
+                <TextView
+                    android:textStyle="bold"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="20dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="Valor Pago"
+                    />
+                <TextView
+                    android:id="@+id/detoferec_valorpago"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="20dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="$$$"
+                    android:layout_marginBottom="10dp"
+                    />
+
+                <TextView
+                    android:textStyle="bold"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="20dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="Recolectores necesarios"
+                    />
+                <TextView
+                    android:id="@+id/detoferec_vacantes"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="20dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="100"
+                    android:layout_marginBottom="10dp"
+                    />
+
+                <TextView
+                    android:textStyle="bold"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="20dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="Dias de trabajo"
+                    />
+                <TextView
+                    android:id="@+id/detoferec_diastrabajo"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="20dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="10"
+                    android:layout_marginBottom="10dp"
+                    />
+
+                <TextView
+                    android:textStyle="bold"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="20dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="Caracteristicas de la planta"
+                    />
+                <TextView
+                    android:id="@+id/detoferec_planta"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="20dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Arbol alto con etc etc etc etc"
+                    android:layout_marginBottom="10dp"
+                    />
+
+                <TextView
+                    android:textStyle="bold"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="20dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="Servicios"
+                    />
+                <TextView
+                    android:id="@+id/detoferec_servicios"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="20dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Hospedaje, alimentacion, entretenimiento, etc."
+                    android:layout_marginBottom="10dp"
+                    />
+
+                <TextView
+                    android:textStyle="bold"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="30dp"
+                    android:gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="Información De La Finca"
+                    />
+
+                <TextView
+                    android:textStyle="bold"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="20dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="Nombre"
+                    />
+                <TextView
+                    android:id="@+id/detoferec_nombrefinca"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="20dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="El suspiro"
+                    android:layout_marginBottom="10dp"
+                    />
+
+                <TextView
+                    android:textStyle="bold"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="20dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="Administrador"
+                    />
+                <TextView
+                    android:id="@+id/detoferec_nombreadmin"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="20dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Nombre Admin"
+                    android:layout_marginBottom="10dp"
+                    />
+
+                <TextView
+                    android:textStyle="bold"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="20dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="Telefono de contacto"
+                    />
+                <TextView
+                    android:id="@+id/detoferec_telefono"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="20dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="123456"
+                    android:layout_marginBottom="10dp"
+                    />
+
+                <TextView
+                    android:textStyle="bold"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="25dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="Ubicacion de la finca"
+                    />
+
+                <TextView
+                    android:textStyle="bold"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="20dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="Departamento"
+                    />
+
+                <TextView
+                    android:id="@+id/detoferec_departamento"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="20dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Tolima"
+                    android:layout_marginBottom="10dp"
+                    />
+
+                <TextView
+                    android:textStyle="bold"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="20dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="Municipio"
+                    />
+                <TextView
+                    android:id="@+id/detoferec_municipio"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="20dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Ibague"
+                    android:layout_marginBottom="10dp"
+                    />
+
+                <TextView
+                    android:textStyle="bold"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="20dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="Corregimiento"
+                    />
+                <TextView
+                    android:id="@+id/detoferec_corregimiento"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="20dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="8"
+                    android:layout_marginBottom="10dp"
+                    />
+
+                <TextView
+                    android:textStyle="bold"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="20dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="Vereda"
+                    />
+                <TextView
+                    android:id="@+id/detoferec_vereda"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="20dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Pastales"
+                    android:layout_marginBottom="10dp"
+                    />
+
+            </LinearLayout>
+
+        </ScrollView>
+
+        <Button
+            android:id="@+id/detoferec_btnaplicar"
+            android:text="Aplicar A ESTA OFERTA"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:textStyle="bold"
+            android:textSize="25dp"
+            android:textColor="@color/colorPrimary"
+            android:background="@color/colorPrimaryDark"
+            android:padding="20dp"/>
+
+    </LinearLayout>
+
+</FrameLayout>

@@ -38,4 +38,5 @@
     <string name="por_kilos">Por Kilos</string>
     <string name="valor_del_pago">Valor del pago</string>
     <string name="jornal">Jornal</string>
+    <string name="title_activity_recolector">Mi Café</string>
 </resources>

@@ -28,6 +28,14 @@ if (isset($_GET["opcion"])) {
 			consultarOfertasCaficultor($_GET["idadministrador"]);
 			break;
 
+		//GET RECOLECTOR
+		case 'consultarofertasrecolector':
+			consultarOfertasRecolector();
+			break;
+		case 'consultardetalleofertarecolector':
+			consultarDetalleOfertaRecolector($_GET["idoferta"]);
+			break;
+
 		default:
 			$respuesta = array('micafe' => 'error al enviar opcion' );
 			echo json_encode($respuesta);
@@ -46,6 +54,12 @@ if (isset($_GET["opcion"])) {
 		case 'registroferta':
 			registrarOferta($_POST["idadministrador"],$_POST["nombrefinca"],$_POST["idmodopago"],$_POST["valorpago"],$_POST["vacantes"],$_POST["diastrabajo"],$_POST["planta"],$_POST["servicios"],$_POST["fechainicio"]);
 			break;
+
+		//POST RECOLECTOR
+		case 'postularrecolector':
+			postularRecolector($_POST["idoferta"],$_POST["idrecolector"]);
+			break;
+
 		default:
 			$respuesta = array('micafe' => 'error al enviar opcion' );
 			echo json_encode($respuesta);
@@ -169,6 +183,33 @@ function consultarOfertasCaficultor($idadministrador)
     WHERE usuarios.id = {$idadministrador} 
     order by ofertas.fechainicio asc"; //OJO cambiar a fecha de inicio
     leerRegistro($sql);
+}
+
+
+/*********** ****************  			  ************** *********************
+								RECOLECTOR
+******************************************************************************/
+
+function consultarOfertasRecolector(){
+	$sql = "SELECT ofertas.id, fincas.nombre , ofertas.fechainicio, ofertas.vacantes FROM ofertas 
+	JOIN fincas ON  ofertas.idfinca = fincas.id 
+    JOIN usuarios ON fincas.idadministrador = usuarios.id
+    order by ofertas.fechainicio asc";
+    leerRegistro($sql);
+}
+
+function consultarDetalleOfertaRecolector($idOferta){
+	$sql = "SELECT ofertas.fechainicio, ofertas.idmodopago, ofertas.valorpago, ofertas.vacantes, ofertas.diastrabajo, ofertas.planta, ofertas.servicios, fincas.nombre as nombrefinca, usuarios.nombre as nombreadmin, fincas.telefono, fincas.departamento, fincas.municipio, fincas.corregimiento, fincas.vereda
+		from ofertas JOIN fincas ON ofertas.idfinca = fincas.id
+		JOIN usuarios ON fincas.idadministrador = usuarios.id
+		WHERE ofertas.id = {$idOferta}";
+	leerRegistro($sql);
+}
+
+function postularRecolector($idOferta,$idRecolector)
+{
+	$sql = "INSERT INTO recolectoresoferta(idoferta,idrecolector,idestado) values({$idOferta},{$idRecolector},2)";
+	actualizarRegistro($sql);
 }
 
 ?>

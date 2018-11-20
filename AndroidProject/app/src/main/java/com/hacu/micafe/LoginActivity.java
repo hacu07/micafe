@@ -18,6 +18,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.hacu.micafe.Caficultor.CaficultorActivity;
 import com.hacu.micafe.Modelo.Usuarios;
 import com.hacu.micafe.Modelo.VolleySingleton;
+import com.hacu.micafe.Recolector.RecolectorActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -107,8 +108,8 @@ public class LoginActivity extends AppCompatActivity {
                 break;
 
             case 3://intent para Recolector
+                miIntent = new Intent(LoginActivity.this, RecolectorActivity.class);
                 break;
-
             case 4://intent para Comerciante
                 break;
         }

@@ -35,6 +35,10 @@
         <activity
             android:name=".Caficultor.CaficultorActivity"
             android:label="@string/title_activity_caficultor"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Recolector.RecolectorActivity"
+            android:label="@string/title_activity_recolector"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 

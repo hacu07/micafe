@@ -10,7 +10,7 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/detOfe_finca"
+            android:id="@+id/detOfecaf_nombrefinca"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
@@ -19,6 +19,46 @@
             android:gravity="center"
             android:textColor="@color/colorPrimaryDark"
             android:textSize="30sp"
+            />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:textStyle="bold"
+            android:text="Fecha de inicio"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="25sp"
+            />
+
+        <TextView
+            android:id="@+id/detOfecaf_fechainicio"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="aaaa/MM/dd"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="20sp"
+            />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:textStyle="bold"
+            android:text="Modo de pago"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="25sp"
+            />
+
+        <TextView
+            android:id="@+id/detOfecaf_modopago"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="Por kilos - Jornal"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="20sp"
             />
 
     </LinearLayout>
