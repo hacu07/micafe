@@ -164,6 +164,10 @@ public class DetalleOfertaRecolectorFragment extends Fragment {
                     municipio.setText(jsonObject.optString("municipio"));
                     corregimiento.setText(jsonObject.optString("corregimiento"));
                     vereda.setText(jsonObject.optString("vereda"));
+                    /*
+                    telefono.setText("No disponible hasta ser aceptado por el caficultor");
+                    nombreAdmin.setText("No disponible hasta ser aceptado por el caficultor");
+                    */
 
                 }catch (JSONException e){
                     e.printStackTrace();

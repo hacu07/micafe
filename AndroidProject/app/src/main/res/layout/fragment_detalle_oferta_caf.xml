@@ -2,64 +2,284 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="10dp"
     tools:context="com.hacu.micafe.Caficultor.FragmentsCaf.DetalleOfertaCafFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:weightSum="6">
 
-        <TextView
-            android:id="@+id/detOfecaf_nombrefinca"
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:textStyle="bold"
-            android:text="Finca"
-            android:gravity="center"
-            android:textColor="@color/colorPrimaryDark"
-            android:textSize="30sp"
-            />
+            android:layout_height="0dp"
+            android:layout_weight="4">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:textStyle="bold"
-            android:text="Fecha de inicio"
-            android:textColor="@color/colorPrimaryDark"
-            android:textSize="25sp"
-            />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/detOfecaf_fechainicio"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:text="aaaa/MM/dd"
-            android:textColor="@color/colorPrimaryDark"
-            android:textSize="20sp"
-            />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:textStyle="bold"
-            android:text="Modo de pago"
-            android:textColor="@color/colorPrimaryDark"
-            android:textSize="25sp"
-            />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:textStyle="bold"
+                        android:text="Oferta #"
+                        android:gravity="center"
+                        android:textColor="@color/colorPrimaryDark"
+                        android:textSize="30sp"
+                        />
 
-        <TextView
-            android:id="@+id/detOfecaf_modopago"
+                    <TextView
+                        android:id="@+id/detOfecaf_idoferta"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:textStyle="bold"
+                        android:text="000"
+                        android:gravity="center"
+                        android:textColor="@color/colorPrimaryDark"
+                        android:textSize="30sp"
+                        />
+
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:textStyle="bold"
+                    android:text="Finca"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="25sp"
+                    />
+
+                <TextView
+                    android:id="@+id/detOfecaf_nombrefinca"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:text="El suspiro"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="20sp"
+                    />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:textStyle="bold"
+                    android:text="Fecha de inicio"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="25sp"
+                    />
+
+                <TextView
+                    android:id="@+id/detOfecaf_fechainicio"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:text="aaaa/MM/dd"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="20sp"
+                    />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:textStyle="bold"
+                    android:text="Modo de pago"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="25sp"
+                    />
+
+                <TextView
+                    android:id="@+id/detOfecaf_modopago"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:text="Por kilos - Jornal"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="20sp"
+                    />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:textStyle="bold"
+                    android:text="Valor pago"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="25sp"
+                    />
+
+                <TextView
+                    android:id="@+id/detOfecaf_valorpago"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:text="30000"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="20sp"
+                    />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:textStyle="bold"
+                    android:text="Recolectores necesarios"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="25sp"
+                    />
+
+                <TextView
+                    android:id="@+id/detOfecaf_vacantes"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:text="50"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="20sp"
+                    />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:textStyle="bold"
+                    android:text="Dias de trabajo"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="25sp"
+                    />
+
+                <TextView
+                    android:id="@+id/detOfecaf_diastrabajo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:text="25"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="20sp"
+                    />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:textStyle="bold"
+                    android:text="Caracteristicas de la planta"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="25sp"
+                    />
+
+                <TextView
+                    android:id="@+id/detOfecaf_planta"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:text="Alto bonita :D "
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="20sp"
+                    />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:textStyle="bold"
+                    android:text="Servicios"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="25sp"
+                    />
+
+                <TextView
+                    android:id="@+id/detOfecaf_servicios"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:text="Tv Comida lavanderia "
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="20sp"
+                    />
+
+            </LinearLayout>
+        </ScrollView>
+
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:text="Por kilos - Jornal"
-            android:textColor="@color/colorPrimaryDark"
-            android:textSize="20sp"
-            />
+            android:layout_height="0dp"
+            android:orientation="horizontal"
+            android:layout_weight="2"
+            android:weightSum="2">
+
+            <LinearLayout
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_gravity="center"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <Button
+                    android:id="@+id/detOfecaf_btnpostulados"
+                    android:text="Ver Postulados"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:textColor="@color/colorPrimary"
+                    android:background="@color/colorPrimaryDark"
+                    android:layout_margin="5dp"/>
+
+                <Button
+                    android:text="Recolectores Aceptados"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:textColor="@color/colorPrimary"
+                    android:background="@color/colorPrimaryDark"
+                    android:layout_margin="5dp"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_gravity="center"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <Button
+                    android:text="Editar Oferta"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:textColor="@color/colorPrimary"
+                    android:background="@color/colorPrimaryDark"
+                    android:layout_margin="5dp"/>
+
+                <Button
+                    android:text="Registrar Pesada"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:textColor="@color/colorPrimary"
+                    android:background="@color/colorPrimaryDark"
+                    android:layout_margin="5dp"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+
 
     </LinearLayout>
 

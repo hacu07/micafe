@@ -27,6 +27,13 @@ if (isset($_GET["opcion"])) {
 		case 'consultarofertascaficultor':
 			consultarOfertasCaficultor($_GET["idadministrador"]);
 			break;
+		case 'cafconsultardetalleoferta':
+			consultarDetalleOfertaCaficultor($_GET["idoferta"]);
+			break;
+
+		case 'consultarpostuladosofertacaficultor':
+			consultarPostuladosOfertaCaficultor($_GET["idoferta"]);
+			break;
 
 		//GET RECOLECTOR
 		case 'consultarofertasrecolector':
@@ -183,6 +190,24 @@ function consultarOfertasCaficultor($idadministrador)
     WHERE usuarios.id = {$idadministrador} 
     order by ofertas.fechainicio asc"; //OJO cambiar a fecha de inicio
     leerRegistro($sql);
+}
+
+function consultarDetalleOfertaCaficultor($idOferta)
+{
+	$sql = "SELECT ofertas.fechainicio, modospago.modo as modopago, ofertas.valorpago, ofertas.vacantes, ofertas.diastrabajo, ofertas.planta, ofertas.servicios
+		FROM ofertas JOIN modospago ON ofertas.idmodopago = modospago.id
+		WHERE ofertas.id = {$idOferta}";
+	leerRegistro($sql);
+}
+
+function consultarPostuladosOfertaCaficultor($idOferta)
+{
+	$sql = "SELECT usuarios.cedula, usuarios.nombre, usuarios.fechanacimiento 
+			FROM recolectoresoferta 
+			JOIN usuarios ON recolectoresoferta.idrecolector = usuarios.id
+			Where recolectoresoferta.idestado = 2
+			AND recolectoresoferta.idoferta = {$idOferta}";
+	leerRegistro($sql);
 }
 
 
