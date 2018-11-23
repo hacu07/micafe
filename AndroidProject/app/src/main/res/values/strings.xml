@@ -15,7 +15,7 @@
     <string name="departamento_residencia">Departamento Residencia</string>
     <string name="municipio_de_residencia">Municipio Residencia</string>
     <string name="fecha_de_nacimiento">Fecha De Nacimiento</string>
-    <string name="title_activity_caficultor">CaficultorActivity</string>
+    <string name="title_activity_caficultor">MiCafé</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>

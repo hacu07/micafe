@@ -66,6 +66,9 @@ if (isset($_GET["opcion"])) {
 		case 'postularrecolector':
 			postularRecolector($_POST["idoferta"],$_POST["idrecolector"]);
 			break;
+		case 'actualizarperfilrecolector':
+			actualizarPerfilRecolector($_POST["cedula"],$_POST["correo"],$_POST["celular"],$_POST["imagen"],$_POST["direccion"],$_POST["departamento"],$_POST["municipio"]);
+			break;
 
 		default:
 			$respuesta = array('micafe' => 'error al enviar opcion' );
@@ -202,7 +205,7 @@ function consultarDetalleOfertaCaficultor($idOferta)
 
 function consultarPostuladosOfertaCaficultor($idOferta)
 {
-	$sql = "SELECT usuarios.cedula, usuarios.nombre, usuarios.fechanacimiento 
+	$sql = "SELECT usuarios.cedula, usuarios.nombre, usuarios.fechanacimiento, usuarios.urlimagen 
 			FROM recolectoresoferta 
 			JOIN usuarios ON recolectoresoferta.idrecolector = usuarios.id
 			Where recolectoresoferta.idestado = 2
@@ -231,9 +234,16 @@ function consultarDetalleOfertaRecolector($idOferta){
 	leerRegistro($sql);
 }
 
-function postularRecolector($idOferta,$idRecolector)
-{
+function postularRecolector($idOferta,$idRecolector){
 	$sql = "INSERT INTO recolectoresoferta(idoferta,idrecolector,idestado) values({$idOferta},{$idRecolector},2)";
+	actualizarRegistro($sql);
+}
+
+function actualizarPerfilRecolector($cedula, $correo, $celular, $imagen, $direccion, $departamento, $municipio){
+	$path = "imagenes/$cedula.jpg";
+	$url = "imagenes/".$cedula.".jpg";//ruta de almacenamiento de la imagen
+	file_put_contents($path,base64_decode($imagen));//mueve la foto a la ruta especificada
+	$sql = "UPDATE usuarios SET correo='{$correo}' , celular='{$celular}' , urlimagen='{$url}', direccion='{$direccion}' , departamento='{$departamento}' , municipio='{$municipio}' WHERE cedula = '{$cedula}'";
 	actualizarRegistro($sql);
 }
 

@@ -14,17 +14,27 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:weightSum="4">
+            android:weightSum="6">
+
+            <ImageView
+                android:id="@+id/lisposofe_imagen"
+                android:layout_gravity="center"
+                android:src="@drawable/logo"
+                android:scaleType="centerCrop"
+                android:layout_weight="2"
+                android:layout_width="0dp"
+                android:layout_height="120dp" />
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:layout_weight="2"
+
                 >
 
                 <TextView
-                    android:text="Nombre Recolector:"
+                    android:text="Nombre:"
                     android:textSize="15sp"
                     android:textStyle="bold"
                     android:layout_width="match_parent"

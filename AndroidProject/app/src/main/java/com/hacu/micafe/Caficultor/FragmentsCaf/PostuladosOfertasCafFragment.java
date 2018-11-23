@@ -102,10 +102,11 @@ public class PostuladosOfertasCafFragment extends Fragment {
                         usuario.setCedula(jsonObject.optString("cedula"));
                         usuario.setNombre(jsonObject.optString("nombre"));
                         usuario.setFechanacimiento(jsonObject.optString("fechanacimiento"));
+                        usuario.setUrlimagen(jsonObject.optString("urlimagen"));
                         //FALTA AGREGAR EL DE LA CALIFICACION
                         listaUsuarios.add(usuario);
                     }
-                    ListaPostulantesAdapter adapter = new ListaPostulantesAdapter(listaUsuarios);
+                    ListaPostulantesAdapter adapter = new ListaPostulantesAdapter(listaUsuarios, getContext(), getString(R.string.ip_servidor));
                     recyclerView.setAdapter(adapter);
                     adapter.setOnClickListener(new View.OnClickListener() {
                         @Override
