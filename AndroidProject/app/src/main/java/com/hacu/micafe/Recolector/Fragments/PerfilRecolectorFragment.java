@@ -1,23 +1,21 @@
 package com.hacu.micafe.Recolector.Fragments;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.hacu.micafe.R;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link PerfilRecolectorFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link PerfilRecolectorFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+
 public class PerfilRecolectorFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -30,19 +28,16 @@ public class PerfilRecolectorFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
+    private ImageView imagen;
+    private TextView nombre,cedula,fechanacimiento;
+    private EditText correo, celular, direccion, departamento, municipio;
+
+
     public PerfilRecolectorFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment PerfilRecolectorFragment.
-     */
-    // TODO: Rename and change types and number of parameters
+
     public static PerfilRecolectorFragment newInstance(String param1, String param2) {
         PerfilRecolectorFragment fragment = new PerfilRecolectorFragment();
         Bundle args = new Bundle();
@@ -64,8 +59,42 @@ public class PerfilRecolectorFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_perfil_recolector, container, false);
+        View vista = inflater.inflate(R.layout.fragment_perfil_recolector, container, false);
+        instanciarElementos(vista);
+        asignarDatosUsuario();
+        return vista;
+    }
+
+    private void asignarDatosUsuario() {
+        nombre.setText(getSession().getString("nombre","No se logro cargar la información"));
+        correo.setText(getSession().getString("correo","No se logro cargar la información"));
+        cedula.setText(getSession().getString("cedula","No se logro cargar la información"));
+        celular.setText(getSession().getString("celular","No se logro cargar la información"));
+        fechanacimiento.setText(getSession().getString("fechanacimiento","No se logro cargar la información"));
+        direccion.setText(getSession().getString("direccion","No se logro cargar la información"));
+        departamento.setText(getSession().getString("departamento","No se logro cargar la información"));
+        municipio.setText(getSession().getString("municipio","No se logro cargar la información"));
+    }
+
+    private void instanciarElementos(View vista) {
+        imagen = vista.findViewById(R.id.perrec_img);
+        nombre = vista.findViewById(R.id.perrec_nombre);
+        correo = vista.findViewById(R.id.perrec_correo);
+        cedula = vista.findViewById(R.id.perrec_cedula);
+        celular = vista.findViewById(R.id.perrec_celular);
+        fechanacimiento = vista.findViewById(R.id.perrec_fechanacimiento);
+        direccion = vista.findViewById(R.id.perrec_direccion);
+        departamento = vista.findViewById(R.id.perrec_departamento);
+        municipio = vista.findViewById(R.id.perrec_municipio);
+    }
+
+    private SharedPreferences getSession(){
+        SharedPreferences preferences = this.getActivity().getSharedPreferences("sesion", Context.MODE_PRIVATE);
+        return preferences;
+    }
+
+    private void imprimirMensaje(String mensaje){
+        Toast.makeText(getContext(),mensaje,Toast.LENGTH_SHORT).show();
     }
 
     // TODO: Rename method, update argument and hook method into UI event
