@@ -19,8 +19,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.hacu.micafe.Caficultor.FragmentsCaf.CaficultorFincaFragment;
 import com.hacu.micafe.Caficultor.FragmentsCaf.CaficultorOfertaFragment;
+import com.hacu.micafe.Caficultor.FragmentsCaf.PerfilCaficultorFragment;
 import com.hacu.micafe.Caficultor.Interfaces.IFragments;
 import com.hacu.micafe.Modelo.Usuarios;
 import com.hacu.micafe.R;
@@ -73,6 +75,11 @@ public class CaficultorActivity extends AppCompatActivity
     //Asigna los datos al menu navbar
     private void asignarDatosNav(Usuarios usuario) {
         nav_nombre.setText(usuario.getNombre());//asigna el nombre del usuario a los datos de navbar
+
+        if (usuario.getUrlimagen() != null){
+            //ASIGNACION DE FOTO DE PERFIL CON LIBRERIA GLIDE (IMPORTADA EN APP)
+            Glide.with(this).load(getString(R.string.ip_servidor)+usuario.getUrlimagen()).into(nav_foto);
+        }
 
         //Segun el IdRol muestra el rol
         switch (usuario.getIdrol()){
@@ -143,8 +150,9 @@ public class CaficultorActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_manage) {
 
-        } else if (id == R.id.nav_share) {
-
+        } else if (id == R.id.nav_perfil_caficultor) {
+            fragMostrar = new PerfilCaficultorFragment();
+            fragmentSeleccionado = true;
         }
 
         if (fragmentSeleccionado){

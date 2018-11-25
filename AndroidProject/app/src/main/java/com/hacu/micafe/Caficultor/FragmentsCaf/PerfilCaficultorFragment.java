@@ -1,4 +1,4 @@
-package com.hacu.micafe.Recolector.Fragments;
+package com.hacu.micafe.Caficultor.FragmentsCaf;
 
 import android.Manifest;
 import android.app.AlertDialog;
@@ -54,7 +54,7 @@ import static android.Manifest.permission.CAMERA;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
 
-public class PerfilRecolectorFragment extends Fragment {
+public class PerfilCaficultorFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -85,14 +85,13 @@ public class PerfilRecolectorFragment extends Fragment {
     private EditText correo, celular, direccion, departamento, municipio;
     private StringRequest stringRequest;
 
-
-    public PerfilRecolectorFragment() {
+    public PerfilCaficultorFragment() {
         // Required empty public constructor
     }
 
 
-    public static PerfilRecolectorFragment newInstance(String param1, String param2) {
-        PerfilRecolectorFragment fragment = new PerfilRecolectorFragment();
+    public static PerfilCaficultorFragment newInstance(String param1, String param2) {
+        PerfilCaficultorFragment fragment = new PerfilCaficultorFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -112,7 +111,8 @@ public class PerfilRecolectorFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View vista = inflater.inflate(R.layout.fragment_perfil_recolector, container, false);
+        View vista = inflater.inflate(R.layout.fragment_perfil_caficultor, container, false);
+
         instanciarElementos(vista);
         asignarDatosUsuario();
 
@@ -144,7 +144,7 @@ public class PerfilRecolectorFragment extends Fragment {
 
     private void actualizarPerfilRecolector() {
         progreso = new ProgressDialog(getContext());
-        progreso.setMessage("Actualizando Perfil...");
+        progreso.setMessage("Actualizando perfil...");
         progreso.show();
         String url = getString(R.string.ip_servidor)+"apimicafe.php?";
         stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
@@ -449,16 +449,16 @@ public class PerfilRecolectorFragment extends Fragment {
     }
 
     private void instanciarElementos(View vista) {
-        imagen = vista.findViewById(R.id.perrec_img);
-        nombre = vista.findViewById(R.id.perrec_nombre);
-        correo = vista.findViewById(R.id.perrec_correo);
-        cedula = vista.findViewById(R.id.perrec_cedula);
-        celular = vista.findViewById(R.id.perrec_celular);
-        fechanacimiento = vista.findViewById(R.id.perrec_fechanacimiento);
-        direccion = vista.findViewById(R.id.perrec_direccion);
-        departamento = vista.findViewById(R.id.perrec_departamento);
-        municipio = vista.findViewById(R.id.perrec_municipio);
-        btnActualizar = vista.findViewById(R.id.perrec_btnactualizar);
+        imagen = vista.findViewById(R.id.percaf_img);
+        nombre = vista.findViewById(R.id.percaf_nombre);
+        correo = vista.findViewById(R.id.percaf_correo);
+        cedula = vista.findViewById(R.id.percaf_cedula);
+        celular = vista.findViewById(R.id.percaf_celular);
+        fechanacimiento = vista.findViewById(R.id.percaf_fechanacimiento);
+        direccion = vista.findViewById(R.id.percaf_direccion);
+        departamento = vista.findViewById(R.id.percaf_departamento);
+        municipio = vista.findViewById(R.id.percaf_municipio);
+        btnActualizar = vista.findViewById(R.id.percaf_btnactualizar);
     }
 
     private SharedPreferences getSession(){

@@ -69,6 +69,9 @@ if (isset($_GET["opcion"])) {
 		case 'actualizarperfilrecolector':
 			actualizarPerfilRecolector($_POST["cedula"],$_POST["correo"],$_POST["celular"],$_POST["imagen"],$_POST["direccion"],$_POST["departamento"],$_POST["municipio"]);
 			break;
+		case 'registrarexperienciarecolector':
+			registrarExperienciaRecolector($_POST["idrecolector"],$_POST["empresa"],$_POST["cargo"],$_POST["funciones"],$_POST["tiempo"],$_POST["supervisor"],$_POST["contactosupervisor"]);
+			break;
 
 		default:
 			$respuesta = array('micafe' => 'error al enviar opcion' );
@@ -244,6 +247,12 @@ function actualizarPerfilRecolector($cedula, $correo, $celular, $imagen, $direcc
 	$url = "imagenes/".$cedula.".jpg";//ruta de almacenamiento de la imagen
 	file_put_contents($path,base64_decode($imagen));//mueve la foto a la ruta especificada
 	$sql = "UPDATE usuarios SET correo='{$correo}' , celular='{$celular}' , urlimagen='{$url}', direccion='{$direccion}' , departamento='{$departamento}' , municipio='{$municipio}' WHERE cedula = '{$cedula}'";
+	actualizarRegistro($sql);
+}
+
+function registrarExperienciaRecolector($idRecolector, $empresa, $cargo, $funciones, $tiempo, $supervisor, $contactoSupervisor)
+{
+	$sql = "INSERT INTO experiencias(idrecolector,empresa,cargo,funciones,tiempo,supervisor,contactosupervisor) VALUES({$idRecolector}, '{$empresa}', '{$cargo}', '{$funciones}', {$tiempo}, '{$supervisor}', '{$contactoSupervisor}')";
 	actualizarRegistro($sql);
 }
 
