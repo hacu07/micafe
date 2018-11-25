@@ -112,7 +112,16 @@ public class PostuladosOfertasCafFragment extends Fragment {
                         @Override
                         public void onClick(View view) {
                             String cedula = listaUsuarios.get(recyclerView.getChildAdapterPosition(view)).getCedula();
-                            imprimirMensaje("Cedula Seleccionada: " + cedula );
+                            String fechaNacimiento = listaUsuarios.get(recyclerView.getChildAdapterPosition(view)).getFechanacimiento();
+
+                            Bundle parametrosEnvio = new Bundle();
+                            parametrosEnvio.putString("cedula",cedula);
+                            parametrosEnvio.putString("fechanacimiento",fechaNacimiento);
+                            parametrosEnvio.putString("idoferta",idoferta.getText().toString());
+
+                            Fragment detallePostuladoFragment = new DetallePostuladoOfertaFragment();
+                            detallePostuladoFragment.setArguments(parametrosEnvio);
+                            getFragmentManager().beginTransaction().replace(R.id.content_caficultor,detallePostuladoFragment).commit();
                         }
                     });
                 }catch (JSONException e){

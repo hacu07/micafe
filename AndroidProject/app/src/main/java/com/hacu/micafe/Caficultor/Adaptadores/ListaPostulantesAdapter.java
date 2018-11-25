@@ -60,14 +60,11 @@ public class ListaPostulantesAdapter extends RecyclerView.Adapter<ListaPostulant
 
         //carga la imagen
         if (listaUsuarios.get(position).getUrlimagen()!=null){
-
             //cargarImagenWebService(listDestinos.get(position).getRuta_imagen(),holder);
-
             //USO DE LA LIBRERIA GLIDE PARA CARGAR LAS IMAGENES
             Glide.with(context).load(ip+listaUsuarios.get(position).getUrlimagen()).into(holder.imagen);
         }else {
             holder.imagen.setImageResource(R.drawable.logo);
-
         }
     }
 

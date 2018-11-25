@@ -3,6 +3,7 @@ package com.hacu.micafe.Caficultor.Interfaces;
 import com.hacu.micafe.Caficultor.FragmentsCaf.CaficultorFincaFragment;
 import com.hacu.micafe.Caficultor.FragmentsCaf.CaficultorOfertaFragment;
 import com.hacu.micafe.Caficultor.FragmentsCaf.DetalleOfertaCafFragment;
+import com.hacu.micafe.Caficultor.FragmentsCaf.DetallePostuladoOfertaFragment;
 import com.hacu.micafe.Caficultor.FragmentsCaf.PerfilCaficultorFragment;
 import com.hacu.micafe.Caficultor.FragmentsCaf.PostuladosOfertasCafFragment;
 import com.hacu.micafe.Caficultor.FragmentsCaf.RegistroFincaFragment;
@@ -18,5 +19,6 @@ public interface IFragments extends CaficultorFincaFragment.OnFragmentInteractio
         RegistroOfertaFragment.OnFragmentInteractionListener,
         DetalleOfertaCafFragment.OnFragmentInteractionListener,
         PostuladosOfertasCafFragment.OnFragmentInteractionListener,
-        PerfilCaficultorFragment.OnFragmentInteractionListener{
+        PerfilCaficultorFragment.OnFragmentInteractionListener,
+        DetallePostuladoOfertaFragment.OnFragmentInteractionListener{
 }

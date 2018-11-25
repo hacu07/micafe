@@ -123,7 +123,6 @@ public class RegistroExperienciaFragment extends Fragment {
                 return parametros;
             }
         };
-        //request.add(stringRequest);
         //limita el tiempo de actualizacion a dos segundos
         stringRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 2, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         VolleySingleton.getInstanciaVolley(getContext()).addToRequestQueue(stringRequest);

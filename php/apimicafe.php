@@ -34,6 +34,9 @@ if (isset($_GET["opcion"])) {
 		case 'consultarpostuladosofertacaficultor':
 			consultarPostuladosOfertaCaficultor($_GET["idoferta"]);
 			break;
+		case 'consultardatospostulado':
+			consultarDatosPostulado($_GET['cedulapostulado']);
+			break;
 
 		//GET RECOLECTOR
 		case 'consultarofertasrecolector':
@@ -60,6 +63,9 @@ if (isset($_GET["opcion"])) {
 			break;
 		case 'registroferta':
 			registrarOferta($_POST["idadministrador"],$_POST["nombrefinca"],$_POST["idmodopago"],$_POST["valorpago"],$_POST["vacantes"],$_POST["diastrabajo"],$_POST["planta"],$_POST["servicios"],$_POST["fechainicio"]);
+			break;
+		case 'cambiarestadopostulado':
+			cambiarEstadoPostulado($_POST["idoferta"],$_POST["cedula"]);
 			break;
 
 		//POST RECOLECTOR
@@ -216,6 +222,20 @@ function consultarPostuladosOfertaCaficultor($idOferta)
 	leerRegistro($sql);
 }
 
+function consultarDatosPostulado($cedulaPostulado)
+{
+	$sql = "SELECT usuarios.nombre, usuarios.correo, usuarios.celular, usuarios.fechanacimiento, usuarios.direccion, usuarios.departamento, usuarios.municipio, usuarios.urlimagen
+		FROM usuarios 
+		WHERE usuarios.cedula = '{$cedulaPostulado}'";
+	leerRegistro($sql);
+}
+
+function cambiarEstadoPostulado($idOferta,$cedula)
+{
+	$sql = "UPDATE recolectoresoferta SET recolectoresoferta.idestado = 1 WHERE recolectoresoferta.idoferta = {$idOferta} AND recolectoresoferta.idrecolector = (SELECT usuarios.id FROM usuarios WHERE usuarios.cedula = '{$cedula}')";
+	actualizarRegistro($sql);
+}
+
 
 /*********** ****************  			  ************** *********************
 								RECOLECTOR
@@ -255,5 +275,7 @@ function registrarExperienciaRecolector($idRecolector, $empresa, $cargo, $funcio
 	$sql = "INSERT INTO experiencias(idrecolector,empresa,cargo,funciones,tiempo,supervisor,contactosupervisor) VALUES({$idRecolector}, '{$empresa}', '{$cargo}', '{$funciones}', {$tiempo}, '{$supervisor}', '{$contactoSupervisor}')";
 	actualizarRegistro($sql);
 }
+
+
 
 ?>
