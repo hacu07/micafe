@@ -21,6 +21,7 @@ import com.bumptech.glide.Glide;
 import com.hacu.micafe.Modelo.Usuarios;
 import com.hacu.micafe.R;
 import com.hacu.micafe.Recolector.Fragments.ExperienciaRecolectorFragment;
+import com.hacu.micafe.Recolector.Fragments.ListaTrabajoFragment;
 import com.hacu.micafe.Recolector.Fragments.OfertasRecolectorFragment;
 import com.hacu.micafe.Recolector.Fragments.PerfilRecolectorFragment;
 import com.hacu.micafe.Recolector.Interfaces.IFragments;
@@ -138,6 +139,9 @@ public class RecolectorActivity extends AppCompatActivity
             fragmentSeleccionado = true;
         }else if (id == R.id.nav_experiencia) {
             fragMostrar = new ExperienciaRecolectorFragment();
+            fragmentSeleccionado = true;
+        }else if (id == R.id.nav_trabajo) {
+            fragMostrar = new ListaTrabajoFragment();
             fragmentSeleccionado = true;
         }
 

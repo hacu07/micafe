@@ -230,8 +230,8 @@
                 android:orientation="vertical">
 
                 <Button
-                    android:id="@+id/detOfecaf_btnpostulados"
-                    android:text="Ver Postulados"
+                    android:id="@+id/detOfecaf_btnaceptados"
+                    android:text="Recolectores Aceptados"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textStyle="bold"
@@ -240,7 +240,8 @@
                     android:layout_margin="5dp"/>
 
                 <Button
-                    android:text="Recolectores Aceptados"
+                    android:id="@+id/detOfecaf_btnpostulados"
+                    android:text="Ver Postulados"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textStyle="bold"

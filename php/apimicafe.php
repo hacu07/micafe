@@ -30,9 +30,11 @@ if (isset($_GET["opcion"])) {
 		case 'cafconsultardetalleoferta':
 			consultarDetalleOfertaCaficultor($_GET["idoferta"]);
 			break;
-
 		case 'consultarpostuladosofertacaficultor':
 			consultarPostuladosOfertaCaficultor($_GET["idoferta"]);
+			break;
+			case 'consultaraceptadosofertacaficultor':
+			consultarAceptadosOfertaCaficultor($_GET["idoferta"]);
 			break;
 		case 'consultardatospostulado':
 			consultarDatosPostulado($_GET['cedulapostulado']);
@@ -44,6 +46,9 @@ if (isset($_GET["opcion"])) {
 			break;
 		case 'consultardetalleofertarecolector':
 			consultarDetalleOfertaRecolector($_GET["idoferta"]);
+			break;
+		case 'consultartrabajosrecolector':
+			consultarTrabajosRecolector($_GET["idrecolector"]);
 			break;
 
 		default:
@@ -222,6 +227,17 @@ function consultarPostuladosOfertaCaficultor($idOferta)
 	leerRegistro($sql);
 }
 
+function consultarAceptadosOfertaCaficultor($idOferta)
+{
+	$sql = "SELECT usuarios.cedula, usuarios.nombre, usuarios.fechanacimiento, usuarios.urlimagen 
+			FROM recolectoresoferta 
+			JOIN usuarios ON recolectoresoferta.idrecolector = usuarios.id
+			Where recolectoresoferta.idestado = 1
+			AND recolectoresoferta.idoferta = {$idOferta}";
+	leerRegistro($sql);
+}
+
+
 function consultarDatosPostulado($cedulaPostulado)
 {
 	$sql = "SELECT usuarios.nombre, usuarios.correo, usuarios.celular, usuarios.fechanacimiento, usuarios.direccion, usuarios.departamento, usuarios.municipio, usuarios.urlimagen
@@ -276,6 +292,15 @@ function registrarExperienciaRecolector($idRecolector, $empresa, $cargo, $funcio
 	actualizarRegistro($sql);
 }
 
+function consultarTrabajosRecolector($idRecolector)
+{
+	$sql = "SELECT recolectoresoferta.idoferta, fincas.nombre, ofertas.fechainicio, ofertas.vacantes 
+		FROM recolectoresoferta JOIN ofertas ON recolectoresoferta.idoferta = ofertas.id
+		JOIN fincas ON ofertas.idfinca = fincas.id
+		WHERE recolectoresoferta.idrecolector = {$idRecolector}
+		AND recolectoresoferta.idestado = 1";
+	leerRegistro($sql);
+}
 
 
 ?>

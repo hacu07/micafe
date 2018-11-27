@@ -10,9 +10,15 @@
             android:title="Ofertas" />
 
         <item
+            android:id="@+id/nav_trabajo"
+            android:icon="@drawable/ic_experiencia"
+            android:title="Trabajo" />
+
+        <item
             android:id="@+id/nav_experiencia"
             android:icon="@drawable/ic_experiencia"
             android:title="Experiencia" />
+
 
     </group>
 

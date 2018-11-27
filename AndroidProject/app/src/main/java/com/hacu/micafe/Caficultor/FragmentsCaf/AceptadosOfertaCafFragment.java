@@ -17,6 +17,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.hacu.micafe.Caficultor.Adaptadores.ListaAceptadosAdapter;
 import com.hacu.micafe.Caficultor.Adaptadores.ListaPostuladosAdapter;
 import com.hacu.micafe.Modelo.Usuarios;
 import com.hacu.micafe.Modelo.VolleySingleton;
@@ -28,7 +29,8 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class PostuladosOfertasCafFragment extends Fragment {
+
+public class AceptadosOfertaCafFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -46,13 +48,13 @@ public class PostuladosOfertasCafFragment extends Fragment {
     private ArrayList<Usuarios> listaUsuarios;
     private RecyclerView recyclerView;
 
-    public PostuladosOfertasCafFragment() {
+
+    public AceptadosOfertaCafFragment() {
         // Required empty public constructor
     }
 
-
-    public static PostuladosOfertasCafFragment newInstance(String param1, String param2) {
-        PostuladosOfertasCafFragment fragment = new PostuladosOfertasCafFragment();
+    public static AceptadosOfertaCafFragment newInstance(String param1, String param2) {
+        AceptadosOfertaCafFragment fragment = new AceptadosOfertaCafFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -72,21 +74,20 @@ public class PostuladosOfertasCafFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View vista = inflater.inflate(R.layout.fragment_postulados_ofertas_caf, container, false);
-        idoferta = vista.findViewById(R.id.posofecaf_id);
+        View vista = inflater.inflate(R.layout.fragment_aceptados_oferta_caf, container, false);
+        idoferta = vista.findViewById(R.id.aceofecaf_id);
         listaUsuarios = new ArrayList<>();
-        recyclerView = vista.findViewById(R.id.recyclerPostuladosOfertaCaf);
+        recyclerView = vista.findViewById(R.id.recyclerAceptadosOfertaCaf);
         recyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
         recyclerView.setHasFixedSize(true);
         int id = getArguments() != null ? getArguments().getInt("idOferta") : 0;
         idoferta.setText(String.valueOf(id));
-        cargarRecyclerPostulantes(id);
+        cargarRecyclerAceptados(id);
         return vista;
     }
 
-    //Consulta los postulantes de la oferta y los muestra en el recycler
-    private void cargarRecyclerPostulantes(int idOferta) {
-        String url = getString(R.string.ip_servidor)+"apimicafe.php?opcion=consultarpostuladosofertacaficultor&idoferta="+idOferta;
+    private void cargarRecyclerAceptados(int idOferta) {
+        String url = getString(R.string.ip_servidor)+"apimicafe.php?opcion=consultaraceptadosofertacaficultor&idoferta="+idOferta;
         jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -106,7 +107,7 @@ public class PostuladosOfertasCafFragment extends Fragment {
                         //FALTA AGREGAR EL DE LA CALIFICACION
                         listaUsuarios.add(usuario);
                     }
-                    ListaPostuladosAdapter adapter = new ListaPostuladosAdapter(listaUsuarios, getContext(), getString(R.string.ip_servidor));
+                    ListaAceptadosAdapter adapter = new ListaAceptadosAdapter(listaUsuarios, getContext(), getString(R.string.ip_servidor));
                     recyclerView.setAdapter(adapter);
                     adapter.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -119,20 +120,20 @@ public class PostuladosOfertasCafFragment extends Fragment {
                             parametrosEnvio.putString("fechanacimiento",fechaNacimiento);
                             parametrosEnvio.putString("idoferta",idoferta.getText().toString());
 
-                            Fragment detallePostuladoFragment = new DetallePostuladoOfertaFragment();
-                            detallePostuladoFragment.setArguments(parametrosEnvio);
-                            getFragmentManager().beginTransaction().replace(R.id.content_caficultor,detallePostuladoFragment).commit();
+                            Fragment detalleAceptadoFragment = new DetalleAceptadoOfertaFragment();
+                            detalleAceptadoFragment.setArguments(parametrosEnvio);
+                            getFragmentManager().beginTransaction().replace(R.id.content_caficultor,detalleAceptadoFragment).commit();
                         }
                     });
                 }catch (JSONException e){
                     e.printStackTrace();
-                    imprimirMensaje("Error en respuesta - postulacion cafe JSON");
+                    imprimirMensaje("Error en respuesta - aceptados cafe JSON");
                 }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                imprimirMensaje("Error en respuesta - postulados caficultor");
+                imprimirMensaje("Error de conexion - aceptados caficultor");
             }
         });
         jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 2, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
@@ -167,16 +168,6 @@ public class PostuladosOfertasCafFragment extends Fragment {
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);

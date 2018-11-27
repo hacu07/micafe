@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="5dp">
+    android:padding="10dp">
 
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
@@ -65,7 +65,7 @@
                 >
 
                 <TextView
-                    android:id="@+id/lisoferec_id"
+                    android:id="@+id/listrarec_id"
                     android:text="---"
                     android:textSize="15sp"
                     android:textStyle="bold"
@@ -73,7 +73,15 @@
                     android:layout_height="wrap_content" />
 
                 <TextView
-                    android:id="@+id/lisoferec_finca"
+                    android:id="@+id/listrarec_finca"
+                    android:text="el suspiro"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:id="@+id/listrarec_fechainicio"
                     android:text="anio/mes/dia"
                     android:textSize="15sp"
                     android:textStyle="bold"
@@ -81,15 +89,7 @@
                     android:layout_height="wrap_content" />
 
                 <TextView
-                    android:id="@+id/lisoferec_fechainicio"
-                    android:text="anio/mes/dia"
-                    android:textSize="15sp"
-                    android:textStyle="bold"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-
-                <TextView
-                    android:id="@+id/lisoferec_vacantes"
+                    android:id="@+id/listrarec_vacantes"
                     android:text="###"
                     android:textSize="15sp"
                     android:textStyle="bold"

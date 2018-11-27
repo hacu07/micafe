@@ -1,9 +1,7 @@
 package com.hacu.micafe.Caficultor.Adaptadores;
 
 import android.content.Context;
-import android.os.Build;
 import android.support.annotation.NonNull;
-import android.support.annotation.RequiresApi;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,24 +9,23 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.hacu.micafe.LoginActivity;
 import com.hacu.micafe.Modelo.Usuarios;
 import com.hacu.micafe.R;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.Period;
-import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-public class ListaPostulantesAdapter extends RecyclerView.Adapter<ListaPostulantesAdapter.ListaPostulantesHolder>
-                                    implements View.OnClickListener{
+/**
+ * Created by hacu1 on 26/11/2018.
+ */
+
+public class ListaAceptadosAdapter extends RecyclerView.Adapter<ListaAceptadosAdapter.ListaAceptadosHolder>
+        implements View.OnClickListener{
 
     List<Usuarios> listaUsuarios;
     Context context;
@@ -36,7 +33,7 @@ public class ListaPostulantesAdapter extends RecyclerView.Adapter<ListaPostulant
 
     private View.OnClickListener listener;
 
-    public ListaPostulantesAdapter(List<Usuarios> listaUsuarios, Context context, String ip) {
+    public ListaAceptadosAdapter(List<Usuarios> listaUsuarios, Context context, String ip) {
         this.listaUsuarios = listaUsuarios;
         this.context = context;
         this.ip = ip;
@@ -44,16 +41,16 @@ public class ListaPostulantesAdapter extends RecyclerView.Adapter<ListaPostulant
 
     @NonNull
     @Override
-    public ListaPostulantesHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View vista = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_postulados_ofertas_caficultor,parent, false);
+    public ListaAceptadosAdapter.ListaAceptadosHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View vista = LayoutInflater.from(parent.getContext()).inflate(R.layout.lista_aceptados_ofertas_caficultor,parent, false);
         RecyclerView.LayoutParams layoutParams =  new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         vista.setLayoutParams(layoutParams);
         vista.setOnClickListener(this);//Escucha de evento
-        return new ListaPostulantesHolder(vista);
+        return new ListaAceptadosAdapter.ListaAceptadosHolder(vista);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ListaPostulantesHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ListaAceptadosAdapter.ListaAceptadosHolder holder, int position) {
         holder.cedula.setText(listaUsuarios.get(position).getCedula());
         holder.nombre.setText(listaUsuarios.get(position).getNombre());
         holder.edad.setText(calcularEdad(listaUsuarios.get(position).getFechanacimiento()));
@@ -108,17 +105,17 @@ public class ListaPostulantesAdapter extends RecyclerView.Adapter<ListaPostulant
         }
     }
 
-    public class ListaPostulantesHolder extends RecyclerView.ViewHolder {
+    public class ListaAceptadosHolder extends RecyclerView.ViewHolder {
         ImageView imagen;
         TextView cedula,nombre,edad,calificacion;
 
-        public ListaPostulantesHolder(View itemView) {
+        public ListaAceptadosHolder(View itemView) {
             super(itemView);
-            cedula = itemView.findViewById(R.id.lisposofe_cedula);
-            nombre = itemView.findViewById(R.id.lisposofe_nombre);
-            edad = itemView.findViewById(R.id.lisposofe_edad);
-            calificacion = itemView.findViewById(R.id.lisposofe_calificacion);
-            imagen = itemView.findViewById(R.id.lisposofe_imagen);
+            cedula = itemView.findViewById(R.id.lisaceofe_cedula);
+            nombre = itemView.findViewById(R.id.lisaceofe_nombre);
+            edad = itemView.findViewById(R.id.lisaceofe_edad);
+            calificacion = itemView.findViewById(R.id.lisaceofe_calificacion);
+            imagen = itemView.findViewById(R.id.lisaceofe_imagen);
         }
     }
 }

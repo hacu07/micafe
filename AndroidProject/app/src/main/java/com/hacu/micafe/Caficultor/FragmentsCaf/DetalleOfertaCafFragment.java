@@ -88,6 +88,7 @@ public class DetalleOfertaCafFragment extends Fragment {
         consultarDetalleOferta(id,nombreFinca);
 
         Button btnPostulados = vista.findViewById(R.id.detOfecaf_btnpostulados);
+        Button btnAceptados = vista.findViewById(R.id.detOfecaf_btnaceptados);
         btnPostulados.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -95,6 +96,18 @@ public class DetalleOfertaCafFragment extends Fragment {
                 parametrosEnvio.putInt("idOferta",id);
 
                 Fragment fragPostulados = new PostuladosOfertasCafFragment();
+                fragPostulados.setArguments(parametrosEnvio);
+                getFragmentManager().beginTransaction().replace(R.id.content_caficultor,fragPostulados).commit();
+            }
+        });
+
+        btnAceptados.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Bundle parametrosEnvio = new Bundle();
+                parametrosEnvio.putInt("idOferta",id);
+
+                Fragment fragPostulados = new AceptadosOfertaCafFragment();
                 fragPostulados.setArguments(parametrosEnvio);
                 getFragmentManager().beginTransaction().replace(R.id.content_caficultor,fragPostulados).commit();
             }
