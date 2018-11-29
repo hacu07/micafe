@@ -139,6 +139,7 @@ public class CaficultorOfertaFragment extends Fragment {
             @Override
             public void onErrorResponse(VolleyError error) {
                 imprimirMensaje("Error al cargar listado de ofertas - WEBSERVICE");
+                error.printStackTrace();
             }
         });
         jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 2, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));

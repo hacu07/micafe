@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -74,14 +75,33 @@ public class PostuladosOfertasCafFragment extends Fragment {
                              Bundle savedInstanceState) {
         View vista = inflater.inflate(R.layout.fragment_postulados_ofertas_caf, container, false);
         idoferta = vista.findViewById(R.id.posofecaf_id);
+        Button btnVolver = vista.findViewById(R.id.posofecaf_btnVolver);
         listaUsuarios = new ArrayList<>();
         recyclerView = vista.findViewById(R.id.recyclerPostuladosOfertaCaf);
         recyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
         recyclerView.setHasFixedSize(true);
-        int id = getArguments() != null ? getArguments().getInt("idOferta") : 0;
+        final int id = getArguments() != null ? getArguments().getInt("idOferta") : 0;
+        final String nombreFinca = getArguments() != null ? getArguments().getString("nombreFinca") : "null";
         idoferta.setText(String.valueOf(id));
         cargarRecyclerPostulantes(id);
+
+        btnVolver.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                cargarFragmentDetalleOferta(id,nombreFinca);
+            }
+        });
         return vista;
+    }
+
+    private void cargarFragmentDetalleOferta(int id, String nombreFinca) {
+        Bundle parametrosEnvio = new Bundle();
+        parametrosEnvio.putInt("idOferta",id);
+        parametrosEnvio.putString("nombreFinca",nombreFinca);
+
+        Fragment fragDetalleOferta = new DetalleOfertaCafFragment();
+        fragDetalleOferta.setArguments(parametrosEnvio);
+        getFragmentManager().beginTransaction().replace(R.id.content_caficultor,fragDetalleOferta).commit();
     }
 
     //Consulta los postulantes de la oferta y los muestra en el recycler

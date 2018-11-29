@@ -39,6 +39,9 @@ if (isset($_GET["opcion"])) {
 		case 'consultardatospostulado':
 			consultarDatosPostulado($_GET['cedulapostulado']);
 			break;
+		case 'consultarlistadopesadasrecolector':
+			consultarListadoPesadasRecolector($_GET["idoferta"],$_GET["cedula"]);
+			break;
 
 		//GET RECOLECTOR
 		case 'consultarofertasrecolector':
@@ -82,6 +85,9 @@ if (isset($_GET["opcion"])) {
 			break;
 		case 'registrarexperienciarecolector':
 			registrarExperienciaRecolector($_POST["idrecolector"],$_POST["empresa"],$_POST["cargo"],$_POST["funciones"],$_POST["tiempo"],$_POST["supervisor"],$_POST["contactosupervisor"]);
+			break;
+		case 'registrarpesadarecolector':
+			registrarPesadaRecolector($_POST["idoferta"],$_POST["cedula"],$_POST["kilos"]);
 			break;
 
 		default:
@@ -250,6 +256,26 @@ function cambiarEstadoPostulado($idOferta,$cedula)
 {
 	$sql = "UPDATE recolectoresoferta SET recolectoresoferta.idestado = 1 WHERE recolectoresoferta.idoferta = {$idOferta} AND recolectoresoferta.idrecolector = (SELECT usuarios.id FROM usuarios WHERE usuarios.cedula = '{$cedula}')";
 	actualizarRegistro($sql);
+}
+
+function registrarPesadaRecolector($idOferta, $cedula, $kilos)
+{
+	$sql = "INSERT INTO pesadas(pesadas.kilos,pesadas.fecha,pesadas.idrecolector,pesadas.idoferta) 
+		VALUES({$kilos},NOW(),(SELECT usuarios.id FROM usuarios WHERE usuarios.cedula = {$cedula}), {$idOferta})";
+	actualizarRegistro($sql);
+}
+
+
+/*SELECT pesadas.fecha, pesadas.kilos, ofertas.valorpago as valorkilo, (pesadas.kilos * ofertas.valorpago ) as valorpesada 
+FROM pesadas JOIN ofertas ON pesadas.idoferta = ofertas.id
+*/
+
+function consultarListadoPesadasRecolector($idOferta, $cedula)
+{
+	$sql = "SELECT pesadas.fecha, pesadas.kilos, ofertas.valorpago as valorkilo, (pesadas.kilos 	* ofertas.valorpago ) as valorpesada 
+			FROM pesadas JOIN ofertas ON pesadas.idoferta = ofertas.id 
+			WHERE pesadas.idoferta = {$idOferta} AND pesadas.idrecolector = (SELECT usuarios.id FROM usuarios WHERE usuarios.cedula = '{$cedula}')";
+	leerRegistro($sql);
 }
 
 

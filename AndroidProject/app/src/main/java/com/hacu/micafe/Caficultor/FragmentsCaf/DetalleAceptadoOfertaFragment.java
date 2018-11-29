@@ -85,8 +85,12 @@ public class DetalleAceptadoOfertaFragment extends Fragment {
         btnRegistrarPesada.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //registrarPesada(idOferta,cedula);
-                imprimirMensaje("REGISTRAR PESADA");
+                Bundle parametrosEnvio = new Bundle();
+                parametrosEnvio.putString("cedula",cedula);
+                parametrosEnvio.putString("idoferta",idOferta);
+                Fragment pesadaAceptadoFragment = new PesadasAceptadoFragment();
+                pesadaAceptadoFragment.setArguments(parametrosEnvio);
+                getFragmentManager().beginTransaction().replace(R.id.content_caficultor,pesadaAceptadoFragment).commit();
             }
         });
 

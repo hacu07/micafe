@@ -94,6 +94,7 @@ public class DetalleOfertaCafFragment extends Fragment {
             public void onClick(View view) {
                 Bundle parametrosEnvio = new Bundle();
                 parametrosEnvio.putInt("idOferta",id);
+                parametrosEnvio.putString("nombreFinca",nombreFinca);
 
                 Fragment fragPostulados = new PostuladosOfertasCafFragment();
                 fragPostulados.setArguments(parametrosEnvio);
@@ -106,6 +107,7 @@ public class DetalleOfertaCafFragment extends Fragment {
             public void onClick(View view) {
                 Bundle parametrosEnvio = new Bundle();
                 parametrosEnvio.putInt("idOferta",id);
+                parametrosEnvio.putString("nombreFinca",nombreFinca);
 
                 Fragment fragPostulados = new AceptadosOfertaCafFragment();
                 fragPostulados.setArguments(parametrosEnvio);

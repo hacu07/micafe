@@ -1,0 +1,79 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.hacu.micafe.Caficultor.FragmentsCaf.PesadasAceptadoFragment">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:weightSum="8">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:textSize="30dp"
+            android:textColor="@color/colorPrimaryDark"
+            android:text="Registrar Nueva Pesada"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:orientation="horizontal"
+            android:layout_weight="1"
+            android:weightSum="3"
+            android:padding="5dp">
+            <EditText
+                android:id="@+id/pesace_kilos"
+                android:layout_weight="2"
+                android:hint="Numero de kilos"
+                android:textSize="25dp"
+                android:textColor="@color/colorPrimaryDark"
+                android:textAlignment="center"
+                android:inputType="number"
+                android:layout_width="0dp"
+                android:layout_height="match_parent" />
+            <Button
+                android:id="@+id/pesace_btnregistrarpesada"
+                android:textSize="20dp"
+                android:background="@color/colorAccent"
+                android:textColor="@color/colorPrimary"
+                android:text="Registrar"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"/>
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:textSize="30dp"
+            android:textColor="@color/colorPrimaryDark"
+            android:text="Pesadas Del Recolector"/>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recyclerPesadasAceptado"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="4"/>
+        <Button
+            android:id="@+id/pesace_btnvolver"
+            android:text="Volver"
+            android:textStyle="bold"
+            android:textSize="30dp"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:textColor="@color/colorPrimary"
+            android:background="@color/colorAccent"
+            />
+
+    </LinearLayout>
+</FrameLayout>

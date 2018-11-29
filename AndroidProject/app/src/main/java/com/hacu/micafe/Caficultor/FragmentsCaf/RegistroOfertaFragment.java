@@ -135,6 +135,9 @@ public class RegistroOfertaFragment extends Fragment implements DatePickerFragme
 
 
     private void registrarOferta() {
+        progreso = new ProgressDialog(getContext());
+        progreso.setMessage("Registrando oferta...");
+        progreso.show();
         //Objeto con los datos a registrar
         final Oferta oferta = new Oferta();
         oferta.setIdModoPago(obtenerModoPago());
@@ -150,6 +153,7 @@ public class RegistroOfertaFragment extends Fragment implements DatePickerFragme
         stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
+                progreso.hide();
                 switch (response){
                     case "Actualizo":
                         imprimirMensaje("Registro de OFERTA completo");
@@ -167,6 +171,7 @@ public class RegistroOfertaFragment extends Fragment implements DatePickerFragme
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                progreso.hide();
                 imprimirMensaje("Error en el webservice - REGISTRAR OFERTA");
             }
         }){

@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -77,13 +78,31 @@ public class AceptadosOfertaCafFragment extends Fragment {
         View vista = inflater.inflate(R.layout.fragment_aceptados_oferta_caf, container, false);
         idoferta = vista.findViewById(R.id.aceofecaf_id);
         listaUsuarios = new ArrayList<>();
+        Button btnVolver = vista.findViewById(R.id.aceofecaf_btnvolver);
         recyclerView = vista.findViewById(R.id.recyclerAceptadosOfertaCaf);
         recyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
         recyclerView.setHasFixedSize(true);
-        int id = getArguments() != null ? getArguments().getInt("idOferta") : 0;
+        final int id = getArguments() != null ? getArguments().getInt("idOferta") : 0;
+        final String nombreFinca = getArguments() != null ? getArguments().getString("nombreFinca") : "null";
         idoferta.setText(String.valueOf(id));
         cargarRecyclerAceptados(id);
+        btnVolver.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                cargarFragmentDetalleOferta(id,nombreFinca);
+            }
+        });
         return vista;
+    }
+
+    private void cargarFragmentDetalleOferta(int id, String nombreFinca) {
+        Bundle parametrosEnvio = new Bundle();
+        parametrosEnvio.putInt("idOferta",id);
+        parametrosEnvio.putString("nombreFinca",nombreFinca);
+
+        Fragment fragDetalleOferta = new DetalleOfertaCafFragment();
+        fragDetalleOferta.setArguments(parametrosEnvio);
+        getFragmentManager().beginTransaction().replace(R.id.content_caficultor,fragDetalleOferta).commit();
     }
 
     private void cargarRecyclerAceptados(int idOferta) {
