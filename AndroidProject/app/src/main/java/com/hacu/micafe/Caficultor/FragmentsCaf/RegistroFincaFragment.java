@@ -28,14 +28,7 @@ import com.hacu.micafe.R;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link RegistroFincaFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link RegistroFincaFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+
 public class RegistroFincaFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -98,6 +91,9 @@ public class RegistroFincaFragment extends Fragment {
 
     //Obtiene los datos ingresados en el formulario y los envia a  la api para ser cargados en la BD
     private void registrarFinca() {
+        progreso = new ProgressDialog(getContext());
+        progreso.setMessage("Registrando finca...");
+        progreso.show();
         final Finca finca = new Finca();
 
         finca.setNombre(nombreFinca.getText().toString());
@@ -114,6 +110,8 @@ public class RegistroFincaFragment extends Fragment {
         stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
+                progreso.hide();
+                Log.i("TAG",response.toString());
                 switch (response){
                     case "Actualizo":
                         imprimirMensaje("Registro completo");
@@ -121,6 +119,7 @@ public class RegistroFincaFragment extends Fragment {
                         break;
                     case "Error":
                         imprimirMensaje("No se registro, intente de nuevo. \n" + response);
+                        Log.i("TAG",response.toString());
                         break;
                     default:
                             imprimirMensaje(response);
@@ -131,6 +130,7 @@ public class RegistroFincaFragment extends Fragment {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                progreso.hide();
                 imprimirMensaje("Error en el webservice");
             }
         }){
@@ -203,16 +203,7 @@ public class RegistroFincaFragment extends Fragment {
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
+
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);

@@ -168,6 +168,7 @@ public class RegistroActivity extends AppCompatActivity implements DatePickerFra
         jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
+                Log.i("TAG",response.toString());
                 JSONArray json = response.optJSONArray("micafe");//Obtiene el json con la respuesta
 
                 //El key de la respuesta es "mensaje" se debe obtener este y publicar el mensaje
@@ -191,6 +192,8 @@ public class RegistroActivity extends AppCompatActivity implements DatePickerFra
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+                Log.i("TAG",error.toString());
                 imprimirMensaje(" Error en el webservice validarRegistroUsuario "+error.toString());
             }
         });
