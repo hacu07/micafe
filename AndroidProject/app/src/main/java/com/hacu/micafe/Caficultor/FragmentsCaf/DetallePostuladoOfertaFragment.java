@@ -5,6 +5,8 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +24,10 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.bumptech.glide.Glide;
+import com.hacu.micafe.Caficultor.Adaptadores.ListadoCalificacionPostuladosAdapter;
+import com.hacu.micafe.Caficultor.Adaptadores.ListadoPesadasAdapter;
+import com.hacu.micafe.Modelo.Comentario;
+import com.hacu.micafe.Modelo.Pesada;
 import com.hacu.micafe.Modelo.VolleySingleton;
 import com.hacu.micafe.R;
 
@@ -29,6 +35,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -44,6 +51,8 @@ public class DetallePostuladoOfertaFragment extends Fragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+    private ArrayList<Comentario> listComentarios;
+    private RecyclerView recyclerComentarios;
     private ImageView imagen;
     private TextView nombre,correo,cedula,celular,fechaNacimiento,direccion,departamento,municipio;
     private JsonObjectRequest jsonObjectRequest;
@@ -80,6 +89,7 @@ public class DetallePostuladoOfertaFragment extends Fragment {
         final String idOferta = getArguments() != null ? getArguments().getString("idoferta") : "0";
         final String cedula = getArguments() != null ? getArguments().getString("cedula") : "0";
         consultarDatosPostulado(cedula);
+        consultarCalificaciones(cedula);
 
         Button btnVolverListaPostulados = vista.findViewById(R.id.detpos_btnVolver);
         Button btnAceptarPostulado = vista.findViewById(R.id.detpos_btnAceptar);
@@ -99,6 +109,42 @@ public class DetallePostuladoOfertaFragment extends Fragment {
         });
 
         return vista;
+    }
+
+    private void consultarCalificaciones(String cedula) {
+        String url = getString(R.string.ip_servidor)+"apimicafe.php?opcion=consultarcalificacionpostulado&cedularecolector="+cedula;
+
+        jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                JSONArray json = response.optJSONArray("micafe");
+                Comentario comentario = null;
+                try {
+                    for (int i = 0; i<json.length(); i++){
+                        comentario = new Comentario();
+                        JSONObject jsonObject = json.getJSONObject(i);
+                        comentario.setNombreAdmin(jsonObject.getString("nombre"));
+                        comentario.setCelular(jsonObject.getString("celular"));
+                        comentario.setCalificacion(jsonObject.getInt("calificacion"));//valor del kilo en idoferta
+                        comentario.setComentario(jsonObject.getString("comentario"));//valor del kilo en idoferta
+                        listComentarios.add(comentario);
+                    }
+                    ListadoCalificacionPostuladosAdapter adapter = new ListadoCalificacionPostuladosAdapter(listComentarios);
+                    recyclerComentarios.setAdapter(adapter);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    imprimirMensaje("Error catch comentario");
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                imprimirMensaje("No se encontro listado de comentarios para este recolector - NO CONEXION");
+            }
+        });
+        jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 2, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        VolleySingleton.getInstanciaVolley(getContext()).addToRequestQueue(jsonObjectRequest);
+
     }
 
     private void volverListadoPostulados(String idOferta){
@@ -207,6 +253,10 @@ public class DetallePostuladoOfertaFragment extends Fragment {
         direccion = vista.findViewById(R.id.detpos_direccion);
         departamento = vista.findViewById(R.id.detpos_departamento);
         municipio = vista.findViewById(R.id.detpos_municipio);
+        recyclerComentarios = vista.findViewById(R.id.detpos_recyclercalificacion);
+        recyclerComentarios.setLayoutManager(new LinearLayoutManager(this.getContext()));
+        recyclerComentarios.setHasFixedSize(true);
+        listComentarios = new ArrayList<>();
     }
 
     private void imprimirMensaje(String mensaje){
