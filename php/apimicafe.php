@@ -75,6 +75,12 @@ if (isset($_GET["opcion"])) {
 		case 'cambiarestadopostulado':
 			cambiarEstadoPostulado($_POST["idoferta"],$_POST["cedula"]);
 			break;
+		case 'registrarcostooferta':
+			registrarCostoOferta($_POST["idoferta"],$_POST["titulo"],$_POST["valor"],$_POST["descripcion"]);
+			break;
+		case 'registrarcalificacion':
+			registrarCalificacion($_POST["idadmon"],$_POST["cedularecolector"],$_POST["comentario"],$_POST["calificacion"]);
+			break;
 
 		//POST RECOLECTOR
 		case 'postularrecolector':
@@ -278,6 +284,18 @@ function consultarListadoPesadasRecolector($idOferta, $cedula)
 	leerRegistro($sql);
 }
 
+function registrarCostoOferta($idOferta, $titulo, $valor, $descripcion)
+{
+	$sql = "INSERT INTO costos(idoferta, titulo, descripcion, valor, fecha) 
+			VALUES({$idOferta}, '{$titulo}', '{$descripcion}', {$valor}, NOW());";
+	actualizarRegistro($sql);
+}
+
+function registrarCalificacion($idAdministrador, $cedulaRecolector, $comentario, $calificacion)
+{
+	$sql = "INSERT INTO comentarios(idadministrador,idrecolector,comentario,calificacion) VALUES({$idAdministrador}, (SELECT usuarios.id FROM usuarios WHERE usuarios.cedula = '{$cedulaRecolector}'), '{$comentario}', {$calificacion} )";
+	actualizarRegistro($sql);
+}
 
 /*********** ****************  			  ************** *********************
 								RECOLECTOR

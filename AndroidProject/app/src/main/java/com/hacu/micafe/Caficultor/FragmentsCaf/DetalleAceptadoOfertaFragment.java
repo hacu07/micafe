@@ -81,6 +81,7 @@ public class DetalleAceptadoOfertaFragment extends Fragment {
 
         Button btnVolverListaPostulados = vista.findViewById(R.id.detace_btnVolver);
         Button btnRegistrarPesada = vista.findViewById(R.id.detace_btnPesada);
+        Button btnCalificar = vista.findViewById(R.id.detace_btnCalificacion);
 
         btnRegistrarPesada.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -88,9 +89,21 @@ public class DetalleAceptadoOfertaFragment extends Fragment {
                 Bundle parametrosEnvio = new Bundle();
                 parametrosEnvio.putString("cedula",cedula);
                 parametrosEnvio.putString("idoferta",idOferta);
-                Fragment pesadaAceptadoFragment = new PesadasAceptadoFragment();
-                pesadaAceptadoFragment.setArguments(parametrosEnvio);
-                getFragmentManager().beginTransaction().replace(R.id.content_caficultor,pesadaAceptadoFragment).commit();
+                Fragment pesadasAceptadoFragment = new PesadasAceptadoFragment();
+                pesadasAceptadoFragment.setArguments(parametrosEnvio);
+                getFragmentManager().beginTransaction().replace(R.id.content_caficultor,pesadasAceptadoFragment).commit();
+            }
+        });
+
+        btnCalificar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Bundle parametrosEnvio = new Bundle();
+                parametrosEnvio.putString("cedula",cedula);
+                parametrosEnvio.putString("idoferta",idOferta);
+                Fragment calificarAceptadoFragment = new CalificarAceptadoFragment();
+                calificarAceptadoFragment.setArguments(parametrosEnvio);
+                getFragmentManager().beginTransaction().replace(R.id.content_caficultor,calificarAceptadoFragment).commit();
             }
         });
 

@@ -259,7 +259,8 @@
                 android:orientation="vertical">
 
                 <Button
-                    android:text="Editar Oferta"
+                    android:id="@+id/detofecaf_btncosto"
+                    android:text="Registrar Costo"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textStyle="bold"
