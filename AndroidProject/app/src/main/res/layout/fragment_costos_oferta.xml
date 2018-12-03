@@ -9,60 +9,64 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:weightSum="8">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="4"
-            android:orientation="vertical"
-            android:weightSum="4">
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="1"
-                android:weightSum="2">
+                android:layout_weight="4"
+                android:orientation="vertical"
+                android:weightSum="5">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="2"
+                    android:weightSum="2">
+                    <EditText
+                        android:id="@+id/cosofecaf_titulo"
+                        android:hint="Titulo"
+                        android:layout_weight="1"
+                        android:layout_width="0dp"
+                        android:layout_gravity="bottom"
+                        android:layout_height="wrap_content" />
+                    <EditText
+                        android:id="@+id/cosofecaf_valor"
+                        android:hint="$$$ Valor Costo"
+                        android:layout_gravity="bottom"
+                        android:layout_weight="1"
+                        android:inputType="number"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
                 <EditText
-                    android:id="@+id/cosofecaf_titulo"
-                    android:hint="Titulo"
+                    android:id="@+id/cosofecaf_descripcion"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="2"
+                    android:layout_marginTop="5dp"
+                    android:lines="5"
+                    android:maxLength="400"
+                    android:hint="Descripcion del costo"
+                    android:inputType="textMultiLine"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <Button
+                    android:id="@+id/cosofecaf_btncosto"
+                    android:text="Registrar Costo"
+                    android:gravity="center"
+                    android:textStyle="bold"
+                    android:layout_margin="2dp"
+                    android:layout_gravity="center"
+                    android:textSize="25dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
                     android:layout_weight="1"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content" />
-                <EditText
-                    android:id="@+id/cosofecaf_valor"
-                    android:hint="$$$ Valor Costo"
-                    android:layout_weight="1"
-                    android:inputType="number"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content" />
+                    android:textColor="@color/colorAccent"
+                    android:background="@color/colorPrimary"
+                    />
+
             </LinearLayout>
-            <EditText
-                android:id="@+id/cosofecaf_descripcion"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="2"
-                android:layout_marginTop="5dp"
-                android:lines="5"
-                android:maxLength="400"
-                android:hint="Descripcion del costo"
-                android:inputType="textMultiLine"
-                android:textColor="@color/colorPrimaryDark"
-                android:textSize="20sp"
-                android:textStyle="bold" />
-
-            <Button
-                android:id="@+id/cosofecaf_btncosto"
-                android:text="Registrar Costo"
-                android:textStyle="bold"
-                android:textSize="30dp"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:textColor="@color/colorAccent"
-                android:background="@color/colorPrimary"
-                />
-
-        </LinearLayout>
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/cosofecaf_recycler"

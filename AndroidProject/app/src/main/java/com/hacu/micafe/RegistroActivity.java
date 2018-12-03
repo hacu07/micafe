@@ -39,10 +39,9 @@ import java.util.Date;
 
 public class RegistroActivity extends AppCompatActivity implements DatePickerFragment.DateDialogListener{
     private Spinner comboRoles;
-    private TextView lblFechaNac;
     private RadioButton radCC,radCE,radTI;
     private Button btnRegistro;
-    private EditText txtNombre,txtCedula,txtCorreo,txtContrasenia,txtCelular,txtDireccion,txtDepartamento,txtMunicipio;
+    private EditText txtNombre,txtCedula,txtContrasenia,txtCelular;
     private ArrayList<String> listaRolesSpi;//Lista para insertar en el spiner
     private ArrayList<Rol> listaRolesBd;//Lista con los datos de la BD
     private String rolSeleccionado;
@@ -68,68 +67,7 @@ public class RegistroActivity extends AppCompatActivity implements DatePickerFra
     public void registrarUsuario(View view) {
         btnRegistro.setEnabled(false);
         if (validarRegistro()==true){
-            //Se obtienen los datos a enviar
-            /*
-            final Usuarios usuarios = new Usuarios();
-            usuarios.setNombre(txtNombre.getText().toString().toUpperCase());
-            usuarios.setTipodocumento(obtenerTipoDocumentoSeleccionado());
-            usuarios.setCedula(txtCedula.getText().toString().trim());
-            usuarios.setCorreo(txtCorreo.getText().toString().trim());
-            usuarios.setContrasenia(txtContrasenia.getText().toString().trim());
-            usuarios.setCelular(txtCelular.getText().toString().trim());
-            usuarios.setFechanacimiento(lblFechaNac.getText().toString());
-            usuarios.setDireccion(txtDireccion.getText().toString().toUpperCase());
-            usuarios.setDepartamento(txtDepartamento.getText().toString().trim().toUpperCase());
-            usuarios.setMunicipio(txtMunicipio.getText().toString().trim().toUpperCase());
 
-            String url = getString(R.string.ip_servidor)+"apimicafe.php";
-            Log.i("TAG",url);
-
-            stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-                @Override
-                public void onResponse(String response) {
-                    switch (response){
-                        case "Actualizo":
-                            imprimirMensaje("Registro completo");
-                            limpiarCampos();
-                            mostrarLogin();
-                            break;
-                        case "Error":
-                            imprimirMensaje("No se registro, intente de nuevo. \n" + response);
-                            break;
-                    }
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    //progreso.hide();
-                    imprimirMensaje(error.toString());
-                }
-            }){
-                @Override
-                protected Map<String, String> getParams() throws AuthFailureError {
-                    Map<String,String> parametros =  new HashMap<>();
-                    String opcion = "registrousuario";
-                    parametros.put("opcion",opcion);
-                    parametros.put("rol",rolSeleccionado);
-                    parametros.put("nombre",usuarios.getNombre());
-                    parametros.put("tipodocumento",usuarios.getTipodocumento());
-                    parametros.put("cedula",usuarios.getCedula());
-                    parametros.put("correo",usuarios.getCorreo());
-                    parametros.put("contrasenia",usuarios.getContrasenia());
-                    parametros.put("celular",usuarios.getContrasenia());
-                    parametros.put("fechanacimiento",usuarios.getFechanacimiento());
-                    parametros.put("direccion",usuarios.getDireccion());
-                    parametros.put("departamento",usuarios.getDepartamento());
-                    parametros.put("municipio",usuarios.getMunicipio());
-                    return parametros;
-                }
-            };
-            //IMPORTANTE ESTA LINEA PARA EJECUTAR EL WEBSERVICE
-            //request.add(stringRequest);
-            stringRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 2, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-            VolleySingleton.getInstanciaVolley(getApplicationContext()).addToRequestQueue(stringRequest);
-            */
             validarRegistroUsuario();
         }
         btnRegistro.setEnabled(true);
@@ -141,24 +79,14 @@ public class RegistroActivity extends AppCompatActivity implements DatePickerFra
         usuarios.setNombre(txtNombre.getText().toString().toUpperCase());
         usuarios.setTipodocumento(obtenerTipoDocumentoSeleccionado());
         usuarios.setCedula(txtCedula.getText().toString().trim());
-        usuarios.setCorreo(txtCorreo.getText().toString().trim());
         usuarios.setContrasenia(txtContrasenia.getText().toString().trim());
         usuarios.setCelular(txtCelular.getText().toString().trim());
-        usuarios.setFechanacimiento(lblFechaNac.getText().toString());
-        usuarios.setDireccion(txtDireccion.getText().toString().toUpperCase());
-        usuarios.setDepartamento(txtDepartamento.getText().toString().trim().toUpperCase());
-        usuarios.setMunicipio(txtMunicipio.getText().toString().trim().toUpperCase());
 
         String url = getString(R.string.ip_servidor)+"apimicafe.php?opcion=validarinsercionreporte&nombre="+usuarios.getNombre()
-                +"&correo="+usuarios.getCorreo()
                 +"&contrasenia="+usuarios.getContrasenia()
                 +"&tipodocumento="+usuarios.getTipodocumento()
                 +"&cedula="+usuarios.getCedula()
                 +"&celular="+usuarios.getCelular()
-                +"&fechanacimiento="+usuarios.getFechanacimiento()
-                +"&direccion="+usuarios.getDireccion()
-                +"&departamento="+usuarios.getDepartamento()
-                +"&municipio="+usuarios.getMunicipio()
                 +"&rol="+rolSeleccionado;
 
         url = url.replace(" ","%20");
@@ -262,6 +190,7 @@ public class RegistroActivity extends AppCompatActivity implements DatePickerFra
             @Override
             public void onErrorResponse(VolleyError error) {
                 error.printStackTrace();
+                Log.i("TAG",error.toString());
                 imprimirMensaje("Error al conectar a la API");
                 Log.i("TAG","NO SE CONECTO A LA API");
             }
@@ -275,15 +204,10 @@ public class RegistroActivity extends AppCompatActivity implements DatePickerFra
 
     private void instanciarElementos() {
         comboRoles =  findViewById(R.id.reg_spiRoles);
-        lblFechaNac = findViewById(R.id.reg_fechanacimiento);
         txtNombre = findViewById(R.id.reg_nombre);
         txtCedula = findViewById(R.id.reg_cedula);
-        txtCorreo = findViewById(R.id.reg_correo);
         txtContrasenia = findViewById(R.id.reg_contrasenia);
         txtCelular = findViewById(R.id.reg_celular);
-        txtDireccion = findViewById(R.id.reg_direccion);
-        txtDepartamento = findViewById(R.id.reg_departamento);
-        txtMunicipio = findViewById(R.id.reg_municipio);
         radCC = findViewById(R.id.radCC);
         radCE = findViewById(R.id.radCE);
         radTI = findViewById(R.id.radTI);
@@ -314,7 +238,7 @@ public class RegistroActivity extends AppCompatActivity implements DatePickerFra
     @Override
     public void onFinishDialog(Date date) {
         //Asigna la fecha seleccionada en el DatePicker a la etiqueta de fecha de nacimiento
-        lblFechaNac.setText(formatDate(date));
+        //lblFechaNac.setText(formatDate(date));
     }
 
     private String formatDate(Date date) {
@@ -333,13 +257,8 @@ public class RegistroActivity extends AppCompatActivity implements DatePickerFra
     private void limpiarCampos() {
         txtNombre.setText("");
         txtCedula.setText("");
-        txtCorreo.setText("");
         txtContrasenia.setText("");
         txtCelular.setText("");
-        txtDireccion.setText("");
-        txtDepartamento.setText("");
-        txtMunicipio.setText("");
-        lblFechaNac.setText("Fecha De Nacimiento");
         btnRegistro.setEnabled(true);
     }
 
@@ -351,13 +270,9 @@ public class RegistroActivity extends AppCompatActivity implements DatePickerFra
         }
         //Evalua si los campos Nombre, Contrasenia, Cedula, Celular, Direccion, Departamento, Municipio estan vacios
         if (txtNombre.getText().toString() == "" || txtContrasenia.getText().toString().isEmpty() || txtCedula.getText().toString().isEmpty() || txtCelular.getText()
-                .toString().isEmpty() || txtDireccion.getText().toString().isEmpty() || txtDepartamento.getText().toString().isEmpty() || txtMunicipio.getText().toString().isEmpty()){
+                .toString().isEmpty()){
             imprimirMensaje("Faltan campos por llenar");
             return false;
-        }
-        if (lblFechaNac.getText().toString().equals("Fecha De Nacimiento")){
-            imprimirMensaje("Seleccione la fecha de nacimiento");
-            return  false;
         }
 
         if (txtContrasenia.getText().toString().trim().length() <= 5 ){

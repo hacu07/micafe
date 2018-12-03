@@ -1,5 +1,8 @@
 package com.hacu.micafe.Recolector;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -18,6 +21,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.hacu.micafe.Caficultor.CaficultorActivity;
+import com.hacu.micafe.Caficultor.FragmentsCaf.InicioCaficultorFragment;
 import com.hacu.micafe.Modelo.Usuarios;
 import com.hacu.micafe.R;
 import com.hacu.micafe.Recolector.Fragments.ExperienciaRecolectorFragment;
@@ -25,6 +30,7 @@ import com.hacu.micafe.Recolector.Fragments.ListaTrabajoFragment;
 import com.hacu.micafe.Recolector.Fragments.OfertasRecolectorFragment;
 import com.hacu.micafe.Recolector.Fragments.PerfilRecolectorFragment;
 import com.hacu.micafe.Recolector.Interfaces.IFragments;
+import com.hacu.micafe.SplashActivity;
 
 public class RecolectorActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, IFragments {
@@ -52,12 +58,12 @@ public class RecolectorActivity extends AppCompatActivity
         Bundle objetoEnviado = getIntent().getExtras();
         Usuarios usuario = null;
 
+        asignarDatosNav(usuario);
+
         if (objetoEnviado!=null){
             usuario = (Usuarios) objetoEnviado.getSerializable("usuario");
-            asignarDatosNav(usuario);
+
         }
-
-
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -65,18 +71,22 @@ public class RecolectorActivity extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
+        //carga fragment de inicio
+        // AL INICIAR LA APP CARGA EL FRAGMENT DE BIENVENIDO
+        Fragment fragment =  new InicioCaficultorFragment();
+        getSupportFragmentManager().beginTransaction().replace(R.id.content_recolector,fragment).commit();
+
     }
 
     private void asignarDatosNav(Usuarios usuario) {
-        nav_nombre.setText(usuario.getNombre());//asigna el nombre del usuario a los datos de navbar
-
-        if (usuario.getUrlimagen() != null){
+        nav_nombre.setText(getSession().getString("nombre","micafe"));//asigna el nombre del usuario a los datos de navbar
+        if (getSession().getString("urlimagen","null") != null){
             //ASIGNACION DE FOTO DE PERFIL CON LIBRERIA GLIDE (IMPORTADA EN APP)
-            Glide.with(this).load(getString(R.string.ip_servidor)+usuario.getUrlimagen()).into(nav_foto);
+            Glide.with(this).load(getString(R.string.ip_servidor)+getSession().getString("urlimagen","null")).into(nav_foto);
         }
 
         //Segun el IdRol muestra el rol
-        switch (usuario.getIdrol()){
+        switch (getSession().getInt("idrol",0)){
             case 2:
                 nav_rol.setText("Caficultor");
                 break;
@@ -114,11 +124,26 @@ public class RecolectorActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_salir) {
+            cerrarSesion();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void cerrarSesion() {
+        //Eliminar SharedPreferences
+        getSession().edit().clear().commit();
+        Intent intent = new Intent(RecolectorActivity.this, SplashActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+        finish();
+    }
+
+    private SharedPreferences getSession(){
+        SharedPreferences preferences = this.getSharedPreferences("sesion", Context.MODE_PRIVATE);
+        return preferences;
     }
 
     @SuppressWarnings("StatementWithEmptyBody")

@@ -27,9 +27,11 @@ import com.bumptech.glide.Glide;
 import com.hacu.micafe.Caficultor.Adaptadores.ListadoCalificacionPostuladosAdapter;
 import com.hacu.micafe.Caficultor.Adaptadores.ListadoPesadasAdapter;
 import com.hacu.micafe.Modelo.Comentario;
+import com.hacu.micafe.Modelo.Experiencia;
 import com.hacu.micafe.Modelo.Pesada;
 import com.hacu.micafe.Modelo.VolleySingleton;
 import com.hacu.micafe.R;
+import com.hacu.micafe.Recolector.Adaptadores.ListaExperienciasAdapter;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -52,7 +54,9 @@ public class DetallePostuladoOfertaFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
     private ArrayList<Comentario> listComentarios;
+    private ArrayList<Experiencia> listExperiencias;
     private RecyclerView recyclerComentarios;
+    private RecyclerView recyclerExperiencias;
     private ImageView imagen;
     private TextView nombre,correo,cedula,celular,fechaNacimiento,direccion,departamento,municipio;
     private JsonObjectRequest jsonObjectRequest;
@@ -90,6 +94,7 @@ public class DetallePostuladoOfertaFragment extends Fragment {
         final String cedula = getArguments() != null ? getArguments().getString("cedula") : "0";
         consultarDatosPostulado(cedula);
         consultarCalificaciones(cedula);
+        consultarExperiencias(cedula);
 
         Button btnVolverListaPostulados = vista.findViewById(R.id.detpos_btnVolver);
         Button btnAceptarPostulado = vista.findViewById(R.id.detpos_btnAceptar);
@@ -111,12 +116,48 @@ public class DetallePostuladoOfertaFragment extends Fragment {
         return vista;
     }
 
+    private void consultarExperiencias(String cedula) {
+        String url = getString(R.string.ip_servidor)+"apimicafe.php?opcion=consultarexperienciaspostulado&cedulaPostulado="+cedula;
+        jsonObjectRequest =  new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                Experiencia experiencia = null;
+                JSONArray jsonArray = response.optJSONArray("micafe");
+                try{
+                    for (int i = 0; i< jsonArray.length(); i++){
+                        experiencia = new Experiencia();
+                        JSONObject jsonObject = jsonArray.getJSONObject(i);
+                        experiencia.setEmpresa(jsonObject.optString("empresa"));
+                        experiencia.setCargo(jsonObject.getString("cargo"));
+                        experiencia.setFunciones(jsonObject.getString("funciones"));
+                        experiencia.setTiempo(jsonObject.optInt("tiempo"));
+                        experiencia.setSupervisor(jsonObject.getString("supervisor"));
+                        experiencia.setContactosupervisor(jsonObject.getString("contactosupervisor"));
+                        listExperiencias.add(experiencia);
+                    }
+                    ListaExperienciasAdapter adapter = new ListaExperienciasAdapter(listExperiencias);
+                    recyclerExperiencias.setAdapter(adapter);
+                }catch (JSONException e){
+                    imprimirMensaje("Error en respuesta de experiencias");
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                imprimirMensaje("No se encontraron experiencias");
+            }
+        });
+        jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 2, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        VolleySingleton.getInstanciaVolley(getContext()).addToRequestQueue(jsonObjectRequest);
+    }
+
     private void consultarCalificaciones(String cedula) {
         String url = getString(R.string.ip_servidor)+"apimicafe.php?opcion=consultarcalificacionpostulado&cedularecolector="+cedula;
 
         jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
+
                 JSONArray json = response.optJSONArray("micafe");
                 Comentario comentario = null;
                 try {
@@ -131,7 +172,7 @@ public class DetallePostuladoOfertaFragment extends Fragment {
                     }
                     ListadoCalificacionPostuladosAdapter adapter = new ListadoCalificacionPostuladosAdapter(listComentarios);
                     recyclerComentarios.setAdapter(adapter);
-                } catch (JSONException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                     imprimirMensaje("Error catch comentario");
                 }
@@ -256,7 +297,11 @@ public class DetallePostuladoOfertaFragment extends Fragment {
         recyclerComentarios = vista.findViewById(R.id.detpos_recyclercalificacion);
         recyclerComentarios.setLayoutManager(new LinearLayoutManager(this.getContext()));
         recyclerComentarios.setHasFixedSize(true);
+        recyclerExperiencias = vista.findViewById(R.id.detpos_recyclerexperiencia);
+        recyclerExperiencias.setLayoutManager(new LinearLayoutManager(this.getContext()));
+        recyclerExperiencias.setHasFixedSize(true);
         listComentarios = new ArrayList<>();
+        listExperiencias = new ArrayList<>();
     }
 
     private void imprimirMensaje(String mensaje){

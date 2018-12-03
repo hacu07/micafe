@@ -119,16 +119,6 @@
                 android:textSize="20sp"
                 android:textStyle="bold" />
             <EditText
-                android:id="@+id/reg_correo"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:hint="@string/correo_electr_nico"
-                android:inputType="textEmailAddress"
-                android:textColor="@color/colorPrimaryDark"
-                android:textSize="30sp"
-                android:textStyle="bold" />
-            <EditText
                 android:id="@+id/reg_contrasenia"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -145,62 +135,6 @@
                 android:layout_marginTop="5dp"
                 android:hint="@string/numero_de_celular"
                 android:inputType="number"
-                android:textColor="@color/colorPrimaryDark"
-                android:textSize="30sp"
-                android:textStyle="bold" />
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:weightSum="3">
-                <TextView
-                    android:id="@+id/reg_fechanacimiento"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:textStyle="bold"
-                    android:text="@string/fecha_de_nacimiento"
-                    android:inputType="number"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:textSize="30sp"
-                    android:onClick="cargarFecha"
-                    android:layout_weight="2"
-                    />
-                <ImageView
-                    android:src="@mipmap/ic_date"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:onClick="cargarFecha"/>
-            </LinearLayout>
-
-            <EditText
-                android:id="@+id/reg_direccion"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:hint="@string/direccion_de_residencia"
-                android:inputType="text"
-                android:textColor="@color/colorPrimaryDark"
-                android:textSize="30sp"
-                android:textStyle="bold" />
-            <EditText
-                android:id="@+id/reg_departamento"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:hint="@string/departamento_residencia"
-                android:inputType="text"
-                android:textColor="@color/colorPrimaryDark"
-                android:textSize="28sp"
-                android:textStyle="bold" />
-            <EditText
-                android:id="@+id/reg_municipio"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:hint="@string/municipio_de_residencia"
-                android:inputType="text"
                 android:textColor="@color/colorPrimaryDark"
                 android:textSize="30sp"
                 android:textStyle="bold" />

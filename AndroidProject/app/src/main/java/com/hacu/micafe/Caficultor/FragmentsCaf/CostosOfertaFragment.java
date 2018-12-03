@@ -21,9 +21,14 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
+import com.hacu.micafe.Caficultor.Adaptadores.ListaCostosOfertaAdapter;
 import com.hacu.micafe.Modelo.Costo;
 import com.hacu.micafe.Modelo.VolleySingleton;
 import com.hacu.micafe.R;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -50,6 +55,7 @@ public class CostosOfertaFragment extends Fragment {
     private StringRequest stringRequest;
     private JsonObjectRequest jsonObjectRequest;
     private ProgressDialog progeso;
+    private ListaCostosOfertaAdapter adapterCostos;
 
     public CostosOfertaFragment() {
         // Required empty public constructor
@@ -79,8 +85,10 @@ public class CostosOfertaFragment extends Fragment {
                              Bundle savedInstanceState) {
         View vista = inflater.inflate(R.layout.fragment_costos_oferta, container, false);
         instanciarElementos(vista);
-        final int id = getArguments() != null ? getArguments().getInt("idOferta") : 0;
+        final int idOferta = getArguments() != null ? getArguments().getInt("idOferta") : 0;
         final String nombreFinca = getArguments() != null ? getArguments().getString("nombreFinca") : "null";
+        consultarCostosOferta(idOferta);
+
         //Botones
         Button btnRegistrarCosto = vista.findViewById(R.id.cosofecaf_btncosto);
         Button btnVolver = vista.findViewById(R.id.cosofecaf_btnvolver);
@@ -88,18 +96,60 @@ public class CostosOfertaFragment extends Fragment {
         btnRegistrarCosto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                registrarCosto(id);
+                registrarCosto(idOferta);
             }
         });
 
         btnVolver.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                cargarFragmentDetalleOferta(id,nombreFinca);
+                cargarFragmentDetalleOferta(idOferta,nombreFinca);
             }
         });
 
         return vista;
+    }
+
+    private void consultarCostosOferta(int idOferta) {
+
+        progeso = new ProgressDialog(getContext());
+        progeso.setMessage("Consultando costos de la oferta...");
+        progeso.show();
+
+        String url = getString(R.string.ip_servidor)+"apimicafe.php?opcion=consultarcostosoferta&idoferta="+idOferta;
+        jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                progeso.hide();
+                JSONArray json = response.optJSONArray("micafe");
+                Costo costo = null;
+                try {
+                    for (int i = 0; i<json.length(); i++){
+                        costo = new Costo();
+                        JSONObject jsonObject = json.getJSONObject(i);
+                        costo.setTitulo(jsonObject.getString("titulo"));
+                        costo.setValor(jsonObject.getInt("valor"));
+                        costo.setDescripcion(jsonObject.getString("descripcion"));
+                        costo.setFecha(jsonObject.getString("fecha"));
+                        listaCostos.add(costo);
+                    }
+                    adapterCostos = new ListaCostosOfertaAdapter(listaCostos);
+                    recyclerCostos.setAdapter(adapterCostos);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    imprimirMensaje("Error catch pesadas");
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                progeso.hide();
+                imprimirMensaje("No se encontro listado de pesadas para este recolector - NO CONEXION");
+            }
+        });
+        jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 2, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        VolleySingleton.getInstanciaVolley(getContext()).addToRequestQueue(jsonObjectRequest);
+
     }
 
     private void cargarFragmentDetalleOferta(int id, String nombreFinca) {
@@ -125,6 +175,8 @@ public class CostosOfertaFragment extends Fragment {
                     case "Actualizo":
                         imprimirMensaje("Costo registrado exitosamente.");
                         limpiarCampos();
+                        listaCostos.clear();
+                        consultarCostosOferta(idOferta);
                         break;
                     case "Error":
                         imprimirMensaje("No se registro el costo, intente de nuevo. \n" + response);

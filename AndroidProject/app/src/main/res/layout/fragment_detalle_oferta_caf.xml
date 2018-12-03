@@ -269,7 +269,7 @@
                     android:layout_margin="5dp"/>
 
                 <Button
-                    android:text="Registrar Pesada"
+                    android:text="---"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textStyle="bold"

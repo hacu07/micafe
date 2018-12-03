@@ -1,5 +1,6 @@
 package com.hacu.micafe.Recolector.Interfaces;
 
+import com.hacu.micafe.Caficultor.FragmentsCaf.InicioCaficultorFragment;
 import com.hacu.micafe.Recolector.Fragments.DetalleOfertaRecolectorFragment;
 import com.hacu.micafe.Recolector.Fragments.ExperienciaRecolectorFragment;
 import com.hacu.micafe.Recolector.Fragments.ListaTrabajoFragment;
@@ -16,5 +17,7 @@ public interface IFragments extends OfertasRecolectorFragment.OnFragmentInteract
         PerfilRecolectorFragment.OnFragmentInteractionListener,
         ExperienciaRecolectorFragment.OnFragmentInteractionListener,
         RegistroExperienciaFragment.OnFragmentInteractionListener,
-        ListaTrabajoFragment.OnFragmentInteractionListener{
+        ListaTrabajoFragment.OnFragmentInteractionListener,
+        InicioCaficultorFragment.OnFragmentInteractionListener
+        {
 }

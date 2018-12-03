@@ -279,7 +279,7 @@ public class PerfilCaficultorFragment extends Fragment {
             }
             bitmap =  redimensionarImagen(bitmap,600,400);
         }catch (Exception e){
-            Toast.makeText(getContext(),"Imagen no seleccionada \n"+ e.toString(),Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
         }
     }
 

@@ -1,11 +1,18 @@
 package com.hacu.micafe.Caficultor;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
+import android.speech.tts.Voice;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -22,16 +29,23 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.hacu.micafe.Caficultor.FragmentsCaf.CaficultorFincaFragment;
 import com.hacu.micafe.Caficultor.FragmentsCaf.CaficultorOfertaFragment;
+import com.hacu.micafe.Caficultor.FragmentsCaf.InicioCaficultorFragment;
 import com.hacu.micafe.Caficultor.FragmentsCaf.PerfilCaficultorFragment;
 import com.hacu.micafe.Caficultor.Interfaces.IFragments;
 import com.hacu.micafe.Modelo.Usuarios;
 import com.hacu.micafe.R;
+import com.hacu.micafe.SplashActivity;
+
+import java.util.Locale;
 
 public class CaficultorActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, IFragments {
+        implements NavigationView.OnNavigationItemSelectedListener, IFragments,
+        TextToSpeech.OnInitListener{
 
+    private TextToSpeech tts; //convierte texto a voz
     TextView nav_nombre, nav_rol;
     ImageView nav_foto;
+    Usuarios usuario = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +53,7 @@ public class CaficultorActivity extends AppCompatActivity
         setContentView(R.layout.activity_caficultor);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
+        tts = new TextToSpeech(getApplicationContext(),this);
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         View cabeceraNav = navigationView.getHeaderView(0);//Obtiene la vista del nav donde se asignaran los datos
@@ -47,33 +61,38 @@ public class CaficultorActivity extends AppCompatActivity
         nav_rol = (TextView) cabeceraNav.findViewById(R.id.nav_rol);
         nav_foto = (ImageView) cabeceraNav.findViewById(R.id.nav_foto);
 
+        asignarDatosNav();
         //Bundle para recibir el bojeto enviado por parametro
         Bundle objetoEnviado = getIntent().getExtras();
-        Usuarios usuario = null;
-
         if (objetoEnviado!=null){
             usuario = (Usuarios) objetoEnviado.getSerializable("usuario");
-            asignarDatosNav(usuario);
         }
+
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
+
+        //carga fragment de inicio
+        // AL INICIAR LA APP CARGA EL FRAGMENT DE BIENVENIDO
+        Fragment fragment =  new InicioCaficultorFragment();
+        getSupportFragmentManager().beginTransaction().replace(R.id.content_caficultor,fragment).commit();
     }
 
     //Asigna los datos al menu navbar
-    private void asignarDatosNav(Usuarios usuario) {
-        nav_nombre.setText(usuario.getNombre());//asigna el nombre del usuario a los datos de navbar
+    private void asignarDatosNav() {
 
-        if (usuario.getUrlimagen() != null){
+        nav_nombre.setText(getSession().getString("nombre","micafe"));//asigna el nombre del usuario a los datos de navbar
+        if (getSession().getString("urlimagen","null") != null){
             //ASIGNACION DE FOTO DE PERFIL CON LIBRERIA GLIDE (IMPORTADA EN APP)
-            Glide.with(this).load(getString(R.string.ip_servidor)+usuario.getUrlimagen()).into(nav_foto);
+            Glide.with(this).load(getString(R.string.ip_servidor)+getSession().getString("urlimagen","null")).into(nav_foto);
         }
 
         //Segun el IdRol muestra el rol
-        switch (usuario.getIdrol()){
+        switch (getSession().getInt("idrol",0)){
             case 2:
                 nav_rol.setText("Caficultor");
                 break;
@@ -114,7 +133,8 @@ public class CaficultorActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_salir) {
+            cerrarSesion();
             return true;
         }
 
@@ -137,14 +157,14 @@ public class CaficultorActivity extends AppCompatActivity
         } else if (id == R.id.nav_ofertas) {
             fragMostrar = new CaficultorOfertaFragment();
             fragmentSeleccionado = true;
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
+        } else if (id == R.id.nav_locales) {
 
         } else if (id == R.id.nav_perfil_caficultor) {
             fragMostrar = new PerfilCaficultorFragment();
             fragmentSeleccionado = true;
         }
+
+
 
         if (fragmentSeleccionado){
             //reemplaza el fragment en el contenedor que se indica
@@ -156,6 +176,15 @@ public class CaficultorActivity extends AppCompatActivity
         return true;
     }
 
+    private void cerrarSesion() {
+        //Eliminar SharedPreferences
+        getSession().edit().clear().commit();
+        Intent intent = new Intent(CaficultorActivity.this, SplashActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+        finish();
+    }
+
     private void imprimirMensaje(String mensaje){
         Toast.makeText(getApplicationContext(), mensaje, Toast.LENGTH_SHORT).show();
     }
@@ -163,5 +192,43 @@ public class CaficultorActivity extends AppCompatActivity
     @Override
     public void onFragmentInteraction(Uri uri) {
 
+    }
+
+    @Override
+    public void onInit(int status) {
+        if (status == TextToSpeech.SUCCESS){
+
+            int result = tts.setLanguage(Locale.getDefault());//Toma el lenguaje predeterminado por el emulador del dispositivo
+            if (result == TextToSpeech.LANG_MISSING_DATA
+                    || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+                Log.e("TTS", "This Language is not supported");
+            } else {
+                reproducirAudio("Bienvenido a mi café " + getSession().getString("nombre"," "));
+            }
+
+        } else {
+            Log.e("TTS", "Initilization Failed!");
+        }
+    }
+
+    private SharedPreferences getSession(){
+        SharedPreferences preferences = this.getSharedPreferences("sesion", Context.MODE_PRIVATE);
+        return preferences;
+    }
+
+    private void reproducirAudio(String texto) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            tts.speak(texto, TextToSpeech.QUEUE_FLUSH, null,"id1");
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        // Don't forget to shutdown tts!
+        if (tts != null) {
+            tts.stop();
+            tts.shutdown();
+        }
+        super.onDestroy();
     }
 }

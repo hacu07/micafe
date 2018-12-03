@@ -94,6 +94,13 @@ public class CalificarAceptadoFragment extends Fragment {
            }
        });
 
+       btnVolver.setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View view) {
+               volverDetalleAceptado(idOferta,cedula);
+           }
+       });
+
        //Evento cuando cambia la eleccion de la barra
        barra.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
            @Override
@@ -121,20 +128,25 @@ public class CalificarAceptadoFragment extends Fragment {
                        break;
                }
            }
-
            @Override
            public void onStartTrackingTouch(SeekBar seekBar) {
-
            }
-
            @Override
            public void onStopTrackingTouch(SeekBar seekBar) {
-
            }
        });
-
-
         return vista;
+    }
+
+    private void volverDetalleAceptado(String idOferta,String cedula) {
+        Bundle parametrosEnvio = new Bundle();
+        parametrosEnvio.putString("idoferta", idOferta);
+        parametrosEnvio.putString("cedula", cedula);
+
+        Fragment fragAceptados = new DetalleAceptadoOfertaFragment();
+        fragAceptados.setArguments(parametrosEnvio);
+        getFragmentManager().beginTransaction().replace(R.id.content_caficultor,fragAceptados).commit();
+
     }
 
     private void registrarComentario(final String cedulaRecolector) {

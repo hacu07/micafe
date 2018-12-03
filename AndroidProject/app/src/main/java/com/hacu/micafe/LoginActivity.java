@@ -99,7 +99,6 @@ public class LoginActivity extends AppCompatActivity {
 
     /* Segun el rol del usuario que ha iniciado sesion se llevara a su modulo correspondiente */
     private void mostrarModulo(Usuarios usuario) {
-        imprimirMensaje("Usuario " + usuario.getId() );
         Intent miIntent = null;
 
         switch (usuario.getIdrol()){
@@ -151,7 +150,6 @@ public class LoginActivity extends AppCompatActivity {
         editor.putString("urlimagen",usuario.getUrlimagen());//
         editor.putInt("idrol",usuario.getIdrol());//
         editor.commit();//crea archivo y
-        imprimirMensaje("Sharedpreferences almacenado");
     }
 
     //Retorna un boolean true si todo esta bien, si no devuelve un false

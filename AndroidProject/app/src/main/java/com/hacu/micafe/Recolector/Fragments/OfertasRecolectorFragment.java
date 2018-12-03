@@ -107,7 +107,6 @@ public class OfertasRecolectorFragment extends Fragment {
                 Oferta oferta =  null;
                 //Obtiene el JSON de la respuesta
                 JSONArray jsonArray = response.optJSONArray("micafe");
-
                 //Se recorre cada elemento del json
                 try{
                     for (int i = 0; i<jsonArray.length(); i++){

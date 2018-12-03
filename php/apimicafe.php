@@ -10,6 +10,7 @@ if (isset($_GET["opcion"])) {
 	$opcion = $_GET["opcion"];
 
 	switch($opcion) {
+		//Opcion de MODULO CAFICULTOR
 		case "consultaroles":
 			consultarRoles();
 			break;
@@ -19,7 +20,7 @@ if (isset($_GET["opcion"])) {
 			break;
 
 		case 'validarinsercionreporte':
-			validarinsercionreporte($_GET["nombre"],$_GET["correo"],$_GET["contrasenia"],$_GET["tipodocumento"],$_GET["cedula"],$_GET["celular"],$_GET["fechanacimiento"],$_GET["direccion"],$_GET["departamento"],$_GET["municipio"],$_GET["rol"]);
+			validarinsercionreporte($_GET["nombre"],"",$_GET["contrasenia"],$_GET["tipodocumento"],$_GET["cedula"],$_GET["celular"],"","","","",$_GET["rol"]);
 			break;
 		case 'consultarfincas':
 			consultarFincasCaficultor($_GET["caficultor"]);
@@ -42,8 +43,20 @@ if (isset($_GET["opcion"])) {
 		case 'consultarlistadopesadasrecolector':
 			consultarListadoPesadasRecolector($_GET["idoferta"],$_GET["cedula"]);
 			break;
+		case 'consultarcalificacionpostulado':
+		consultarcalificacionpostulado($_GET["cedularecolector"]);
+		break;
+		case 'consultarcostosoferta':
+			consultarCostosOferta($_GET["idoferta"]);
+		break;
+		case 'consultarexperienciaspostulado':
+			consultarExperienciasPostulado($_GET["cedulaPostulado"]);
+		break;
+		case 'consultarfincascaficultor':
+			consultarFincasCaficultor($_GET["idcaficultor"]);
+		break;
 
-		//GET RECOLECTOR
+		//GET RECOLECTOR - OPCION DE MODULO RECOLECTOR
 		case 'consultarofertasrecolector':
 			consultarOfertasRecolector();
 			break;
@@ -52,6 +65,9 @@ if (isset($_GET["opcion"])) {
 			break;
 		case 'consultartrabajosrecolector':
 			consultarTrabajosRecolector($_GET["idrecolector"]);
+			break;
+		case 'consultarexperienciasrecolector':
+			consultarExperienciasRecolector($_GET["idrecolector"]);
 			break;
 
 		default:
@@ -81,6 +97,7 @@ if (isset($_GET["opcion"])) {
 		case 'registrarcalificacion':
 			registrarCalificacion($_POST["idadmon"],$_POST["cedularecolector"],$_POST["comentario"],$_POST["calificacion"]);
 			break;
+	
 
 		//POST RECOLECTOR
 		case 'postularrecolector':
@@ -297,6 +314,33 @@ function registrarCalificacion($idAdministrador, $cedulaRecolector, $comentario,
 	actualizarRegistro($sql);
 }
 
+function consultarcalificacionpostulado($cedulaRecolector){
+    $sql = "SELECT usuarios.nombre, usuarios.celular, comentarios.calificacion, comentarios.comentario 
+    FROM usuarios JOIN comentarios ON usuarios.id = comentarios.idadministrador
+    WHERE comentarios.idrecolector = (SELECT usuarios.id FROM usuarios where usuarios.cedula = '{$cedulaRecolector}')";
+    leerRegistro($sql);
+}
+
+function consultarCostosOferta($idOferta)
+{
+	$sql = "SELECT titulo,valor,descripcion,fecha FROM costos WHERE idoferta = {$idOferta} ORDER BY costos.fecha DESC";
+	leerRegistro($sql);
+}
+
+function consultarExperienciasPostulado($cedulaPostulado)
+{
+	$sql = "SELECT empresa,cargo,funciones,tiempo, supervisor, contactosupervisor 
+			FROM experiencias JOIN usuarios ON experiencias.idrecolector = usuarios.id 
+			where usuarios.cedula like '{$cedulaPostulado}'";
+	leerRegistro($sql);
+}
+
+/*function consultarFincasCaficultor($idCaficultor)
+{
+	$sql = "SELECT fincas.id, fincas.nombre FROM fincas WHERE fincas.id = {$idCaficultor}";
+	leerRegistro($sql);
+}*/
+
 /*********** ****************  			  ************** *********************
 								RECOLECTOR
 ******************************************************************************/
@@ -346,5 +390,10 @@ function consultarTrabajosRecolector($idRecolector)
 	leerRegistro($sql);
 }
 
+function consultarExperienciasRecolector($idRecolector)
+{
+	$sql = "SELECT empresa,cargo,funciones,tiempo, supervisor, contactosupervisor FROM experiencias WHERE idrecolector = {$idRecolector}";
+	leerRegistro($sql);
+}
 
 ?>

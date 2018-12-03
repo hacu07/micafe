@@ -1,15 +1,34 @@
 package com.hacu.micafe.Caficultor.FragmentsCaf;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.hacu.micafe.Caficultor.Adaptadores.ListaFincasAdapter;
+import com.hacu.micafe.Modelo.Finca;
+import com.hacu.micafe.Modelo.VolleySingleton;
 import com.hacu.micafe.R;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 
 public class CaficultorFincaFragment extends Fragment {
@@ -24,19 +43,15 @@ public class CaficultorFincaFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
+    private RecyclerView recyclerFincas;
+    private ArrayList<Finca> listaFincas;
+    private JsonObjectRequest jsonObjectRequest;
+
     public CaficultorFincaFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment CaficultorFincaFragment.
-     */
-    // TODO: Rename and change types and number of parameters
+
     public static CaficultorFincaFragment newInstance(String param1, String param2) {
         CaficultorFincaFragment fragment = new CaficultorFincaFragment();
         Bundle args = new Bundle();
@@ -59,7 +74,10 @@ public class CaficultorFincaFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View vista = inflater.inflate(R.layout.fragment_caficultor_finca, container, false);
+        instanciarElementos(vista);
         Button btn_crearFinca = vista.findViewById(R.id.caffin_btncrearfinca);
+        consultarFincasCaficultor();
+
         btn_crearFinca.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -70,6 +88,55 @@ public class CaficultorFincaFragment extends Fragment {
         });
 
         return vista;
+    }
+
+    private void consultarFincasCaficultor() {
+        String url = getString(R.string.ip_servidor)+"apimicafe.php?opcion=consultarfincascaficultor&idcaficultor="+getSession().getInt("id",0);
+        Log.i("TAG",url);
+        jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                JSONArray jsonArray = response.optJSONArray("micafe");
+                Finca finca = null;
+                try {
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        finca = new Finca();
+                        JSONObject jsonObject = jsonArray.getJSONObject(i);
+                        finca.setId(jsonObject.optInt("id"));
+                        finca.setNombre(jsonObject.optString("nombre"));
+                        listaFincas.add(finca);
+                    }
+                    ListaFincasAdapter adapter = new ListaFincasAdapter(listaFincas);
+                    recyclerFincas.setAdapter(adapter);
+                }catch (JSONException e) {
+                    e.printStackTrace();
+                    imprimirMensaje("Error catch pesadas");
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                imprimirMensaje("No se encontraron fincas registras - No Conexion");
+            }
+        });
+        jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 2, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        VolleySingleton.getInstanciaVolley(getContext()).addToRequestQueue(jsonObjectRequest);
+    }
+
+    private void imprimirMensaje(String mensaje) {
+        Toast.makeText(getContext(), mensaje, Toast.LENGTH_SHORT).show();
+    }
+
+    private void instanciarElementos(View vista) {
+        listaFincas = new ArrayList<>();
+        recyclerFincas = vista.findViewById(R.id.caffin_recyclerfinca);
+        recyclerFincas.setLayoutManager(new LinearLayoutManager(this.getContext()));
+        recyclerFincas.setHasFixedSize(true);
+    }
+
+    private SharedPreferences getSession(){
+        SharedPreferences preferences = this.getActivity().getSharedPreferences("sesion", Context.MODE_PRIVATE);
+        return preferences;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -96,16 +163,6 @@ public class CaficultorFincaFragment extends Fragment {
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
