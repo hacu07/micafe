@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -92,6 +93,7 @@ public class CaficultorOfertaFragment extends Fragment {
     private void cargarOfertas() {
         String id = String.valueOf(getSession().getInt("id",0));//Obtiene el ID de la persona que ha iniciado sesion
         String url = getString(R.string.ip_servidor)+"apimicafe.php?opcion=consultarofertascaficultor&idadministrador="+id;
+        Log.i("TAG",url);
         jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {

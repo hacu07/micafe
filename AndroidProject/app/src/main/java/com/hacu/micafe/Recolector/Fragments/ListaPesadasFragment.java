@@ -1,10 +1,12 @@
-package com.hacu.micafe.Caficultor.FragmentsCaf;
+package com.hacu.micafe.Recolector.Fragments;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -19,8 +21,9 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.hacu.micafe.Caficultor.Adaptadores.ListaFincasAdapter;
-import com.hacu.micafe.Modelo.Finca;
+import com.android.volley.toolbox.StringRequest;
+import com.hacu.micafe.Caficultor.Adaptadores.ListadoPesadasAdapter;
+import com.hacu.micafe.Modelo.Pesada;
 import com.hacu.micafe.Modelo.VolleySingleton;
 import com.hacu.micafe.R;
 
@@ -31,7 +34,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 
-public class CaficultorFincaFragment extends Fragment {
+public class ListaPesadasFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -43,17 +46,19 @@ public class CaficultorFincaFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    private RecyclerView recyclerFincas;
-    private ArrayList<Finca> listaFincas;
+    private RecyclerView recyclerPesadas;
+    private ArrayList<Pesada> listaPesadas;
+    private ProgressDialog progreso;
     private JsonObjectRequest jsonObjectRequest;
+    private ListadoPesadasAdapter adapter;
 
-    public CaficultorFincaFragment() {
+    public ListaPesadasFragment() {
         // Required empty public constructor
     }
 
 
-    public static CaficultorFincaFragment newInstance(String param1, String param2) {
-        CaficultorFincaFragment fragment = new CaficultorFincaFragment();
+    public static ListaPesadasFragment newInstance(String param1, String param2) {
+        ListaPesadasFragment fragment = new ListaPesadasFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -73,53 +78,50 @@ public class CaficultorFincaFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View vista = inflater.inflate(R.layout.fragment_caficultor_finca, container, false);
+        View vista = inflater.inflate(R.layout.fragment_lista_pesadas, container, false);
+        final int idOferta = getArguments() != null? getArguments().getInt("idOferta") : 0;
+        Button btnVolver = vista.findViewById(R.id.lispesrec_btnvolver);
         instanciarElementos(vista);
-        Button btn_crearFinca = vista.findViewById(R.id.caffin_btncrearfinca);
-        consultarFincasCaficultor();
-
-        btn_crearFinca.setOnClickListener(new View.OnClickListener() {
+        consultarListadoPesadas(idOferta,getSession().getInt("id",0));
+        btnVolver.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //reemplaza el fragment en el contenedor que se indica
-                Fragment formularioFincaFragment = new RegistroFincaFragment();
-                getFragmentManager().beginTransaction().replace(R.id.content_caficultor,formularioFincaFragment).commit();
+                mostrarFragmentDetalleTrabajo(idOferta);
             }
         });
-
         return vista;
     }
 
-    private void consultarFincasCaficultor() {
-        String url = getString(R.string.ip_servidor)+"apimicafe.php?opcion=consultarfincascaficultor&idcaficultor="+getSession().getInt("id",0);
-        Log.i("TAG",url);
+    private void mostrarFragmentDetalleTrabajo(int idOferta) {
+        Bundle parametrosEnvio = new Bundle();
+        parametrosEnvio.putInt("idOferta",idOferta);
+        Fragment fragmentDetalleTrabajo = new DetalleTrabajoFragment();
+        fragmentDetalleTrabajo.setArguments(parametrosEnvio);
+        getFragmentManager().beginTransaction().replace(R.id.content_recolector,fragmentDetalleTrabajo).commit();
+    }
+
+
+    private void consultarListadoPesadas(int idOferta, int idRecolector) {
+        String url = getString(R.string.ip_servidor)+"apimicafe.php?opcion=consultarlistadopesadasmodulorecolector&idoferta="+idOferta+"&idrecolector="+idRecolector;
+        Log.i("url",url);
         jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-                JSONArray jsonArray = response.optJSONArray("micafe");
-                Finca finca = null;
+                JSONArray json = response.optJSONArray("micafe");
+                Pesada pesada = null;
                 try {
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        finca = new Finca();
-                        JSONObject jsonObject = jsonArray.getJSONObject(i);
-                        finca.setId(jsonObject.optInt("id"));
-                        finca.setNombre(jsonObject.optString("nombre"));
-                        listaFincas.add(finca);
+                    for (int i = 0; i<json.length(); i++){
+                        pesada = new Pesada();
+                        JSONObject jsonObject = json.getJSONObject(i);
+                        pesada.setFecha(jsonObject.getString("fecha"));
+                        pesada.setKilos(jsonObject.getInt("kilos"));
+                        pesada.setIdoferta(jsonObject.getInt("valorkilo"));//valor del kilo en idoferta
+                        pesada.setIdrecolector(jsonObject.getInt("valorpesada"));//valor del kilo en idoferta
+                        listaPesadas.add(pesada);
                     }
-                    ListaFincasAdapter adapter = new ListaFincasAdapter(listaFincas);
-                    recyclerFincas.setAdapter(adapter);
-                    adapter.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            int codFinca = listaFincas.get(recyclerFincas.getChildAdapterPosition(view)).getId();
-                            Bundle bundle = new Bundle();
-                            bundle.putInt("idFinca",codFinca);
-                            Fragment detalleFincaFrag = new DetalleFincaCaficultorFragment();
-                            detalleFincaFrag.setArguments(bundle);
-                            getFragmentManager().beginTransaction().replace(R.id.content_caficultor,detalleFincaFrag).commit();
-                        }
-                    });
-                }catch (JSONException e) {
+                    adapter = new ListadoPesadasAdapter(listaPesadas);
+                    recyclerPesadas.setAdapter(adapter);
+                } catch (JSONException e) {
                     e.printStackTrace();
                     imprimirMensaje("Error catch pesadas");
                 }
@@ -127,28 +129,31 @@ public class CaficultorFincaFragment extends Fragment {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                imprimirMensaje("No se encontraron fincas registras - No Conexion");
+                imprimirMensaje("No se encontro listado de pesadas para este recolector - NO CONEXION");
             }
         });
         jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 2, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         VolleySingleton.getInstanciaVolley(getContext()).addToRequestQueue(jsonObjectRequest);
     }
 
-    private void imprimirMensaje(String mensaje) {
-        Toast.makeText(getContext(), mensaje, Toast.LENGTH_SHORT).show();
-    }
-
     private void instanciarElementos(View vista) {
-        listaFincas = new ArrayList<>();
-        recyclerFincas = vista.findViewById(R.id.caffin_recyclerfinca);
-        recyclerFincas.setLayoutManager(new LinearLayoutManager(this.getContext()));
-        recyclerFincas.setHasFixedSize(true);
+        listaPesadas = new ArrayList<>();
+        recyclerPesadas = vista.findViewById(R.id.lispesrec_recycler);
+        recyclerPesadas.setLayoutManager(new LinearLayoutManager(this.getContext()));
+        recyclerPesadas.setHasFixedSize(true);
     }
 
+    //Obtiene la informacion del usuario que ha iniciado sesion
     private SharedPreferences getSession(){
         SharedPreferences preferences = this.getActivity().getSharedPreferences("sesion", Context.MODE_PRIVATE);
         return preferences;
     }
+
+    private void imprimirMensaje(String mensaje){
+        Toast.makeText(getContext(),mensaje,Toast.LENGTH_SHORT).show();
+    }
+
+
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
@@ -173,6 +178,7 @@ public class CaficultorFincaFragment extends Fragment {
         super.onDetach();
         mListener = null;
     }
+
 
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name

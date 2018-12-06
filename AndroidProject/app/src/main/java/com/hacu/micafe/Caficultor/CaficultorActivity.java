@@ -39,10 +39,8 @@ import com.hacu.micafe.SplashActivity;
 import java.util.Locale;
 
 public class CaficultorActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, IFragments,
-        TextToSpeech.OnInitListener{
+        implements NavigationView.OnNavigationItemSelectedListener, IFragments{
 
-    private TextToSpeech tts; //convierte texto a voz
     TextView nav_nombre, nav_rol;
     ImageView nav_foto;
     Usuarios usuario = null;
@@ -53,7 +51,6 @@ public class CaficultorActivity extends AppCompatActivity
         setContentView(R.layout.activity_caficultor);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        tts = new TextToSpeech(getApplicationContext(),this);
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         View cabeceraNav = navigationView.getHeaderView(0);//Obtiene la vista del nav donde se asignaran los datos
@@ -194,41 +191,14 @@ public class CaficultorActivity extends AppCompatActivity
 
     }
 
-    @Override
-    public void onInit(int status) {
-        if (status == TextToSpeech.SUCCESS){
 
-            int result = tts.setLanguage(Locale.getDefault());//Toma el lenguaje predeterminado por el emulador del dispositivo
-            if (result == TextToSpeech.LANG_MISSING_DATA
-                    || result == TextToSpeech.LANG_NOT_SUPPORTED) {
-                Log.e("TTS", "This Language is not supported");
-            } else {
-                reproducirAudio("Bienvenido a mi café " + getSession().getString("nombre"," "));
-            }
-
-        } else {
-            Log.e("TTS", "Initilization Failed!");
-        }
-    }
 
     private SharedPreferences getSession(){
         SharedPreferences preferences = this.getSharedPreferences("sesion", Context.MODE_PRIVATE);
         return preferences;
     }
 
-    private void reproducirAudio(String texto) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            tts.speak(texto, TextToSpeech.QUEUE_FLUSH, null,"id1");
-        }
-    }
 
-    @Override
-    public void onDestroy() {
-        // Don't forget to shutdown tts!
-        if (tts != null) {
-            tts.stop();
-            tts.shutdown();
-        }
-        super.onDestroy();
-    }
+
+
 }

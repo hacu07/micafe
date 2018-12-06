@@ -1,9 +1,9 @@
 <resources>
     <string name="app_name">Mi Café</string>
 
-    <string name="ip_servidor3">https://appmicafe.000webhostapp.com/micafe/php/</string>
+    <string name="ip_servidor">https://appmicafe.000webhostapp.com/micafe/php/</string>
 
-    <string name="ip_servidor">http://192.168.1.35:8081/micafe/php/</string>
+    <string name="ip_servidor2">http://192.168.1.48:8081/micafe/php/</string>
     <string name="contrasenia">Contraseña</string>
     <string name="cedula">Cedula</string>
     <string name="login">Ingresar</string>
@@ -42,4 +42,5 @@
     <string name="valor_del_pago">Valor del pago</string>
     <string name="jornal">Jornal</string>
     <string name="title_activity_recolector">Mi Café</string>
+    <string name="no_disponible">no disponible</string>
 </resources>

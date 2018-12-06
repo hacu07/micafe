@@ -16,9 +16,10 @@ import java.util.ArrayList;
  * Created by hacu1 on 03/12/2018.
  */
 
-public class ListaFincasAdapter extends RecyclerView.Adapter<ListaFincasAdapter.ListaFincasHolder> {
+public class ListaFincasAdapter extends RecyclerView.Adapter<ListaFincasAdapter.ListaFincasHolder> implements View.OnClickListener {
 
     private ArrayList<Finca> listaFincas;
+    private View.OnClickListener listener;
 
     public ListaFincasAdapter(ArrayList<Finca> listaFincas) {
         this.listaFincas = listaFincas;
@@ -30,6 +31,7 @@ public class ListaFincasAdapter extends RecyclerView.Adapter<ListaFincasAdapter.
         View vista = LayoutInflater.from(parent.getContext()).inflate(R.layout.lista_fincas_caficultor,parent,false);
         RecyclerView.LayoutParams layoutParams =  new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         vista.setLayoutParams(layoutParams);
+        vista.setOnClickListener(this);//Escucha de evento
         return new ListaFincasHolder(vista);
     }
 
@@ -42,6 +44,17 @@ public class ListaFincasAdapter extends RecyclerView.Adapter<ListaFincasAdapter.
     @Override
     public int getItemCount() {
         return listaFincas.size();
+    }
+
+    public void setOnClickListener(View.OnClickListener listener){
+        this.listener = listener;
+    }
+
+    @Override
+    public void onClick(View view) {
+        if (listener!=null){
+            listener.onClick(view);
+        }
     }
 
     public class ListaFincasHolder extends RecyclerView.ViewHolder {

@@ -43,7 +43,6 @@
                         android:id="@+id/lispesace_fecha"
                         android:text="aaaa/MM/dd"
                         android:textSize="15sp"
-                        android:textStyle="bold"
                         android:layout_weight="1"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content" />
@@ -65,7 +64,6 @@
                         android:id="@+id/lispesace_kilos"
                         android:text="100"
                         android:textSize="15sp"
-                        android:textStyle="bold"
                         android:layout_weight="1"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content" />
@@ -87,7 +85,6 @@
                         android:id="@+id/lispesace_valorkilo"
                         android:text="500"
                         android:textSize="15sp"
-                        android:textStyle="bold"
                         android:layout_weight="1"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content" />
@@ -109,7 +106,6 @@
                         android:id="@+id/lispesace_total"
                         android:text="50000"
                         android:textSize="15sp"
-                        android:textStyle="bold"
                         android:layout_weight="1"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content" />

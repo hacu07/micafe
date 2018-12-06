@@ -3,6 +3,10 @@ package com.hacu.micafe;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.MediaPlayer;
+import android.os.Build;
+import android.os.Handler;
+import android.speech.tts.TextToSpeech;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -24,15 +28,19 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class LoginActivity extends AppCompatActivity {
+import java.util.Locale;
+
+public class LoginActivity extends AppCompatActivity implements TextToSpeech.OnInitListener {
     private EditText txtUsuario,txtContrasenia;
     //RequestQueue request;
     JsonObjectRequest jsonObjectRequest;
+    private TextToSpeech tts; //convierte texto a voz
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        tts = new TextToSpeech(getApplicationContext(),this);
         txtUsuario = findViewById(R.id.log_cedula);
         txtContrasenia = findViewById(R.id.log_contrasenia);
     }
@@ -75,9 +83,7 @@ public class LoginActivity extends AppCompatActivity {
                             usuario.setUrlimagen(jsonObject.optString("urlimagen"));
                             usuario.setIdrol(jsonObject.optInt("idrol"));
 
-                            imprimirMensaje("Hola "+ usuario.getNombre());
-
-                            mostrarModulo(usuario);
+                            ejecutarMensajes(usuario);
                         }
                     }catch (JSONException e){
                         e.printStackTrace();
@@ -95,6 +101,19 @@ public class LoginActivity extends AppCompatActivity {
             jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 2, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
             VolleySingleton.getInstanciaVolley(getApplicationContext()).addToRequestQueue(jsonObjectRequest);
         }
+    }
+
+    private void ejecutarMensajes(final Usuarios usuario) {
+        imprimirMensaje("Hola "+ usuario.getNombre());
+        MediaPlayer mp = MediaPlayer.create(getApplicationContext(), R.raw.clic);
+        mp.start();
+        reproducirAudio("Bienvenido a mi cafe");
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mostrarModulo(usuario);
+            }
+        },2000);
     }
 
     /* Segun el rol del usuario que ha iniciado sesion se llevara a su modulo correspondiente */
@@ -174,5 +193,49 @@ public class LoginActivity extends AppCompatActivity {
 
     private void imprimirMensaje(String mensaje){
         Toast.makeText(this,mensaje,Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onInit(int status) {
+        if (status == TextToSpeech.SUCCESS){
+
+            int result = tts.setLanguage(Locale.getDefault());//Toma el lenguaje predeterminado por el emulador del dispositivo
+            if (result == TextToSpeech.LANG_MISSING_DATA
+                    || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+                Log.e("TTS", "This Language is not supported");
+            } else {
+                //reproducirAudio("Bienvenido a mi café ");
+            }
+
+        } else {
+            Log.e("TTS", "Initilization Failed!");
+        }
+    }
+
+    private void reproducirAudio(String texto) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            tts.speak(texto, TextToSpeech.QUEUE_FLUSH, null,"id1");
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        // Don't forget to shutdown tts!
+        if (tts != null) {
+            tts.stop();
+            tts.shutdown();
+        }
+        super.onDestroy();
+    }
+
+    @Override
+    protected void onStop() {
+        // Don't forget to shutdown tts!
+        if (tts != null) {
+            tts.stop();
+            tts.shutdown();
+        }
+        super.onStop();
+
     }
 }

@@ -16,7 +16,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:textStyle="bold"
-            android:textSize="30dp"
+            android:textSize="25dp"
             android:textColor="@color/colorPrimaryDark"
             android:text="Registrar Nueva Pesada"/>
 
@@ -31,7 +31,7 @@
                 android:id="@+id/pesace_kilos"
                 android:layout_weight="2"
                 android:hint="Numero de kilos"
-                android:textSize="25dp"
+                android:textSize="20dp"
                 android:textColor="@color/colorPrimaryDark"
                 android:textAlignment="center"
                 android:inputType="number"
@@ -54,7 +54,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:textStyle="bold"
-            android:textSize="30dp"
+            android:textSize="20dp"
             android:textColor="@color/colorPrimaryDark"
             android:text="Pesadas Del Recolector"/>
 

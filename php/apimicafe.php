@@ -55,6 +55,10 @@ if (isset($_GET["opcion"])) {
 		case 'consultarfincascaficultor':
 			consultarFincasCaficultor($_GET["idcaficultor"]);
 		break;
+		case 'consultardetallefinca':
+			consultarDetalleFinca($_GET["idfinca"]);
+			break;
+
 
 		//GET RECOLECTOR - OPCION DE MODULO RECOLECTOR
 		case 'consultarofertasrecolector':
@@ -68,6 +72,12 @@ if (isset($_GET["opcion"])) {
 			break;
 		case 'consultarexperienciasrecolector':
 			consultarExperienciasRecolector($_GET["idrecolector"]);
+			break;
+		case 'consultardetalletrabajorecolector':
+			consultarDetalleTrabajorecolector($_GET["idoferta"]);
+			break;
+		case 'consultarlistadopesadasmodulorecolector':
+			consultarListadoPesadasModuloRecolector($_GET["idoferta"],$_GET["idrecolector"]);
 			break;
 
 		default:
@@ -96,6 +106,9 @@ if (isset($_GET["opcion"])) {
 			break;
 		case 'registrarcalificacion':
 			registrarCalificacion($_POST["idadmon"],$_POST["cedularecolector"],$_POST["comentario"],$_POST["calificacion"]);
+			break;
+		case 'actualizardatosfinca':
+			actualizarDatosFinca($_POST["idfinca"],$_POST["idadministrador"],$_POST["nombre"],$_POST["departamento"],$_POST["municipio"],$_POST["corregimiento"],$_POST["vereda"],$_POST["hectareas"],$_POST["telefono"]);
 			break;
 	
 
@@ -335,6 +348,19 @@ function consultarExperienciasPostulado($cedulaPostulado)
 	leerRegistro($sql);
 }
 
+function consultarDetalleFinca($idFinca)
+{
+	$sql = "SELECT nombre, departamento, municipio, corregimiento, vereda, hectareas, telefono FROM fincas WHERE id = {$idFinca}";
+	leerRegistro($sql);
+}
+
+
+function actualizarDatosFinca($idfinca ,$idadministrador ,$nombre ,$departamento ,$municipio ,$corregimiento ,$vereda ,$hectareas ,$telefono )
+{
+	$sql = "UPDATE fincas SET nombre = '{$nombre}', departamento = '{$departamento}', municipio = '{$municipio}', corregimiento = '{$corregimiento}', vereda = '{$vereda}' , hectareas = {$hectareas}, telefono = '{$telefono}' WHERE id = $idfinca AND idAdministrador = $idadministrador";
+	actualizarRegistro($sql);
+}
+
 /*function consultarFincasCaficultor($idCaficultor)
 {
 	$sql = "SELECT fincas.id, fincas.nombre FROM fincas WHERE fincas.id = {$idCaficultor}";
@@ -358,6 +384,12 @@ function consultarDetalleOfertaRecolector($idOferta){
 		from ofertas JOIN fincas ON ofertas.idfinca = fincas.id
 		JOIN usuarios ON fincas.idadministrador = usuarios.id
 		WHERE ofertas.id = {$idOferta}";
+	leerRegistro($sql);
+}
+
+function consultarDetalleTrabajorecolector($idOferta)
+{
+	$sql = "SELECT ofertas.fechainicio, modospago.modo, ofertas.valorpago, ofertas.vacantes, ofertas.diastrabajo, ofertas.planta, ofertas.servicios, fincas.nombre as nombrefinca, usuarios.nombre as nombreadmin, fincas.telefono, fincas.departamento, fincas.municipio, fincas.corregimiento, fincas.vereda from ofertas JOIN fincas ON ofertas.idfinca = fincas.id JOIN usuarios ON fincas.idadministrador = usuarios.id JOIN modospago ON ofertas.idmodopago = modospago.id WHERE ofertas.id = {$idOferta}";
 	leerRegistro($sql);
 }
 
@@ -393,6 +425,14 @@ function consultarTrabajosRecolector($idRecolector)
 function consultarExperienciasRecolector($idRecolector)
 {
 	$sql = "SELECT empresa,cargo,funciones,tiempo, supervisor, contactosupervisor FROM experiencias WHERE idrecolector = {$idRecolector}";
+	leerRegistro($sql);
+}
+
+function consultarListadoPesadasModuloRecolector($idOferta, $idRecolector)
+{
+	$sql = "SELECT pesadas.fecha, pesadas.kilos, ofertas.valorpago as valorkilo, (pesadas.kilos 	* ofertas.valorpago ) as valorpesada 
+			FROM pesadas JOIN ofertas ON pesadas.idoferta = ofertas.id 
+			WHERE pesadas.idoferta = {$idOferta} AND pesadas.idrecolector = $idRecolector";
 	leerRegistro($sql);
 }
 

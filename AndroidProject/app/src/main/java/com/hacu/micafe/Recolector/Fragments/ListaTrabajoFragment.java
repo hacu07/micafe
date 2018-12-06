@@ -112,14 +112,13 @@ public class ListaTrabajoFragment extends Fragment {
                             //Se obtiene el id de la oferta para consultar a detalle en el siguiente fragment
                             int idOfertaSeleccionado = listaTrabajo.get(recyclerTrabajo.getChildAdapterPosition(view)).getId();
                             String nombreFinca = listaTrabajo.get(recyclerTrabajo.getChildAdapterPosition(view)).getServicios();
+                            imprimirMensaje("Finca Seleccionada "+ nombreFinca);
                             Bundle parametrosEnvio = new Bundle();
                             parametrosEnvio.putInt("idOferta",idOfertaSeleccionado);
                             parametrosEnvio.putString("nombreFinca",nombreFinca);
-
-                            /*Fragment fragDetalleOferta = new DetalleOfertaRecolectorFragment();
-                            fragDetalleOferta.setArguments(parametrosEnvio);
-                            getFragmentManager().beginTransaction().replace(R.id.content_recolector,fragDetalleOferta).commit();
-                            */
+                            Fragment detalleTrabajoFragment =  new DetalleTrabajoFragment();
+                            detalleTrabajoFragment.setArguments(parametrosEnvio);
+                            getFragmentManager().beginTransaction().replace(R.id.content_recolector,detalleTrabajoFragment).commit();
 
                         }
                     });
