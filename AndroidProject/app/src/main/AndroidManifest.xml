@@ -24,6 +24,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
+        <!-- Maps Android Key  -->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyC6NSS-fZEymQzfS22moeT8oqdnmqmMWVI"
+            />
+
         <activity android:name=".LoginActivity">
         </activity>
         <activity android:name=".RegistroActivity" />
@@ -52,6 +59,9 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_paths" />
         </provider>
+
+
+
 
 
     </application>

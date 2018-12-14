@@ -92,7 +92,7 @@ public class ListaPesadasFragment extends Fragment {
         return vista;
     }
 
-    
+
 
     private void mostrarFragmentDetalleTrabajo(int idOferta) {
         Bundle parametrosEnvio = new Bundle();

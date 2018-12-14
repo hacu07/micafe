@@ -35,6 +35,7 @@ import com.hacu.micafe.Caficultor.Interfaces.IFragments;
 import com.hacu.micafe.Modelo.Usuarios;
 import com.hacu.micafe.R;
 import com.hacu.micafe.SplashActivity;
+import com.hacu.micafe.Utilidades.MapaFragment;
 
 import java.util.Locale;
 
@@ -75,7 +76,7 @@ public class CaficultorActivity extends AppCompatActivity
 
         //carga fragment de inicio
         // AL INICIAR LA APP CARGA EL FRAGMENT DE BIENVENIDO
-        Fragment fragment =  new InicioCaficultorFragment();
+        Fragment fragment =  new MapaFragment();
         getSupportFragmentManager().beginTransaction().replace(R.id.content_caficultor,fragment).commit();
     }
 
