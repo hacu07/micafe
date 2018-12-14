@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -82,50 +83,54 @@ public class RegistroExperienciaFragment extends Fragment {
     }
 
     private void registrarExperiencia() {
-        progreso =  new ProgressDialog(getContext());
-        progreso.setMessage("Registrando experiencia...");
-        progreso.show();
-        final Experiencia experiencia = obtenerValores();
-        String url = getString(R.string.ip_servidor)+"apimicafe.php";
-        stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                progreso.hide();
-                switch (response){
-                    case "Actualizo":
-                        imprimirMensaje("Actualizacion completa");
-                        limpiarCampos();
-                        break;
-                    case "Error":
-                        imprimirMensaje("No se actualizo, intente de nuevo. \n" + response);
-                        break;
+        try {
+            progreso = new ProgressDialog(getContext());
+            progreso.setMessage("Registrando experiencia...");
+            progreso.show();
+            final Experiencia experiencia = obtenerValores();
+            String url = getString(R.string.ip_servidor) + "apimicafe.php";
+            stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    progreso.hide();
+                    switch (response) {
+                        case "Actualizo":
+                            imprimirMensaje("Actualizacion completa");
+                            limpiarCampos();
+                            break;
+                        case "Error":
+                            imprimirMensaje("No se actualizo, intente de nuevo. \n" + response);
+                            break;
+                    }
                 }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                progreso.hide();
-                imprimirMensaje("No se logro registrar la experiencia \n Intente de nuevo");
-                error.printStackTrace();
-            }
-        }){
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> parametros = new HashMap<>();
-                parametros.put("opcion","registrarexperienciarecolector");
-                parametros.put("idrecolector",String.valueOf(experiencia.getIdRecolector()));
-                parametros.put("empresa",experiencia.getEmpresa());
-                parametros.put("cargo",experiencia.getCargo());
-                parametros.put("funciones",experiencia.getFunciones());
-                parametros.put("tiempo",String.valueOf(experiencia.getTiempo()));
-                parametros.put("supervisor",experiencia.getSupervisor());
-                parametros.put("contactosupervisor",experiencia.getContactosupervisor());
-                return parametros;
-            }
-        };
-        //limita el tiempo de actualizacion a dos segundos
-        stringRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 2, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-        VolleySingleton.getInstanciaVolley(getContext()).addToRequestQueue(stringRequest);
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    progreso.hide();
+                    imprimirMensaje("No se logro registrar la experiencia \n Intente de nuevo");
+                    error.printStackTrace();
+                }
+            }) {
+                @Override
+                protected Map<String, String> getParams() throws AuthFailureError {
+                    Map<String, String> parametros = new HashMap<>();
+                    parametros.put("opcion", "registrarexperienciarecolector");
+                    parametros.put("idrecolector", String.valueOf(experiencia.getIdRecolector()));
+                    parametros.put("empresa", experiencia.getEmpresa());
+                    parametros.put("cargo", experiencia.getCargo());
+                    parametros.put("funciones", experiencia.getFunciones());
+                    parametros.put("tiempo", String.valueOf(experiencia.getTiempo()));
+                    parametros.put("supervisor", experiencia.getSupervisor());
+                    parametros.put("contactosupervisor", experiencia.getContactosupervisor());
+                    return parametros;
+                }
+            };
+            //limita el tiempo de actualizacion a dos segundos
+            stringRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 2, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+            VolleySingleton.getInstanciaVolley(getContext()).addToRequestQueue(stringRequest);
+        }catch (Exception e){
+            Log.i("TAG","Error al registrar experiencia - Recolector");
+        }
     }
 
     private void limpiarCampos() {

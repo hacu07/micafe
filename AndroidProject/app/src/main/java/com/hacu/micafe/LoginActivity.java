@@ -1,5 +1,6 @@
 package com.hacu.micafe;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -32,6 +33,7 @@ import java.util.Locale;
 
 public class LoginActivity extends AppCompatActivity implements TextToSpeech.OnInitListener {
     private EditText txtUsuario,txtContrasenia;
+    private ProgressDialog progreso;
     //RequestQueue request;
     JsonObjectRequest jsonObjectRequest;
     private TextToSpeech tts; //convierte texto a voz
@@ -52,54 +54,64 @@ public class LoginActivity extends AppCompatActivity implements TextToSpeech.OnI
 
 
     public void iniciarSesion(View view) {
-        if (validarCamposRegistro()){
-            String url = getString(R.string.ip_servidor)+"apimicafe.php?opcion=iniciarsesion&usuario="+txtUsuario.getText().toString().trim()+
-                    "&contrasenia="+txtContrasenia.getText().toString().trim();
-            Log.i("TAG",url);
-            jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
-                @Override
-                public void onResponse(JSONObject response) {
-                    Usuarios usuario = null;
-                    JSONArray json = response.optJSONArray("micafe");
+        try {
+            if (validarCamposRegistro()) {
+                progreso = new ProgressDialog(this);
+                progreso.setMessage("Iniciando Sesión...");
+                progreso.show();
+                String url = getString(R.string.ip_servidor) + "apimicafe.php?opcion=iniciarsesion&usuario=" + txtUsuario.getText().toString().trim() +
+                        "&contrasenia=" + txtContrasenia.getText().toString().trim();
+                Log.i("TAG", url);
+                jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        progreso.dismiss();
+                        Usuarios usuario = null;
+                        JSONArray json = response.optJSONArray("micafe");
 
-                    try{
-                        for (int i = 0; i<json.length(); i++){//Recorre acada elemento del json
-                            usuario = new Usuarios();
-                            JSONObject jsonObject = null;
-                            jsonObject = json.getJSONObject(i);
+                        try {
+                            for (int i = 0; i < json.length(); i++) {//Recorre acada elemento del json
+                                usuario = new Usuarios();
+                                JSONObject jsonObject = null;
+                                jsonObject = json.getJSONObject(i);
 
-                            //Asignar Valores a Objeto para enviar por bundle
-                            usuario.setId(jsonObject.optInt("id"));
-                            usuario.setNombre(jsonObject.optString("nombre"));
-                            usuario.setCorreo(jsonObject.optString("correo"));
-                            usuario.setContrasenia(jsonObject.optString("contrasenia"));
-                            usuario.setTipodocumento(jsonObject.optString("tipodocumento"));
-                            usuario.setCedula(jsonObject.optString("cedula"));
-                            usuario.setCelular(jsonObject.optString("celular"));
-                            usuario.setFechanacimiento(jsonObject.optString("fechanacimiento"));
-                            usuario.setDireccion(jsonObject.optString("direccion"));
-                            usuario.setDepartamento(jsonObject.optString("departamento"));
-                            usuario.setMunicipio(jsonObject.optString("municipio"));
-                            usuario.setUrlimagen(jsonObject.optString("urlimagen"));
-                            usuario.setIdrol(jsonObject.optInt("idrol"));
+                                //Asignar Valores a Objeto para enviar por bundle
+                                usuario.setId(jsonObject.optInt("id"));
+                                usuario.setNombre(jsonObject.optString("nombre"));
+                                usuario.setCorreo(jsonObject.optString("correo"));
+                                usuario.setContrasenia(jsonObject.optString("contrasenia"));
+                                usuario.setTipodocumento(jsonObject.optString("tipodocumento"));
+                                usuario.setCedula(jsonObject.optString("cedula"));
+                                usuario.setCelular(jsonObject.optString("celular"));
+                                usuario.setFechanacimiento(jsonObject.optString("fechanacimiento"));
+                                usuario.setDireccion(jsonObject.optString("direccion"));
+                                usuario.setDepartamento(jsonObject.optString("departamento"));
+                                usuario.setMunicipio(jsonObject.optString("municipio"));
+                                usuario.setUrlimagen(jsonObject.optString("urlimagen"));
+                                usuario.setIdrol(jsonObject.optInt("idrol"));
 
-                            ejecutarMensajes(usuario);
+                                ejecutarMensajes(usuario);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            imprimirMensaje("Usuario no encontrado \n Verifique su usuario y contraseña.");
                         }
-                    }catch (JSONException e){
-                        e.printStackTrace();
-                        imprimirMensaje("Usuario no encontrado \n Verifique su usuario y contraseña.");
                     }
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    imprimirMensaje("Usuario no encontrado");
-                }
-            });
-            //IMPORTANTE ESTA LINEA PARA EJECUTAR EL WEBSERVICE
-            //request.add(stringRequest);
-            jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 2, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-            VolleySingleton.getInstanciaVolley(getApplicationContext()).addToRequestQueue(jsonObjectRequest);
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        progreso.dismiss();
+                        imprimirMensaje("Usuario no encontrado");
+                    }
+                });
+                //IMPORTANTE ESTA LINEA PARA EJECUTAR EL WEBSERVICE
+                //request.add(stringRequest);
+                jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 2, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+                VolleySingleton.getInstanciaVolley(getApplicationContext()).addToRequestQueue(jsonObjectRequest);
+            }
+        }catch (Exception e){
+            Log.i("TAG","Error en webservice inicio de sesion");
+            e.printStackTrace();
         }
     }
 

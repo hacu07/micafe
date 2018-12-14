@@ -3,7 +3,7 @@
 
     <string name="ip_servidor">https://appmicafe.000webhostapp.com/micafe/php/</string>
 
-    <string name="ip_servidor2">http://192.168.1.48:8081/micafe/php/</string>
+    <string name="ip_servidor1">http://10.78.148.15:8081/micafe/php/</string>
     <string name="contrasenia">Contraseña</string>
     <string name="cedula">Cedula</string>
     <string name="login">Ingresar</string>

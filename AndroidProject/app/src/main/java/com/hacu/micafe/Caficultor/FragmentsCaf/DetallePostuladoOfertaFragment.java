@@ -180,7 +180,7 @@ public class DetallePostuladoOfertaFragment extends Fragment {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                imprimirMensaje("No se encontro listado de comentarios para este recolector - NO CONEXION");
+                imprimirMensaje("No se encontro listado de comentarios para este recolector");
             }
         });
         jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 2, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));

@@ -1,11 +1,13 @@
 package com.hacu.micafe.Caficultor.FragmentsCaf;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,7 +44,7 @@ public class PostuladosOfertasCafFragment extends Fragment {
     private OnFragmentInteractionListener mListener;
 
     private TextView idoferta;
-
+    private ProgressDialog progreso;
     private JsonObjectRequest jsonObjectRequest;
     private ArrayList<Usuarios> listaUsuarios;
     private RecyclerView recyclerView;
@@ -106,57 +108,66 @@ public class PostuladosOfertasCafFragment extends Fragment {
 
     //Consulta los postulantes de la oferta y los muestra en el recycler
     private void cargarRecyclerPostulantes(int idOferta) {
-        String url = getString(R.string.ip_servidor)+"apimicafe.php?opcion=consultarpostuladosofertacaficultor&idoferta="+idOferta;
-        jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                Usuarios usuario = null;
-                //Obtiene el JSON de la respuesta
-                JSONArray json = response.optJSONArray("micafe");
+        try {
+            progreso = new ProgressDialog(getContext());
+            progreso.setMessage("Cargando lista de postulados a la oferta...");
+            progreso.show();
+            String url = getString(R.string.ip_servidor) + "apimicafe.php?opcion=consultarpostuladosofertacaficultor&idoferta=" + idOferta;
+            jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    progreso.dismiss();
+                    Usuarios usuario = null;
+                    //Obtiene el JSON de la respuesta
+                    JSONArray json = response.optJSONArray("micafe");
 
-                //recorre cada elemento del json
-                try{
-                    for (int i = 0; i<json.length(); i++){
-                        usuario = new Usuarios();
-                        JSONObject jsonObject =  json.getJSONObject(i);
-                        usuario.setCedula(jsonObject.optString("cedula"));
-                        usuario.setNombre(jsonObject.optString("nombre"));
-                        usuario.setFechanacimiento(jsonObject.optString("fechanacimiento"));
-                        usuario.setUrlimagen(jsonObject.optString("urlimagen"));
-                        //FALTA AGREGAR EL DE LA CALIFICACION
-                        listaUsuarios.add(usuario);
-                    }
-                    ListaPostuladosAdapter adapter = new ListaPostuladosAdapter(listaUsuarios, getContext(), getString(R.string.ip_servidor));
-                    recyclerView.setAdapter(adapter);
-                    adapter.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            String cedula = listaUsuarios.get(recyclerView.getChildAdapterPosition(view)).getCedula();
-                            String fechaNacimiento = listaUsuarios.get(recyclerView.getChildAdapterPosition(view)).getFechanacimiento();
-
-                            Bundle parametrosEnvio = new Bundle();
-                            parametrosEnvio.putString("cedula",cedula);
-                            parametrosEnvio.putString("fechanacimiento",fechaNacimiento);
-                            parametrosEnvio.putString("idoferta",idoferta.getText().toString());
-
-                            Fragment detallePostuladoFragment = new DetallePostuladoOfertaFragment();
-                            detallePostuladoFragment.setArguments(parametrosEnvio);
-                            getFragmentManager().beginTransaction().replace(R.id.content_caficultor,detallePostuladoFragment).commit();
+                    //recorre cada elemento del json
+                    try {
+                        for (int i = 0; i < json.length(); i++) {
+                            usuario = new Usuarios();
+                            JSONObject jsonObject = json.getJSONObject(i);
+                            usuario.setCedula(jsonObject.optString("cedula"));
+                            usuario.setNombre(jsonObject.optString("nombre"));
+                            usuario.setFechanacimiento(jsonObject.optString("fechanacimiento"));
+                            usuario.setUrlimagen(jsonObject.optString("urlimagen"));
+                            //FALTA AGREGAR EL DE LA CALIFICACION
+                            listaUsuarios.add(usuario);
                         }
-                    });
-                }catch (JSONException e){
-                    e.printStackTrace();
-                    imprimirMensaje("Error en respuesta - postulacion cafe JSON");
+                        ListaPostuladosAdapter adapter = new ListaPostuladosAdapter(listaUsuarios, getContext(), getString(R.string.ip_servidor));
+                        recyclerView.setAdapter(adapter);
+                        adapter.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                String cedula = listaUsuarios.get(recyclerView.getChildAdapterPosition(view)).getCedula();
+                                String fechaNacimiento = listaUsuarios.get(recyclerView.getChildAdapterPosition(view)).getFechanacimiento();
+
+                                Bundle parametrosEnvio = new Bundle();
+                                parametrosEnvio.putString("cedula", cedula);
+                                parametrosEnvio.putString("fechanacimiento", fechaNacimiento);
+                                parametrosEnvio.putString("idoferta", idoferta.getText().toString());
+
+                                Fragment detallePostuladoFragment = new DetallePostuladoOfertaFragment();
+                                detallePostuladoFragment.setArguments(parametrosEnvio);
+                                getFragmentManager().beginTransaction().replace(R.id.content_caficultor, detallePostuladoFragment).commit();
+                            }
+                        });
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        imprimirMensaje("Error en respuesta - postulacion cafe JSON");
+                    }
                 }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                imprimirMensaje("Error en respuesta - postulados caficultor");
-            }
-        });
-        jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 2, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-        VolleySingleton.getInstanciaVolley(getContext()).addToRequestQueue(jsonObjectRequest);
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    progreso.dismiss();
+                    imprimirMensaje("Error en respuesta - postulados caficultor");
+                }
+            });
+            jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 2, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+            VolleySingleton.getInstanciaVolley(getContext()).addToRequestQueue(jsonObjectRequest);
+        }catch (Exception e){
+            Log.i("TAG","ERROR AL CARGAR LISTA DE POSTULADOS A LA OFERTA\n"+e.toString());
+        }
     }
 
     private void imprimirMensaje(String mensaje) {

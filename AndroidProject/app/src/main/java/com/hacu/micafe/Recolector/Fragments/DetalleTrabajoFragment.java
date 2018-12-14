@@ -1,5 +1,6 @@
 package com.hacu.micafe.Recolector.Fragments;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
@@ -108,49 +109,58 @@ public class DetalleTrabajoFragment extends Fragment {
     }
 
     private void consultarDetalleTrabajo(int idOferta) {
-        String url = getString(R.string.ip_servidor)+"apimicafe.php?opcion=consultardetalletrabajorecolector&idoferta="+idOferta;
-        Log.i("TAG",url);
-        jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                Usuarios usuario = null;
-                JSONArray json = response.optJSONArray("micafe");
+        try {
+            final ProgressDialog progreso = new ProgressDialog(getContext());
+            progreso.setMessage("Cargando información...");
+            progreso.show();
+            String url = getString(R.string.ip_servidor) + "apimicafe.php?opcion=consultardetalletrabajorecolector&idoferta=" + idOferta;
+            Log.i("TAG", url);
+            jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    progreso.dismiss();
+                    Usuarios usuario = null;
+                    JSONArray json = response.optJSONArray("micafe");
 
-                try{
-                    JSONObject jsonObject = null;
-                    jsonObject = json.getJSONObject(0);
+                    try {
+                        JSONObject jsonObject = null;
+                        jsonObject = json.getJSONObject(0);
 
-                    //Asignar Valores a Objeto para enviar por bundle
-                    fechaInicio.setText(jsonObject.optString("fechainicio"));
-                    modoPago.setText(jsonObject.optString("modo"));
-                    valorPago.setText(String.valueOf(jsonObject.optInt("valorpago")));
-                    vacantes.setText(String.valueOf(jsonObject.optInt("vacantes")));
-                    diasTrabajo.setText(String.valueOf(jsonObject.optInt("diastrabajo")));
-                    planta.setText(jsonObject.optString("planta"));
-                    servicios.setText(jsonObject.optString("servicios"));
-                    nombreFinca.setText(jsonObject.optString("nombrefinca"));
-                    nombreAdmin.setText(jsonObject.optString("nombreadmin"));
-                    telefono.setText(jsonObject.optString("telefono"));
-                    departamento.setText(jsonObject.optString("departamento"));
-                    municipio.setText(jsonObject.optString("municipio"));
-                    corregimiento.setText(jsonObject.optString("corregimiento"));
-                    vereda.setText(jsonObject.optString("vereda"));
+                        //Asignar Valores a Objeto para enviar por bundle
+                        fechaInicio.setText(jsonObject.optString("fechainicio"));
+                        modoPago.setText(jsonObject.optString("modo"));
+                        valorPago.setText(String.valueOf(jsonObject.optInt("valorpago")));
+                        vacantes.setText(String.valueOf(jsonObject.optInt("vacantes")));
+                        diasTrabajo.setText(String.valueOf(jsonObject.optInt("diastrabajo")));
+                        planta.setText(jsonObject.optString("planta"));
+                        servicios.setText(jsonObject.optString("servicios"));
+                        nombreFinca.setText(jsonObject.optString("nombrefinca"));
+                        nombreAdmin.setText(jsonObject.optString("nombreadmin"));
+                        telefono.setText(jsonObject.optString("telefono"));
+                        departamento.setText(jsonObject.optString("departamento"));
+                        municipio.setText(jsonObject.optString("municipio"));
+                        corregimiento.setText(jsonObject.optString("corregimiento"));
+                        vereda.setText(jsonObject.optString("vereda"));
 
-                }catch (JSONException e){
-                    e.printStackTrace();
-                    imprimirMensaje("Error al cargar detalle de Oferta.");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        imprimirMensaje("Error al cargar detalle de Oferta.");
+                    }
                 }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                imprimirMensaje("Error webservice detalle oferta");
-            }
-        });
-        //IMPORTANTE ESTA LINEA PARA EJECUTAR EL WEBSERVICE
-        //request.add(stringRequest);
-        jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 2, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-        VolleySingleton.getInstanciaVolley(getContext()).addToRequestQueue(jsonObjectRequest);
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    progreso.dismiss();
+                    imprimirMensaje("Error webservice detalle oferta");
+                }
+            });
+            //IMPORTANTE ESTA LINEA PARA EJECUTAR EL WEBSERVICE
+            //request.add(stringRequest);
+            jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 2, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+            VolleySingleton.getInstanciaVolley(getContext()).addToRequestQueue(jsonObjectRequest);
+        }catch (Exception e){
+            Log.i("TAG","Error en detalle trabajo - Recolector");
+        }
     }
 
     private void imprimirMensaje(String mensaje) {

@@ -1,5 +1,6 @@
 package com.hacu.micafe.Recolector.Fragments;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -7,6 +8,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -83,59 +85,68 @@ public class ListaTrabajoFragment extends Fragment {
     }
 
     private void cargarTrabajosRecolector() {
-        String id = String.valueOf(getSession().getInt("id",0));//Obtiene el ID de la persona que ha iniciado sesion
-        String url = getString(R.string.ip_servidor)+"apimicafe.php?opcion=consultartrabajosrecolector&idrecolector="+id;
-        jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                Oferta oferta =  null;
-                //Obtiene el JSON de la respuesta
-                JSONArray jsonArray = response.optJSONArray("micafe");
+        try {
+            final ProgressDialog progreso = new ProgressDialog(getContext());
+            progreso.setMessage("Cargando información");
+            progreso.show();
+            String id = String.valueOf(getSession().getInt("id", 0));//Obtiene el ID de la persona que ha iniciado sesion
+            String url = getString(R.string.ip_servidor) + "apimicafe.php?opcion=consultartrabajosrecolector&idrecolector=" + id;
+            jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    progreso.dismiss();
+                    Oferta oferta = null;
+                    //Obtiene el JSON de la respuesta
+                    JSONArray jsonArray = response.optJSONArray("micafe");
 
-                //Se recorre cada elemento del json
-                try{
-                    for (int i = 0; i<jsonArray.length(); i++){
-                        oferta = new Oferta();
-                        JSONObject jsonObject = jsonArray.getJSONObject(i);
-                        oferta.setId(jsonObject.optInt("idoferta"));
-                        oferta.setServicios(jsonObject.getString("nombre"));
-                        oferta.setFechainicio(jsonObject.getString("fechainicio"));//cambiar por fecha de inicio
-                        oferta.setVacantes(jsonObject.getInt("vacantes"));
-                        listaTrabajo.add(oferta);
-                    }
-
-                    ListaTrabajosRecAdapter adapter = new ListaTrabajosRecAdapter(listaTrabajo);
-                    recyclerTrabajo.setAdapter(adapter);
-                    adapter.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            //Se obtiene el id de la oferta para consultar a detalle en el siguiente fragment
-                            int idOfertaSeleccionado = listaTrabajo.get(recyclerTrabajo.getChildAdapterPosition(view)).getId();
-                            String nombreFinca = listaTrabajo.get(recyclerTrabajo.getChildAdapterPosition(view)).getServicios();
-                            imprimirMensaje("Finca Seleccionada "+ nombreFinca);
-                            Bundle parametrosEnvio = new Bundle();
-                            parametrosEnvio.putInt("idOferta",idOfertaSeleccionado);
-                            parametrosEnvio.putString("nombreFinca",nombreFinca);
-                            Fragment detalleTrabajoFragment =  new DetalleTrabajoFragment();
-                            detalleTrabajoFragment.setArguments(parametrosEnvio);
-                            getFragmentManager().beginTransaction().replace(R.id.content_recolector,detalleTrabajoFragment).commit();
-
+                    //Se recorre cada elemento del json
+                    try {
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            oferta = new Oferta();
+                            JSONObject jsonObject = jsonArray.getJSONObject(i);
+                            oferta.setId(jsonObject.optInt("idoferta"));
+                            oferta.setServicios(jsonObject.getString("nombre"));
+                            oferta.setFechainicio(jsonObject.getString("fechainicio"));//cambiar por fecha de inicio
+                            oferta.setVacantes(jsonObject.getInt("vacantes"));
+                            listaTrabajo.add(oferta);
                         }
-                    });
 
-                }catch (JSONException e){
-                    e.printStackTrace();
-                    imprimirMensaje("Error al cargar listado de ofertas - RESPONSE ");
+                        ListaTrabajosRecAdapter adapter = new ListaTrabajosRecAdapter(listaTrabajo);
+                        recyclerTrabajo.setAdapter(adapter);
+                        adapter.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                //Se obtiene el id de la oferta para consultar a detalle en el siguiente fragment
+                                int idOfertaSeleccionado = listaTrabajo.get(recyclerTrabajo.getChildAdapterPosition(view)).getId();
+                                String nombreFinca = listaTrabajo.get(recyclerTrabajo.getChildAdapterPosition(view)).getServicios();
+                                imprimirMensaje("Finca Seleccionada " + nombreFinca);
+                                Bundle parametrosEnvio = new Bundle();
+                                parametrosEnvio.putInt("idOferta", idOfertaSeleccionado);
+                                parametrosEnvio.putString("nombreFinca", nombreFinca);
+                                Fragment detalleTrabajoFragment = new DetalleTrabajoFragment();
+                                detalleTrabajoFragment.setArguments(parametrosEnvio);
+                                getFragmentManager().beginTransaction().replace(R.id.content_recolector, detalleTrabajoFragment).commit();
+
+                            }
+                        });
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        imprimirMensaje("Error al cargar listado de ofertas - RESPONSE ");
+                    }
                 }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                imprimirMensaje("Error al cargar listado de ofertas - WEBSERVICE");
-            }
-        });
-        jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 2, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-        VolleySingleton.getInstanciaVolley(getContext()).addToRequestQueue(jsonObjectRequest);
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    progreso.dismiss();
+                    imprimirMensaje("Error al cargar listado de ofertas - WEBSERVICE");
+                }
+            });
+            jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 2, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+            VolleySingleton.getInstanciaVolley(getContext()).addToRequestQueue(jsonObjectRequest);
+        }catch (Exception e){
+            Log.i("TAG","Error al cargar trabajos - Recolector");
+        }
     }
 
     private void imprimirMensaje(String mensaje) {

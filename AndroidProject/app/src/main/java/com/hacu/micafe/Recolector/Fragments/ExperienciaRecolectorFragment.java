@@ -1,5 +1,6 @@
 package com.hacu.micafe.Recolector.Fragments;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -91,40 +92,49 @@ public class ExperienciaRecolectorFragment extends Fragment {
     }
 
     private void consultarExperienciasRecolector() {
-        String idRecolector = String.valueOf(getSession().getInt("id",0));
-        String url = getString(R.string.ip_servidor)+"apimicafe.php?opcion=consultarexperienciasrecolector&idrecolector="+idRecolector;
-        Log.i("TAG",url);
-        jsonObjectRequest =  new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                Experiencia experiencia = null;
-                JSONArray jsonArray = response.optJSONArray("micafe");
-                try{
-                    for (int i = 0; i< jsonArray.length(); i++){
-                        experiencia = new Experiencia();
-                        JSONObject jsonObject = jsonArray.getJSONObject(i);
-                        experiencia.setEmpresa(jsonObject.optString("empresa"));
-                        experiencia.setCargo(jsonObject.getString("cargo"));
-                        experiencia.setFunciones(jsonObject.getString("funciones"));
-                        experiencia.setTiempo(jsonObject.optInt("tiempo"));
-                        experiencia.setSupervisor(jsonObject.getString("supervisor"));
-                        experiencia.setContactosupervisor(jsonObject.getString("contactosupervisor"));
-                        listaExperiencias.add(experiencia);
+        try {
+            final ProgressDialog progreso = new ProgressDialog(getContext());
+            progreso.setMessage("Cargando experiencias");
+            progreso.show();
+            String idRecolector = String.valueOf(getSession().getInt("id", 0));
+            String url = getString(R.string.ip_servidor) + "apimicafe.php?opcion=consultarexperienciasrecolector&idrecolector=" + idRecolector;
+            Log.i("TAG", url);
+            jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    progreso.dismiss();
+                    Experiencia experiencia = null;
+                    JSONArray jsonArray = response.optJSONArray("micafe");
+                    try {
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            experiencia = new Experiencia();
+                            JSONObject jsonObject = jsonArray.getJSONObject(i);
+                            experiencia.setEmpresa(jsonObject.optString("empresa"));
+                            experiencia.setCargo(jsonObject.getString("cargo"));
+                            experiencia.setFunciones(jsonObject.getString("funciones"));
+                            experiencia.setTiempo(jsonObject.optInt("tiempo"));
+                            experiencia.setSupervisor(jsonObject.getString("supervisor"));
+                            experiencia.setContactosupervisor(jsonObject.getString("contactosupervisor"));
+                            listaExperiencias.add(experiencia);
+                        }
+                        ListaExperienciasAdapter adapter = new ListaExperienciasAdapter(listaExperiencias);
+                        recyclerExperiencias.setAdapter(adapter);
+                    } catch (JSONException e) {
+                        imprimirMensaje("Error en respuesta de experiencias");
                     }
-                    ListaExperienciasAdapter adapter = new ListaExperienciasAdapter(listaExperiencias);
-                    recyclerExperiencias.setAdapter(adapter);
-                }catch (JSONException e){
-                    imprimirMensaje("Error en respuesta de experiencias");
                 }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                imprimirMensaje("No se encontraron experiencias");
-            }
-        });
-        jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 2, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-        VolleySingleton.getInstanciaVolley(getContext()).addToRequestQueue(jsonObjectRequest);
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    progreso.dismiss();
+                    imprimirMensaje("No se encontraron experiencias");
+                }
+            });
+            jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 2, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+            VolleySingleton.getInstanciaVolley(getContext()).addToRequestQueue(jsonObjectRequest);
+        }catch (Exception e){
+            Log.i("TAG","Consultar experiencia recolector - Recolector");
+        }
     }
 
     private void instanciarElementos(View vista) {

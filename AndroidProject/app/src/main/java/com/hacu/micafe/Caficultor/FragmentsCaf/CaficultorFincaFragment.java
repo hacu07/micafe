@@ -1,5 +1,6 @@
 package com.hacu.micafe.Caficultor.FragmentsCaf;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -43,6 +44,7 @@ public class CaficultorFincaFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
+    private ProgressDialog progreso;
     private RecyclerView recyclerFincas;
     private ArrayList<Finca> listaFincas;
     private JsonObjectRequest jsonObjectRequest;
@@ -91,47 +93,56 @@ public class CaficultorFincaFragment extends Fragment {
     }
 
     private void consultarFincasCaficultor() {
-        String url = getString(R.string.ip_servidor)+"apimicafe.php?opcion=consultarfincascaficultor&idcaficultor="+getSession().getInt("id",0);
-        Log.i("TAG",url);
-        jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                JSONArray jsonArray = response.optJSONArray("micafe");
-                Finca finca = null;
-                try {
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        finca = new Finca();
-                        JSONObject jsonObject = jsonArray.getJSONObject(i);
-                        finca.setId(jsonObject.optInt("id"));
-                        finca.setNombre(jsonObject.optString("nombre"));
-                        listaFincas.add(finca);
-                    }
-                    ListaFincasAdapter adapter = new ListaFincasAdapter(listaFincas);
-                    recyclerFincas.setAdapter(adapter);
-                    adapter.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            int codFinca = listaFincas.get(recyclerFincas.getChildAdapterPosition(view)).getId();
-                            Bundle bundle = new Bundle();
-                            bundle.putInt("idFinca",codFinca);
-                            Fragment detalleFincaFrag = new DetalleFincaCaficultorFragment();
-                            detalleFincaFrag.setArguments(bundle);
-                            getFragmentManager().beginTransaction().replace(R.id.content_caficultor,detalleFincaFrag).commit();
+        try {
+            progreso = new ProgressDialog(getContext());
+            progreso.setMessage("Consultando Fincas...");
+            progreso.show();
+            String url = getString(R.string.ip_servidor) + "apimicafe.php?opcion=consultarfincascaficultor&idcaficultor=" + getSession().getInt("id", 0);
+            Log.i("TAG", url);
+            jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    progreso.dismiss();
+                    JSONArray jsonArray = response.optJSONArray("micafe");
+                    Finca finca = null;
+                    try {
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            finca = new Finca();
+                            JSONObject jsonObject = jsonArray.getJSONObject(i);
+                            finca.setId(jsonObject.optInt("id"));
+                            finca.setNombre(jsonObject.optString("nombre"));
+                            listaFincas.add(finca);
                         }
-                    });
-                }catch (JSONException e) {
-                    e.printStackTrace();
-                    imprimirMensaje("Error catch pesadas");
+                        ListaFincasAdapter adapter = new ListaFincasAdapter(listaFincas);
+                        recyclerFincas.setAdapter(adapter);
+                        adapter.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                int codFinca = listaFincas.get(recyclerFincas.getChildAdapterPosition(view)).getId();
+                                Bundle bundle = new Bundle();
+                                bundle.putInt("idFinca", codFinca);
+                                Fragment detalleFincaFrag = new DetalleFincaCaficultorFragment();
+                                detalleFincaFrag.setArguments(bundle);
+                                getFragmentManager().beginTransaction().replace(R.id.content_caficultor, detalleFincaFrag).commit();
+                            }
+                        });
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        imprimirMensaje("Error catch pesadas");
+                    }
                 }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                imprimirMensaje("No se encontraron fincas registras - No Conexion");
-            }
-        });
-        jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 2, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-        VolleySingleton.getInstanciaVolley(getContext()).addToRequestQueue(jsonObjectRequest);
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    progreso.dismiss();
+                    imprimirMensaje("No se encontraron fincas registras - No Conexion");
+                }
+            });
+            jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 2, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+            VolleySingleton.getInstanciaVolley(getContext()).addToRequestQueue(jsonObjectRequest);
+        }catch (Exception e){
+            Log.i("Tag","Error cargando fincas caficultor\n"+e.toString());
+        }
     }
 
     private void imprimirMensaje(String mensaje) {

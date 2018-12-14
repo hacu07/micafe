@@ -67,7 +67,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
-                    android:text="El suspiro"
+                    android:text="---"
                     android:textColor="@color/colorPrimaryDark"
                     android:textSize="20sp"
                     />
@@ -107,7 +107,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
-                    android:text="Por kilos - Jornal"
+                    android:text="---"
                     android:textColor="@color/colorPrimaryDark"
                     android:textSize="20sp"
                     />
@@ -127,7 +127,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
-                    android:text="30000"
+                    android:text="---"
                     android:textColor="@color/colorPrimaryDark"
                     android:textSize="20sp"
                     />
@@ -147,7 +147,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
-                    android:text="50"
+                    android:text="---"
                     android:textColor="@color/colorPrimaryDark"
                     android:textSize="20sp"
                     />
@@ -167,7 +167,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
-                    android:text="25"
+                    android:text="---"
                     android:textColor="@color/colorPrimaryDark"
                     android:textSize="20sp"
                     />
@@ -187,7 +187,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
-                    android:text="Alto bonita :D "
+                    android:text="---"
                     android:textColor="@color/colorPrimaryDark"
                     android:textSize="20sp"
                     />
@@ -207,7 +207,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
-                    android:text="Tv Comida lavanderia "
+                    android:text="---"
                     android:textColor="@color/colorPrimaryDark"
                     android:textSize="20sp"
                     />

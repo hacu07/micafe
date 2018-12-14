@@ -1,9 +1,11 @@
 package com.hacu.micafe.Caficultor.FragmentsCaf;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,6 +48,7 @@ public class DetalleOfertaCafFragment extends Fragment {
     private TextView idOferta, nombreFinca, fechaInicio, modoPago, valorPago, vacantes, diasTrabajo, planta, servicios;
 
     private JsonObjectRequest jsonObjectRequest;
+    private ProgressDialog progreso;
 
     public DetalleOfertaCafFragment() {
         // Required empty public constructor
@@ -137,36 +140,45 @@ public class DetalleOfertaCafFragment extends Fragment {
     }
 
     private void consultarDetalleOferta(final int id, final String finca) {
-        String url = getString(R.string.ip_servidor)+"apimicafe.php?opcion=cafconsultardetalleoferta&idoferta="+id;
-        jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                JSONArray json = response.optJSONArray("micafe");
-                try {
-                    JSONObject jsonObject = json.getJSONObject(0);
-                    //asignar respuestas a elementos de la vista
-                    idOferta.setText(String.valueOf(id));
-                    nombreFinca.setText(finca);
-                    fechaInicio.setText(jsonObject.optString("fechainicio"));
-                    modoPago.setText(jsonObject.optString("modopago"));
-                    valorPago.setText(String.valueOf(jsonObject.optInt("valorpago")));
-                    vacantes.setText(String.valueOf(jsonObject.optInt("vacantes")));
-                    diasTrabajo.setText(String.valueOf(jsonObject.optInt("diastrabajo")));
-                    planta.setText(jsonObject.optString("planta"));
-                    servicios.setText(jsonObject.optString("servicios"));
-                }catch (JSONException e){
-                    imprimirMensaje("Error en respuesta oferta detalle - caficultor");
-                }
+        try {
+            progreso = new ProgressDialog(getContext());
+            progreso.setMessage("Consultando detalle de la oferta");
+            progreso.show();
+            String url = getString(R.string.ip_servidor) + "apimicafe.php?opcion=cafconsultardetalleoferta&idoferta=" + id;
+            jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    progreso.dismiss();
+                    JSONArray json = response.optJSONArray("micafe");
+                    try {
+                        JSONObject jsonObject = json.getJSONObject(0);
+                        //asignar respuestas a elementos de la vista
+                        idOferta.setText(String.valueOf(id));
+                        nombreFinca.setText(finca);
+                        fechaInicio.setText(jsonObject.optString("fechainicio"));
+                        modoPago.setText(jsonObject.optString("modopago"));
+                        valorPago.setText(String.valueOf(jsonObject.optInt("valorpago")));
+                        vacantes.setText(String.valueOf(jsonObject.optInt("vacantes")));
+                        diasTrabajo.setText(String.valueOf(jsonObject.optInt("diastrabajo")));
+                        planta.setText(jsonObject.optString("planta"));
+                        servicios.setText(jsonObject.optString("servicios"));
+                    } catch (JSONException e) {
+                        imprimirMensaje("Error en respuesta oferta detalle - caficultor");
+                    }
 
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                imprimirMensaje("Error webservice detalle oferta - caficultor");
-            }
-        });
-        jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 2, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-        VolleySingleton.getInstanciaVolley(getContext()).addToRequestQueue(jsonObjectRequest);
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    progreso.dismiss();
+                    imprimirMensaje("Error webservice detalle oferta - caficultor");
+                }
+            });
+            jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 2, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+            VolleySingleton.getInstanciaVolley(getContext()).addToRequestQueue(jsonObjectRequest);
+        }catch (Exception e){
+            Log.i("TAG","Error consultando detalle de la oferta\n"+e.toString());
+        }
     }
 
     private void imprimirMensaje(String mensaje){

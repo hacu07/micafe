@@ -1,5 +1,6 @@
 package com.hacu.micafe.Caficultor.FragmentsCaf;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -43,6 +44,7 @@ public class CaficultorOfertaFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
+    private ProgressDialog progreso;
     private JsonObjectRequest jsonObjectRequest;
     RecyclerView recyclerOfertas;
     ArrayList<Oferta> listaOfertas;
@@ -91,61 +93,70 @@ public class CaficultorOfertaFragment extends Fragment {
 
     //Web service que obtiene las ofertas registradas por el caficultor
     private void cargarOfertas() {
-        String id = String.valueOf(getSession().getInt("id",0));//Obtiene el ID de la persona que ha iniciado sesion
-        String url = getString(R.string.ip_servidor)+"apimicafe.php?opcion=consultarofertascaficultor&idadministrador="+id;
-        Log.i("TAG",url);
-        jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                Oferta oferta =  null;
-                //Obtiene el JSON de la respuesta
-                JSONArray jsonArray = response.optJSONArray("micafe");
+        try {
+            progreso = new ProgressDialog(getContext());
+            progreso.setMessage("Consultando ofertas...");
+            progreso.show();
+            String id = String.valueOf(getSession().getInt("id", 0));//Obtiene el ID de la persona que ha iniciado sesion
+            String url = getString(R.string.ip_servidor) + "apimicafe.php?opcion=consultarofertascaficultor&idadministrador=" + id;
+            Log.i("TAG", url);
+            jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    progreso.dismiss();
+                    Oferta oferta = null;
+                    //Obtiene el JSON de la respuesta
+                    JSONArray jsonArray = response.optJSONArray("micafe");
 
-                //Se recorre cada elemento del json
-                try{
-                    for (int i = 0; i<jsonArray.length(); i++){
-                        oferta = new Oferta();
-                        JSONObject jsonObject = jsonArray.getJSONObject(i);
-                        oferta.setId(jsonObject.optInt("id"));
-                        oferta.setServicios(jsonObject.getString("nombre"));
-                        oferta.setFechainicio(jsonObject.getString("fechainicio"));//cambiar por fecha de inicio
-                        oferta.setVacantes(jsonObject.getInt("vacantes"));
-                        listaOfertas.add(oferta);
-                    }
-
-                    ListaOfertasAdapter adapter = new ListaOfertasAdapter(listaOfertas);
-                    recyclerOfertas.setAdapter(adapter);
-                    adapter.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            //Se obtiene el id de la oferta para consultar a detalle en el siguiente fragment
-                            int idOfertaSeleccionado = listaOfertas.get(recyclerOfertas.getChildAdapterPosition(view)).getId();
-                            String nombreFinca = listaOfertas.get(recyclerOfertas.getChildAdapterPosition(view)).getServicios();
-                            imprimirMensaje("Ha seleccionado la oferta #"+idOfertaSeleccionado);
-                            Bundle parametrosEnvio = new Bundle();
-                            parametrosEnvio.putInt("idOferta",idOfertaSeleccionado);
-                            parametrosEnvio.putString("nombreFinca",nombreFinca);
-
-                            Fragment fragDetalleOferta = new DetalleOfertaCafFragment();
-                            fragDetalleOferta.setArguments(parametrosEnvio);
-                            getFragmentManager().beginTransaction().replace(R.id.content_caficultor,fragDetalleOferta).commit();
+                    //Se recorre cada elemento del json
+                    try {
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            oferta = new Oferta();
+                            JSONObject jsonObject = jsonArray.getJSONObject(i);
+                            oferta.setId(jsonObject.optInt("id"));
+                            oferta.setServicios(jsonObject.getString("nombre"));
+                            oferta.setFechainicio(jsonObject.getString("fechainicio"));//cambiar por fecha de inicio
+                            oferta.setVacantes(jsonObject.getInt("vacantes"));
+                            listaOfertas.add(oferta);
                         }
-                    });
 
-                }catch (JSONException e){
-                    e.printStackTrace();
-                    imprimirMensaje("Error al cargar listado de ofertas - RESPONSE ");
+                        ListaOfertasAdapter adapter = new ListaOfertasAdapter(listaOfertas);
+                        recyclerOfertas.setAdapter(adapter);
+                        adapter.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                //Se obtiene el id de la oferta para consultar a detalle en el siguiente fragment
+                                int idOfertaSeleccionado = listaOfertas.get(recyclerOfertas.getChildAdapterPosition(view)).getId();
+                                String nombreFinca = listaOfertas.get(recyclerOfertas.getChildAdapterPosition(view)).getServicios();
+                                imprimirMensaje("Ha seleccionado la oferta #" + idOfertaSeleccionado);
+                                Bundle parametrosEnvio = new Bundle();
+                                parametrosEnvio.putInt("idOferta", idOfertaSeleccionado);
+                                parametrosEnvio.putString("nombreFinca", nombreFinca);
+
+                                Fragment fragDetalleOferta = new DetalleOfertaCafFragment();
+                                fragDetalleOferta.setArguments(parametrosEnvio);
+                                getFragmentManager().beginTransaction().replace(R.id.content_caficultor, fragDetalleOferta).commit();
+                            }
+                        });
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        imprimirMensaje("Error al cargar listado de ofertas - RESPONSE ");
+                    }
                 }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                imprimirMensaje("Error al cargar listado de ofertas - WEBSERVICE");
-                error.printStackTrace();
-            }
-        });
-        jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 2, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-        VolleySingleton.getInstanciaVolley(getContext()).addToRequestQueue(jsonObjectRequest);
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    progreso.dismiss();
+                    imprimirMensaje("Error al cargar listado de ofertas - WEBSERVICE");
+                    error.printStackTrace();
+                }
+            });
+            jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 2, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+            VolleySingleton.getInstanciaVolley(getContext()).addToRequestQueue(jsonObjectRequest);
+        }catch (Exception e){
+            Log.i("TAG","Error tratando de cargar ofertas del caficultor\n"+e.toString());
+        }
     }
 
     //Obtiene la informacion del usuario que ha iniciado sesion

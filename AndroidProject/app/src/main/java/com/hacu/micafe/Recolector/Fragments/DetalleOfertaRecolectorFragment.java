@@ -1,5 +1,6 @@
 package com.hacu.micafe.Recolector.Fragments;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -96,94 +97,111 @@ public class DetalleOfertaRecolectorFragment extends Fragment {
     }
 
     private void registrarPostulacionRecolector() {
-        String url = getString(R.string.ip_servidor)+"apimicafe.php";
-        stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                switch (response){
-                    case "Actualizo":
-                        imprimirMensaje("Registro de OFERTA completo");
-                        Fragment fragmentOfertasRecolector = new OfertasRecolectorFragment();
-                        getFragmentManager().beginTransaction().replace(R.id.content_recolector,fragmentOfertasRecolector).commit();
-                        break;
-                    case "Error":
-                        imprimirMensaje("Ya se ha postulado a esta oferta. \n" + response);
-                        break;
-                    default:
-                        imprimirMensaje(response);
-                        Log.i("TAG",response);
-                        break;
+        try {
+            final ProgressDialog progreso = new ProgressDialog(getContext());
+            progreso.setMessage("Espere un momento...");
+            progreso.show();
+            String url = getString(R.string.ip_servidor) + "apimicafe.php";
+            stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    progreso.hide();
+                    switch (response) {
+                        case "Actualizo":
+                            imprimirMensaje("Registro de OFERTA completo");
+                            Fragment fragmentOfertasRecolector = new OfertasRecolectorFragment();
+                            getFragmentManager().beginTransaction().replace(R.id.content_recolector, fragmentOfertasRecolector).commit();
+                            break;
+                        case "Error":
+                            imprimirMensaje("Ya se ha postulado a esta oferta. \n" + response);
+                            break;
+                        default:
+                            imprimirMensaje(response);
+                            Log.i("TAG", response);
+                            break;
+                    }
                 }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                imprimirMensaje("Error en el webservice - REGISTRAR OFERTA");
-            }
-        }){
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> parametros = new HashMap<>();
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    progreso.hide();
+                    imprimirMensaje("Error en el webservice - REGISTRAR OFERTA");
+                }
+            }) {
+                @Override
+                protected Map<String, String> getParams() throws AuthFailureError {
+                    Map<String, String> parametros = new HashMap<>();
 
-                parametros.put("opcion","postularrecolector");
-                parametros.put("idoferta",idOferta.getText().toString());
-                parametros.put("idrecolector",String.valueOf(getSession().getInt("id",0)));
-                return parametros;
-            }
-        };
-        stringRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 2, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-        VolleySingleton.getInstanciaVolley(getContext()).addToRequestQueue(stringRequest);
-
+                    parametros.put("opcion", "postularrecolector");
+                    parametros.put("idoferta", idOferta.getText().toString());
+                    parametros.put("idrecolector", String.valueOf(getSession().getInt("id", 0)));
+                    return parametros;
+                }
+            };
+            stringRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 2, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+            VolleySingleton.getInstanciaVolley(getContext()).addToRequestQueue(stringRequest);
+        }catch (Exception e){
+            Log.i("TAG","Error al postular recolector a oferta - Recolector");
+        }
     }
 
     private void consultarDetalleOferta(int id) {
-        String url = getString(R.string.ip_servidor)+"apimicafe.php?opcion=consultardetalleofertarecolector&idoferta="+id;
-        Log.i("TAG",url);
-        jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                Usuarios usuario = null;
-                JSONArray json = response.optJSONArray("micafe");
+        try {
+            final ProgressDialog progreso = new ProgressDialog(getContext());
+            progreso.show();
+            progreso.setMessage("Cargando oferta...");
+            String url = getString(R.string.ip_servidor) + "apimicafe.php?opcion=consultardetalleofertarecolector&idoferta=" + id;
+            Log.i("TAG", url);
+            jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    progreso.dismiss();
+                    Usuarios usuario = null;
+                    JSONArray json = response.optJSONArray("micafe");
 
-                try{
-                    JSONObject jsonObject = null;
-                    jsonObject = json.getJSONObject(0);
+                    try {
+                        JSONObject jsonObject = null;
+                        jsonObject = json.getJSONObject(0);
 
-                    //Asignar Valores a Objeto para enviar por bundle
-                    fechaInicio.setText(jsonObject.optString("fechainicio"));
-                    modoPago.setText(obtenerModoPago(jsonObject.optInt("idmodopago")));
-                    valorPago.setText(String.valueOf(jsonObject.optInt("valorpago")));
-                    vacantes.setText(String.valueOf(jsonObject.optInt("vacantes")));
-                    diasTrabajo.setText(String.valueOf(jsonObject.optInt("diastrabajo")));
-                    planta.setText(jsonObject.optString("planta"));
-                    servicios.setText(jsonObject.optString("servicios"));
-                    nombreFinca.setText(jsonObject.optString("nombrefinca"));
-                    nombreAdmin.setText(jsonObject.optString("nombreadmin"));
-                    telefono.setText(jsonObject.optString("telefono"));
-                    departamento.setText(jsonObject.optString("departamento"));
-                    municipio.setText(jsonObject.optString("municipio"));
-                    corregimiento.setText(jsonObject.optString("corregimiento"));
-                    vereda.setText(jsonObject.optString("vereda"));
+                        //Asignar Valores a Objeto para enviar por bundle
+                        fechaInicio.setText(jsonObject.optString("fechainicio"));
+                        modoPago.setText(obtenerModoPago(jsonObject.optInt("idmodopago")));
+                        valorPago.setText(String.valueOf(jsonObject.optInt("valorpago")));
+                        vacantes.setText(String.valueOf(jsonObject.optInt("vacantes")));
+                        diasTrabajo.setText(String.valueOf(jsonObject.optInt("diastrabajo")));
+                        planta.setText(jsonObject.optString("planta"));
+                        servicios.setText(jsonObject.optString("servicios"));
+                        nombreFinca.setText(jsonObject.optString("nombrefinca"));
+                        nombreAdmin.setText(jsonObject.optString("nombreadmin"));
+                        telefono.setText(jsonObject.optString("telefono"));
+                        departamento.setText(jsonObject.optString("departamento"));
+                        municipio.setText(jsonObject.optString("municipio"));
+                        corregimiento.setText(jsonObject.optString("corregimiento"));
+                        vereda.setText(jsonObject.optString("vereda"));
                     /*
                     telefono.setText("No disponible hasta ser aceptado por el caficultor");
                     nombreAdmin.setText("No disponible hasta ser aceptado por el caficultor");
                     */
 
-                }catch (JSONException e){
-                    e.printStackTrace();
-                    imprimirMensaje("Error al cargar detalle de Oferta.");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        imprimirMensaje("Error al cargar detalle de Oferta.");
+                    }
                 }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                imprimirMensaje("Error webservice detalle oferta");
-            }
-        });
-        //IMPORTANTE ESTA LINEA PARA EJECUTAR EL WEBSERVICE
-        //request.add(stringRequest);
-        jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 2, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-        VolleySingleton.getInstanciaVolley(getContext()).addToRequestQueue(jsonObjectRequest);
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    progreso.dismiss();
+                    imprimirMensaje("Error webservice detalle oferta");
+                }
+            });
+            //IMPORTANTE ESTA LINEA PARA EJECUTAR EL WEBSERVICE
+            //request.add(stringRequest);
+            jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 2, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+            VolleySingleton.getInstanciaVolley(getContext()).addToRequestQueue(jsonObjectRequest);
+        }catch (Exception e){
+            Log.i("TAG","Error al cargar detalle de oferta -  Recolector");
+        }
     }
 
     private String obtenerModoPago(int idmodopago) {

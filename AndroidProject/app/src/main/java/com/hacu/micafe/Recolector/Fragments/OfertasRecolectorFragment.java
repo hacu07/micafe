@@ -1,5 +1,6 @@
 package com.hacu.micafe.Recolector.Fragments;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -7,6 +8,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -99,58 +101,67 @@ public class OfertasRecolectorFragment extends Fragment {
     }
 
     private void cargarOfertasRecolector() {
-        String id = String.valueOf(getSession().getInt("id",0));//Obtiene el ID de la persona que ha iniciado sesion
-        String url = getString(R.string.ip_servidor)+"apimicafe.php?opcion=consultarofertasrecolector";
-        jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                Oferta oferta =  null;
-                //Obtiene el JSON de la respuesta
-                JSONArray jsonArray = response.optJSONArray("micafe");
-                //Se recorre cada elemento del json
-                try{
-                    for (int i = 0; i<jsonArray.length(); i++){
-                        oferta = new Oferta();
-                        JSONObject jsonObject = jsonArray.getJSONObject(i);
-                        oferta.setId(jsonObject.optInt("id"));
-                        oferta.setServicios(jsonObject.getString("nombre"));
-                        oferta.setFechainicio(jsonObject.getString("fechainicio"));//cambiar por fecha de inicio
-                        oferta.setVacantes(jsonObject.getInt("vacantes"));
-                        listaOfertas.add(oferta);
-                    }
-
-                    ListaOfertasRecAdapter adapter = new ListaOfertasRecAdapter(listaOfertas);
-                    recyclerOfertas.setAdapter(adapter);
-                    adapter.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            //Se obtiene el id de la oferta para consultar a detalle en el siguiente fragment
-                            int idOfertaSeleccionado = listaOfertas.get(recyclerOfertas.getChildAdapterPosition(view)).getId();
-                            String nombreFinca = listaOfertas.get(recyclerOfertas.getChildAdapterPosition(view)).getServicios();
-                            Bundle parametrosEnvio = new Bundle();
-                            parametrosEnvio.putInt("idOferta",idOfertaSeleccionado);
-                            parametrosEnvio.putString("nombreFinca",nombreFinca);
-
-                            Fragment fragDetalleOferta = new DetalleOfertaRecolectorFragment();
-                            fragDetalleOferta.setArguments(parametrosEnvio);
-                            getFragmentManager().beginTransaction().replace(R.id.content_recolector,fragDetalleOferta).commit();
-
+        try {
+            final ProgressDialog progreso = new ProgressDialog(getContext());
+            progreso.setMessage("Buscando ofertas...");
+            progreso.show();
+            String id = String.valueOf(getSession().getInt("id", 0));//Obtiene el ID de la persona que ha iniciado sesion
+            String url = getString(R.string.ip_servidor) + "apimicafe.php?opcion=consultarofertasrecolector";
+            jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    progreso.hide();
+                    Oferta oferta = null;
+                    //Obtiene el JSON de la respuesta
+                    JSONArray jsonArray = response.optJSONArray("micafe");
+                    //Se recorre cada elemento del json
+                    try {
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            oferta = new Oferta();
+                            JSONObject jsonObject = jsonArray.getJSONObject(i);
+                            oferta.setId(jsonObject.optInt("id"));
+                            oferta.setServicios(jsonObject.getString("nombre"));
+                            oferta.setFechainicio(jsonObject.getString("fechainicio"));//cambiar por fecha de inicio
+                            oferta.setVacantes(jsonObject.getInt("vacantes"));
+                            listaOfertas.add(oferta);
                         }
-                    });
 
-                }catch (JSONException e){
-                    e.printStackTrace();
-                    imprimirMensaje("Error al cargar listado de ofertas - RESPONSE ");
+                        ListaOfertasRecAdapter adapter = new ListaOfertasRecAdapter(listaOfertas);
+                        recyclerOfertas.setAdapter(adapter);
+                        adapter.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                //Se obtiene el id de la oferta para consultar a detalle en el siguiente fragment
+                                int idOfertaSeleccionado = listaOfertas.get(recyclerOfertas.getChildAdapterPosition(view)).getId();
+                                String nombreFinca = listaOfertas.get(recyclerOfertas.getChildAdapterPosition(view)).getServicios();
+                                Bundle parametrosEnvio = new Bundle();
+                                parametrosEnvio.putInt("idOferta", idOfertaSeleccionado);
+                                parametrosEnvio.putString("nombreFinca", nombreFinca);
+
+                                Fragment fragDetalleOferta = new DetalleOfertaRecolectorFragment();
+                                fragDetalleOferta.setArguments(parametrosEnvio);
+                                getFragmentManager().beginTransaction().replace(R.id.content_recolector, fragDetalleOferta).commit();
+
+                            }
+                        });
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        imprimirMensaje("Error al cargar listado de ofertas - RESPONSE ");
+                    }
                 }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                imprimirMensaje("Error al cargar listado de ofertas - WEBSERVICE");
-            }
-        });
-        jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 2, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-        VolleySingleton.getInstanciaVolley(getContext()).addToRequestQueue(jsonObjectRequest);
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    progreso.hide();
+                    imprimirMensaje("Error al cargar listado de ofertas - WEBSERVICE");
+                }
+            });
+            jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 2, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+            VolleySingleton.getInstanciaVolley(getContext()).addToRequestQueue(jsonObjectRequest);
+        }catch (Exception e){
+            Log.i("TAG","Error al cargar las ofertas - Recolector");
+        }
     }
 
     private void imprimirMensaje(String mensaje) {

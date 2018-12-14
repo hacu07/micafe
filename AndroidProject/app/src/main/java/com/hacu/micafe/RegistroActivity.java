@@ -3,8 +3,12 @@ package com.hacu.micafe;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.AsyncTask;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -36,6 +40,8 @@ import org.json.JSONObject;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class RegistroActivity extends AppCompatActivity implements DatePickerFragment.DateDialogListener{
     private Spinner comboRoles;
@@ -51,9 +57,11 @@ public class RegistroActivity extends AppCompatActivity implements DatePickerFra
 
     //Usado para el registro en la BD
     private StringRequest stringRequest;
-
-
     private static final String DIALOG_DATE = "RegistroActivity.DateDialog";
+
+    //PRUEBA - BORRAR ESTO
+    Timer timer = new Timer();
+    final Handler handler = new Handler();
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +69,40 @@ public class RegistroActivity extends AppCompatActivity implements DatePickerFra
         setContentView(R.layout.activity_registro);
         instanciarElementos();
         consultarRoles();
+        //llamar();
     }
+
+
+    //ELIMINAR ESTE METODO - PRUEBA
+    /*
+    public void llamar(){
+
+        TimerTask task = new TimerTask() {
+            @Override
+            public void run() {
+                AsyncTask mytask = new AsyncTask() {
+                    @Override
+                    protected Object doInBackground(Object[] objects) {
+
+                        new Handler (Looper.getMainLooper()).post(new Runnable() {
+                            @Override
+                            public void run() {
+                                //imprimirMensaje("hola cada 5 segundos");
+                                //MediaPlayer mp = MediaPlayer.create(getApplicationContext(), R.raw.clic);
+                                //mp.start();
+                            }
+                        });
+
+                        return null;
+                    }
+                };
+                mytask.execute();
+            }
+        };
+        timer.schedule(task,0,10000);
+    }
+    */
+
 
     //Encargado de enviar los datos a la API para registrar a la BD con php
     public void registrarUsuario(View view) {

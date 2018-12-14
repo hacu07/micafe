@@ -143,58 +143,62 @@ public class PerfilRecolectorFragment extends Fragment {
     }
 
     private void actualizarPerfilRecolector() {
-        progreso = new ProgressDialog(getContext());
-        progreso.setMessage("Actualizando Perfil...");
-        progreso.show();
-        String url = getString(R.string.ip_servidor)+"apimicafe.php?";
-        stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                progreso.hide();
-                Log.i("response",response);
-                switch (response){
-                    case "Actualizo":
-                        imprimirMensaje("Actualizacion completa");
-                        break;
-                    case "Error":
-                        imprimirMensaje("No se actualizo, intente de nuevo. \n" + response);
-                        break;
-                }
-            }
-        },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        progreso.hide();
-                        Toast.makeText(getContext(),"NO SE HA CONECTADO",Toast.LENGTH_SHORT).show();
-                        //progreso.hide();
+        try {
+            progreso = new ProgressDialog(getContext());
+            progreso.setMessage("Actualizando Perfil...");
+            progreso.show();
+            String url = getString(R.string.ip_servidor) + "apimicafe.php?";
+            stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    progreso.hide();
+                    Log.i("response", response);
+                    switch (response) {
+                        case "Actualizo":
+                            imprimirMensaje("Actualizacion completa");
+                            break;
+                        case "Error":
+                            imprimirMensaje("No se actualizo, intente de nuevo. \n" + response);
+                            break;
                     }
-                }){
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                //Se obtiene los datos a enviar
-                if (bitmap == null){
-                    bitmap = ((BitmapDrawable)imagen.getDrawable()).getBitmap();//asigna al bitmap la imagen que se encuentre en campoFoto
-                    //bitmap = BitmapFactory.decodeResource()
                 }
-                String imagen = convertirImgString(bitmap); //Bitmap: objeto que contiene la fotografia
-                //Retornamos parametros
-                Map<String,String> parametros =  new HashMap<>();
-                parametros.put("opcion","actualizarperfilrecolector");
-                parametros.put("cedula",cedula.getText().toString());
-                parametros.put("correo",correo.getText().toString());
-                parametros.put("celular",celular.getText().toString());
-                parametros.put("imagen",imagen);
-                parametros.put("direccion",direccion.getText().toString());
-                parametros.put("departamento",departamento.getText().toString());
-                parametros.put("municipio",municipio.getText().toString());
-                return parametros;
-            }
-        };
-        //request.add(stringRequest);
-        //limita el tiempo de actualizacion a dos segundos
-        stringRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 2, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-        VolleySingleton.getInstanciaVolley(getContext()).addToRequestQueue(stringRequest);
+            },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            progreso.hide();
+                            Toast.makeText(getContext(), "NO SE HA CONECTADO", Toast.LENGTH_SHORT).show();
+                            //progreso.hide();
+                        }
+                    }) {
+                @Override
+                protected Map<String, String> getParams() throws AuthFailureError {
+                    //Se obtiene los datos a enviar
+                    if (bitmap == null) {
+                        bitmap = ((BitmapDrawable) imagen.getDrawable()).getBitmap();//asigna al bitmap la imagen que se encuentre en campoFoto
+                        //bitmap = BitmapFactory.decodeResource()
+                    }
+                    String imagen = convertirImgString(bitmap); //Bitmap: objeto que contiene la fotografia
+                    //Retornamos parametros
+                    Map<String, String> parametros = new HashMap<>();
+                    parametros.put("opcion", "actualizarperfilrecolector");
+                    parametros.put("cedula", cedula.getText().toString());
+                    parametros.put("correo", correo.getText().toString());
+                    parametros.put("celular", celular.getText().toString());
+                    parametros.put("imagen", imagen);
+                    parametros.put("direccion", direccion.getText().toString());
+                    parametros.put("departamento", departamento.getText().toString());
+                    parametros.put("municipio", municipio.getText().toString());
+                    return parametros;
+                }
+            };
+            //request.add(stringRequest);
+            //limita el tiempo de actualizacion a dos segundos
+            stringRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 2, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+            VolleySingleton.getInstanciaVolley(getContext()).addToRequestQueue(stringRequest);
+        }catch (Exception e){
+            Log.i("TAG","Error al actualizar el perfil - Recolector");
+        }
     }
 
     /*

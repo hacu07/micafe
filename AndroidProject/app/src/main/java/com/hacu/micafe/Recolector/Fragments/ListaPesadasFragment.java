@@ -92,6 +92,8 @@ public class ListaPesadasFragment extends Fragment {
         return vista;
     }
 
+    
+
     private void mostrarFragmentDetalleTrabajo(int idOferta) {
         Bundle parametrosEnvio = new Bundle();
         parametrosEnvio.putInt("idOferta",idOferta);
@@ -102,38 +104,47 @@ public class ListaPesadasFragment extends Fragment {
 
 
     private void consultarListadoPesadas(int idOferta, int idRecolector) {
-        String url = getString(R.string.ip_servidor)+"apimicafe.php?opcion=consultarlistadopesadasmodulorecolector&idoferta="+idOferta+"&idrecolector="+idRecolector;
-        Log.i("url",url);
-        jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                JSONArray json = response.optJSONArray("micafe");
-                Pesada pesada = null;
-                try {
-                    for (int i = 0; i<json.length(); i++){
-                        pesada = new Pesada();
-                        JSONObject jsonObject = json.getJSONObject(i);
-                        pesada.setFecha(jsonObject.getString("fecha"));
-                        pesada.setKilos(jsonObject.getInt("kilos"));
-                        pesada.setIdoferta(jsonObject.getInt("valorkilo"));//valor del kilo en idoferta
-                        pesada.setIdrecolector(jsonObject.getInt("valorpesada"));//valor del kilo en idoferta
-                        listaPesadas.add(pesada);
+        try {
+            final ProgressDialog progreso = new ProgressDialog(getContext());
+            progreso.setMessage("Cargando listado de pesadas");
+            progreso.show();
+            String url = getString(R.string.ip_servidor) + "apimicafe.php?opcion=consultarlistadopesadasmodulorecolector&idoferta=" + idOferta + "&idrecolector=" + idRecolector;
+            Log.i("url", url);
+            jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    progreso.dismiss();
+                    JSONArray json = response.optJSONArray("micafe");
+                    Pesada pesada = null;
+                    try {
+                        for (int i = 0; i < json.length(); i++) {
+                            pesada = new Pesada();
+                            JSONObject jsonObject = json.getJSONObject(i);
+                            pesada.setFecha(jsonObject.getString("fecha"));
+                            pesada.setKilos(jsonObject.getInt("kilos"));
+                            pesada.setIdoferta(jsonObject.getInt("valorkilo"));//valor del kilo en idoferta
+                            pesada.setIdrecolector(jsonObject.getInt("valorpesada"));//valor del kilo en idoferta
+                            listaPesadas.add(pesada);
+                        }
+                        adapter = new ListadoPesadasAdapter(listaPesadas);
+                        recyclerPesadas.setAdapter(adapter);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        imprimirMensaje("Error catch pesadas");
                     }
-                    adapter = new ListadoPesadasAdapter(listaPesadas);
-                    recyclerPesadas.setAdapter(adapter);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    imprimirMensaje("Error catch pesadas");
                 }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                imprimirMensaje("No se encontro listado de pesadas para este recolector - NO CONEXION");
-            }
-        });
-        jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 2, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-        VolleySingleton.getInstanciaVolley(getContext()).addToRequestQueue(jsonObjectRequest);
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    progreso.dismiss();
+                    imprimirMensaje("No se encontro listado de pesadas para este recolector - NO CONEXION");
+                }
+            });
+            jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 2, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+            VolleySingleton.getInstanciaVolley(getContext()).addToRequestQueue(jsonObjectRequest);
+        }catch (Exception e){
+            Log.i("TAG","Error consultando el listado de las pesadas - Recolector");
+        }
     }
 
     private void instanciarElementos(View vista) {
