@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:name="com.google.android.gms.maps.SupportMapFragment"
     tools:context=".Utilidades.MapaFragment">
 
@@ -11,6 +12,18 @@
         android:name="com.google.android.gms.maps.MapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_mapa"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+        android:clickable="true"
+        android:src="@drawable/ic_my_location"
+        android:backgroundTint="@color/colorPrimary"
+        app:borderWidth="0dp"
         />
 
 </FrameLayout>
