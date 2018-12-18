@@ -1,10 +1,12 @@
 package com.hacu.micafe.Modelo;
 
+import java.io.Serializable;
+
 /**
  * Created by hacu1 on 14/11/2018.
  */
 
-public class Finca {
+public class Finca implements Serializable {
     private int id;
     private int idadministrador;
     private String nombre;
@@ -14,13 +16,13 @@ public class Finca {
     private String vereda;
     private int hectareas;
     private String telefono;
-    private String latitud;
-    private String longitud;
+    private double latitud = 0.0;
+    private double longitud = 0.0;
 
     public Finca() {
     }
 
-    public Finca(int id, int idadministrador, String nombre, String departamento, String municipio, String corregimiento, String vereda, int hectareas, String telefono, String latitud, String longitud) {
+    public Finca(int id, int idadministrador, String nombre, String departamento, String municipio, String corregimiento, String vereda, int hectareas, String telefono, double latitud, double longitud) {
         this.id = id;
         this.idadministrador = idadministrador;
         this.nombre = nombre;
@@ -106,19 +108,19 @@ public class Finca {
         this.telefono = telefono;
     }
 
-    public String getLatitud() {
+    public double getLatitud() {
         return latitud;
     }
 
-    public void setLatitud(String latitud) {
+    public void setLatitud(double latitud) {
         this.latitud = latitud;
     }
 
-    public String getLongitud() {
+    public double getLongitud() {
         return longitud;
     }
 
-    public void setLongitud(String longitud) {
+    public void setLongitud(double longitud) {
         this.longitud = longitud;
     }
 }

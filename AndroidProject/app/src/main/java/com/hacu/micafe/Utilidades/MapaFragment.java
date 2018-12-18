@@ -32,20 +32,26 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PointOfInterest;
+import com.hacu.micafe.Caficultor.FragmentsCaf.RegistroFincaFragment;
+import com.hacu.micafe.Modelo.Finca;
 import com.hacu.micafe.R;
+
+import java.io.Serializable;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.Manifest.permission.LOCATION_HARDWARE;
 import static android.content.Context.LOCATION_SERVICE;
 
 
-public class MapaFragment extends Fragment implements OnMapReadyCallback, LocationListener {
+public class MapaFragment extends Fragment implements OnMapReadyCallback, LocationListener, GoogleMap.OnPoiClickListener {
     public static final int COD_LOCATION = 100;//CODIGO DE PERMISO DE ACCESO A UBICACION
     private View vista;
     private GoogleMap gMap;
     private MapView mapView; //Captura el layout
     //Action Button
     private FloatingActionButton fab;
+    private Button btnVolver;
 
     private LocationManager locationManager;
     private Location currentLocation;
@@ -66,13 +72,63 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Locati
                              Bundle savedInstanceState) {
         vista = inflater.inflate(R.layout.fragment_mapa, container, false);
         FloatingActionButton fab = vista.findViewById(R.id.fab_mapa);
+        instanciarElementos(vista);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 obtenerPosicionActual();
             }
         });
+        if (getArguments()!=null){
+            obtenerParametrosArguments(getArguments());
+        }
         return vista;
+    }
+
+    private void instanciarElementos(View vista) {
+        btnVolver = vista.findViewById(R.id.mapa_btnvolver);
+    }
+
+    /**
+     * Segun el parametro obtenido ejecuta la instruccion en el switch
+     * Los parametros son enviados desde los distintos fragments de la app
+     */
+    private void obtenerParametrosArguments(Bundle arguments) {
+        String opcion = getArguments().getString("opcion");
+
+        if (opcion!=null){
+            switch (opcion){
+                case "registrarFinca":
+                    devolverPosicionFinca(arguments.getSerializable("finca"));
+                    break;
+                default:
+                    break;
+            }
+        }
+
+
+    }
+
+    private void devolverPosicionFinca(final Serializable finca) {
+        btnVolver.setVisibility(View.VISIBLE);//Muestra el Boton de volver
+        btnVolver.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (currentLocation!=null){//Si se ha establecido una posicion con el marcador
+                    Fragment regFinFrag = new RegistroFincaFragment();
+                    //asigna los parametros para que sean capturados por el registro
+                    Bundle bundle = new Bundle();
+                    Finca objFinca = (Finca) finca;//Instancia un objeto de Finca desde el Serializable
+                    objFinca.setLatitud(currentLocation.getLatitude());//Agrega los campos de lat y lon
+                    objFinca.setLongitud(currentLocation.getLongitude());
+                    bundle.putSerializable("finca",objFinca);
+                    regFinFrag.setArguments(bundle);
+                    getFragmentManager().beginTransaction().replace(R.id.content_caficultor, regFinFrag).commit();
+                }else{
+                    imprimirMensaje("No se ha establecido ubicación GPS de la finca");
+                }
+            }
+        });
     }
 
     /*Encargado de mostrar el layout del mapa*/
@@ -93,12 +149,13 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Locati
         MapsInitializer.initialize(getContext());
         //Obtenemos al parametro del metodo
         gMap = googleMap;
-        gMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+        gMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+        gMap.setTrafficEnabled(true);//Habilita la opcion de ver como se encuentra el trafico en la ZONA
         locationManager = (LocationManager) getContext().getSystemService(LOCATION_SERVICE);
 
 
         //Escucha de clic en los puntos de interes
-        //gMap.setOnPoiClickListener(this);
+        gMap.setOnPoiClickListener(this);
 
         //PROBAR PARA PERMISOS
         if (ActivityCompat.checkSelfPermission(getContext(), ACCESS_FINE_LOCATION)
@@ -118,6 +175,8 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Locati
         } else {
             requestPermissions(new String[]{ACCESS_FINE_LOCATION, LOCATION_HARDWARE}, COD_LOCATION);
         }
+
+        obtenerPosicionActual();
     }
 
     private void obtenerPosicionActual() {
@@ -211,7 +270,7 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Locati
             marker = gMap.addMarker(new MarkerOptions().position(new LatLng(location.getLatitude(),location.getLongitude())).draggable(true));//Añadimos el marcador cada vez que actualice
             //marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.sininternet));
             marker.setTitle("Aquí Estoy!");
-            marker.setSnippet("Busca que hay alrededor");
+            marker.setSnippet("Gracias por usar MiCafé");
         }else{
             marker.setPosition(new LatLng(location.getLatitude(),location.getLongitude()));
         }
@@ -225,6 +284,8 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Locati
                 .bearing(0) // 0 --> 365º
                 .tilt(30)   //limit 90
                 .build();
+        gMap.setMinZoomPreference(6.0f);
+        gMap.setMaxZoomPreference(18.0f);
         gMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraZoom));
     }
 
@@ -246,5 +307,14 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Locati
     @Override
     public void onProviderDisabled(String provider) {
 
+    }
+
+    @Override
+    public void onPoiClick(PointOfInterest pointOfInterest) {
+        imprimirMensaje(pointOfInterest.name);
+    }
+
+    private void imprimirMensaje(String mensaje){
+        Toast.makeText(getContext(),mensaje,Toast.LENGTH_SHORT).show();
     }
 }

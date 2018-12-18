@@ -12,6 +12,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -24,6 +26,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.hacu.micafe.Modelo.Finca;
 import com.hacu.micafe.Modelo.VolleySingleton;
 import com.hacu.micafe.R;
+import com.hacu.micafe.Utilidades.MapaFragment;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -49,10 +52,12 @@ public class RegistroFincaFragment extends Fragment {
     /*VARIABLES FRAGMENT*/
     private EditText nombreFinca, departamento, municipio, corregimiento, vereda, hectareas, telefono;
     private Button btnRegistrar;
+    private ImageView btnLocation;
     //Usado para el registro en la BD
     private JsonObjectRequest jsonObjectRequest;
     private ProgressDialog progreso;
     private StringRequest stringRequest;
+    private Finca finca; //Objeto global que contiene los datos del formulario de la finca
 
 
 
@@ -80,13 +85,48 @@ public class RegistroFincaFragment extends Fragment {
                              Bundle savedInstanceState) {
         View vista = inflater.inflate(R.layout.fragment_registro_finca, container, false);;
         instanciarElementos(vista);
+
+        if (getArguments()!=null){
+            finca = (Finca) getArguments().getSerializable("finca");
+            asignarDatosFormulario();
+            if((finca.getLongitud()!=0.0) && finca.getLatitud()!= 0.0 ){
+               imprimirMensaje("Ubicación GPS Obtenida.");
+                TextView txtInfoUbicacion = vista.findViewById(R.id.regfin_ubicacion);
+                txtInfoUbicacion.setText("Ubicación Obtenida");
+            }
+        }
+
         btnRegistrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 registrarFinca();
             }
         });
+        btnLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                obtenerDatosFormularioFinca();
+                MapaFragment mapaFragment = new MapaFragment();
+                Bundle bundle = new Bundle();
+                bundle.putString("opcion","registrarFinca");
+                bundle.putSerializable("finca",finca);
+                mapaFragment.setArguments(bundle);
+                getFragmentManager().beginTransaction().replace(R.id.content_caficultor,mapaFragment).commit();
+            }
+        });
         return vista;
+    }
+
+    private void asignarDatosFormulario() {
+        if (finca!=null){
+            nombreFinca.setText(finca.getNombre());
+            departamento.setText(finca.getDepartamento());
+            municipio.setText(finca.getMunicipio());
+            corregimiento.setText(finca.getCorregimiento());
+            vereda.setText(finca.getVereda());
+            hectareas.setText(String.valueOf(finca.getHectareas()));
+            telefono.setText(finca.getTelefono());
+        }
     }
 
     //Obtiene los datos ingresados en el formulario y los envia a  la api para ser cargados en la BD
@@ -94,15 +134,8 @@ public class RegistroFincaFragment extends Fragment {
         progreso = new ProgressDialog(getContext());
         progreso.setMessage("Registrando finca...");
         progreso.show();
-        final Finca finca = new Finca();
 
-        finca.setNombre(nombreFinca.getText().toString());
-        finca.setDepartamento(departamento.getText().toString());
-        finca.setMunicipio(municipio.getText().toString());
-        finca.setCorregimiento(corregimiento.getText().toString());
-        finca.setVereda(vereda.getText().toString());
-        finca.setHectareas(Integer.parseInt(hectareas.getText().toString()));
-        finca.setTelefono(telefono.getText().toString());
+        obtenerDatosFormularioFinca();
 
         String url = getString(R.string.ip_servidor)+"apimicafe.php";
 
@@ -147,6 +180,8 @@ public class RegistroFincaFragment extends Fragment {
                 parametros.put("vereda",finca.getVereda());
                 parametros.put("hectareas",String.valueOf(finca.getHectareas()));
                 parametros.put("telefono",finca.getTelefono());
+                parametros.put("latitud",finca.getLatitud()!=0.0?String.valueOf(finca.getLatitud()):"");
+                parametros.put("longitud",finca.getLongitud()!=0.0?String.valueOf(finca.getLongitud()):"");
                 return parametros;
             }
         };
@@ -168,6 +203,19 @@ public class RegistroFincaFragment extends Fragment {
         Toast.makeText(getContext(),mensaje,Toast.LENGTH_SHORT).show();
     }
 
+    /*
+    * Asigna los datos contenidos en los campos al objeto finca
+    * */
+    private void obtenerDatosFormularioFinca(){
+        finca.setNombre(nombreFinca.getText().toString());
+        finca.setDepartamento(departamento.getText().toString());
+        finca.setMunicipio(municipio.getText().toString());
+        finca.setCorregimiento(corregimiento.getText().toString());
+        finca.setVereda(vereda.getText().toString());
+        finca.setHectareas(hectareas.getText().toString().isEmpty()?0:Integer.parseInt(hectareas.getText().toString()));
+        finca.setTelefono(telefono.getText().toString());
+    }
+
     private void instanciarElementos(View vista) {
         nombreFinca = vista.findViewById(R.id.regfin_nombre);
         departamento = vista.findViewById(R.id.regfin_departamento);
@@ -177,6 +225,8 @@ public class RegistroFincaFragment extends Fragment {
         hectareas = vista.findViewById(R.id.regfin_hectareas);
         telefono = vista.findViewById(R.id.regfin_telefono);
         btnRegistrar = vista.findViewById(R.id.regfin_btnRegistrar);
+        btnLocation = vista.findViewById(R.id.regfin_btnlocation);
+        finca = new Finca();
     }
 
     // TODO: Rename method, update argument and hook method into UI event

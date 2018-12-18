@@ -93,7 +93,7 @@ if (isset($_GET["opcion"])) {
 			registrarUsuario($_POST["rol"],$_POST["nombre"],$_POST["tipodocumento"],$_POST["cedula"],$_POST["correo"],$_POST["contrasenia"],$_POST["celular"],$_POST["fechanacimiento"],$_POST["direccion"],$_POST["departamento"],$_POST["municipio"]);
 			break;
 		case 'registrofinca':
-			registrarFinca($_POST["idadministrador"],$_POST["nombrefinca"],$_POST["departamento"],$_POST["municipio"],$_POST["corregimiento"],$_POST["vereda"],$_POST["hectareas"],$_POST["telefono"]);
+			registrarFinca($_POST["idadministrador"],$_POST["nombrefinca"],$_POST["departamento"],$_POST["municipio"],$_POST["corregimiento"],$_POST["vereda"],$_POST["hectareas"],$_POST["telefono"],$_POST["latitud"],$_POST["longitud"]);
 			break;
 		case 'registroferta':
 			registrarOferta($_POST["idadministrador"],$_POST["nombrefinca"],$_POST["idmodopago"],$_POST["valorpago"],$_POST["vacantes"],$_POST["diastrabajo"],$_POST["planta"],$_POST["servicios"],$_POST["fechainicio"]);
@@ -223,8 +223,8 @@ function validarUsuario($usuario,$contrasenia){
 	leerRegistro($sql);
 }
 
-function registrarFinca($idadministrador,$nombrefinca,$departamento,$municipio,$corregimiento,$vereda,$hectareas,$telefono){
-	$sql = "INSERT INTO fincas(idadministrador,nombre,departamento,municipio,corregimiento,vereda,hectareas,telefono) values({$idadministrador},'{$nombrefinca}','{$departamento}','{$municipio}','{$corregimiento}','{$vereda}',{$hectareas},'{$telefono}')";
+function registrarFinca($idadministrador,$nombrefinca,$departamento,$municipio,$corregimiento,$vereda,$hectareas,$telefono,$latitud,$longitud){
+	$sql = "INSERT INTO fincas(idadministrador,nombre,departamento,municipio,corregimiento,vereda,hectareas,telefono,latitud,longitud) values({$idadministrador},'{$nombrefinca}','{$departamento}','{$municipio}','{$corregimiento}','{$vereda}',{$hectareas},'{$telefono}',{$latitud},{$longitud})";
 	actualizarRegistro($sql);
 }
 
