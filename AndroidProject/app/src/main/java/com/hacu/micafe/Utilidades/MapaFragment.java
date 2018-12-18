@@ -36,6 +36,7 @@ import com.google.android.gms.maps.model.PointOfInterest;
 import com.hacu.micafe.Caficultor.FragmentsCaf.RegistroFincaFragment;
 import com.hacu.micafe.Modelo.Finca;
 import com.hacu.micafe.R;
+import com.hacu.micafe.Recolector.Fragments.DetalleOfertaRecolectorFragment;
 
 import java.io.Serializable;
 
@@ -101,12 +102,41 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Locati
                 case "registrarFinca":
                     devolverPosicionFinca(arguments.getSerializable("finca"));
                     break;
-                default:
+                case "ubicacionOfertaRecolector":
+                    posicionFincaOfertaRecolector(arguments.getInt("idOferta"),arguments.getString("nombreFinca"),
+                            arguments.getDouble("latitud"),arguments.getDouble("longitud"));
                     break;
             }
         }
 
 
+    }
+
+    private void posicionFincaOfertaRecolector(final int idOferta, final String nombreFinca, final double latitud, final double longitud) {
+        //crea el marcador
+        if (latitud == 0.0 || longitud == 0.0){
+            imprimirMensaje("Coordenadas no encontradas");
+        }else {
+            //gMap es null por eso arroja error
+            if (gMap!=null) {
+                Marker markerFinca = gMap.addMarker(new MarkerOptions().position(new LatLng(latitud, longitud)));
+                markerFinca.setTitle(nombreFinca);
+                markerFinca.setSnippet("Finca de la oferta " + idOferta);
+                zoomToLocationLatLon(latitud, longitud);
+            }
+        }
+        btnVolver.setVisibility(View.VISIBLE);
+        btnVolver.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Fragment detOfeRecFrag = new DetalleOfertaRecolectorFragment();
+                Bundle bundle = new Bundle();
+                bundle.putString("nombreFinca",nombreFinca);
+                bundle.putInt("idOferta",idOferta);
+                detOfeRecFrag.setArguments(bundle);
+                getFragmentManager().beginTransaction().replace(R.id.content_recolector,detOfeRecFrag).commit();
+            }
+        });
     }
 
     private void devolverPosicionFinca(final Serializable finca) {
@@ -177,6 +207,12 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Locati
         }
 
         obtenerPosicionActual();
+
+
+        if (getArguments()!=null){
+            obtenerParametrosArguments(getArguments());
+        }
+
     }
 
     private void obtenerPosicionActual() {
@@ -280,6 +316,19 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Locati
     private void zoomToLocation(Location location){
         cameraZoom = new CameraPosition.Builder()
                 .target(new LatLng(location.getLatitude(),location.getLongitude()))
+                .zoom(15) //limit --> 21
+                .bearing(0) // 0 --> 365º
+                .tilt(30)   //limit 90
+                .build();
+        gMap.setMinZoomPreference(6.0f);
+        gMap.setMaxZoomPreference(18.0f);
+        gMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraZoom));
+    }
+
+
+    private void zoomToLocationLatLon(double latitude, double longitude) {
+        cameraZoom = new CameraPosition.Builder()
+                .target(new LatLng(latitude, longitude))
                 .zoom(15) //limit --> 21
                 .bearing(0) // 0 --> 365º
                 .tilt(30)   //limit 90

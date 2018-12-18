@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,6 +26,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.hacu.micafe.Modelo.Usuarios;
 import com.hacu.micafe.Modelo.VolleySingleton;
 import com.hacu.micafe.R;
+import com.hacu.micafe.Utilidades.MapaFragment;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -46,8 +48,10 @@ public class DetalleOfertaRecolectorFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
+
     private TextView idOferta,fechaInicio, modoPago, valorPago, vacantes, diasTrabajo, planta, servicios, nombreFinca, nombreAdmin,
                     telefono, departamento, municipio, corregimiento, vereda;
+    private double latitud,longitud;
 
     private JsonObjectRequest jsonObjectRequest;
     private StringRequest stringRequest;
@@ -81,18 +85,36 @@ public class DetalleOfertaRecolectorFragment extends Fragment {
         View vista = inflater.inflate(R.layout.fragment_detalle_oferta_recolector, container, false);
         instanciarElementos(vista);
 
-        int id = getArguments() != null ? getArguments().getInt("idOferta") : 0;
-        String nombreFinca = getArguments() != null ? getArguments().getString("nombreFinca") : "---";
+        final int id = getArguments() != null ? getArguments().getInt("idOferta") : 0;
+        final String nombreFinca = getArguments() != null ? getArguments().getString("nombreFinca") : "---";
         idOferta.setText(String.valueOf(id));
         consultarDetalleOferta(id);
 
         Button btnAplicarOferta = vista.findViewById(R.id.detoferec_btnaplicar);
+        ImageView btnIniciarMapa = vista.findViewById(R.id.detoferec_btnlocation);
         btnAplicarOferta.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 registrarPostulacionRecolector();
             }
         });
+
+        btnIniciarMapa.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Fragment mapaFragment = new MapaFragment();
+                Bundle bundle = new Bundle();
+                bundle.putString("opcion","ubicacionOfertaRecolector");
+                bundle.putInt("idOferta",id);
+                bundle.putString("nombreFinca",nombreFinca);
+                bundle.putDouble("latitud",latitud);
+                bundle.putDouble("longitud",longitud);
+                mapaFragment.setArguments(bundle);
+                getFragmentManager().beginTransaction().replace(R.id.content_recolector,mapaFragment).commit();
+            }
+        });
+
+
         return vista;
     }
 
@@ -178,10 +200,8 @@ public class DetalleOfertaRecolectorFragment extends Fragment {
                         municipio.setText(jsonObject.optString("municipio"));
                         corregimiento.setText(jsonObject.optString("corregimiento"));
                         vereda.setText(jsonObject.optString("vereda"));
-                    /*
-                    telefono.setText("No disponible hasta ser aceptado por el caficultor");
-                    nombreAdmin.setText("No disponible hasta ser aceptado por el caficultor");
-                    */
+                        latitud = jsonObject.getDouble("latitud");
+                        longitud = jsonObject.getDouble("longitud");
 
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -230,6 +250,9 @@ public class DetalleOfertaRecolectorFragment extends Fragment {
         municipio = vista.findViewById(R.id.detoferec_municipio);
         corregimiento = vista.findViewById(R.id.detoferec_corregimiento);
         vereda = vista.findViewById(R.id.detoferec_vereda);
+
+        latitud = 0.0;
+        longitud = 0.0;
     }
 
     private void imprimirMensaje(String mensaje) {

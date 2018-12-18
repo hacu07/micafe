@@ -380,7 +380,7 @@ function consultarOfertasRecolector(){
 }
 
 function consultarDetalleOfertaRecolector($idOferta){
-	$sql = "SELECT ofertas.fechainicio, ofertas.idmodopago, ofertas.valorpago, ofertas.vacantes, ofertas.diastrabajo, ofertas.planta, ofertas.servicios, fincas.nombre as nombrefinca, usuarios.nombre as nombreadmin, fincas.telefono, fincas.departamento, fincas.municipio, fincas.corregimiento, fincas.vereda
+	$sql = "SELECT ofertas.fechainicio, ofertas.idmodopago, ofertas.valorpago, ofertas.vacantes, ofertas.diastrabajo, ofertas.planta, ofertas.servicios, fincas.nombre as nombrefinca, usuarios.nombre as nombreadmin, fincas.telefono, fincas.departamento, fincas.municipio, fincas.corregimiento, fincas.vereda, fincas.latitud, fincas.longitud
 		from ofertas JOIN fincas ON ofertas.idfinca = fincas.id
 		JOIN usuarios ON fincas.idadministrador = usuarios.id
 		WHERE ofertas.id = {$idOferta}";

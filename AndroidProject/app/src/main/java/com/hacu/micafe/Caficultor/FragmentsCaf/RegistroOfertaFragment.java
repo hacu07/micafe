@@ -330,7 +330,7 @@ public class RegistroOfertaFragment extends Fragment implements DatePickerFragme
         DatePickerDialog datePicker = new DatePickerDialog(getActivity(), new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                String fecha = String.valueOf(year) +"-"+String.valueOf(monthOfYear) +"-"+String.valueOf(dayOfMonth);
+                String fecha = String.valueOf(year) +"-"+String.valueOf(monthOfYear+1) +"-"+String.valueOf(dayOfMonth);
                 fechainicio.setText(fecha);
             }
         }, yy, mm, dd);
