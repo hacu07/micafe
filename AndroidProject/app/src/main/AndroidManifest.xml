@@ -28,7 +28,7 @@
         <!-- Maps Android Key  -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyC6NSS-fZEymQzfS22moeT8oqdnmqmMWVI"
+            android:value="AIzaSyBlCtbljLE8mkuHKpMlxGy9ZAybOYQ9vzc"
             />
 
         <activity android:name=".LoginActivity">
@@ -59,11 +59,6 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_paths" />
         </provider>
-
-
-
-
-
     </application>
 
 </manifest>
