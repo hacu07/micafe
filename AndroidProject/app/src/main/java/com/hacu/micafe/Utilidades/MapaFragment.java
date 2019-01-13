@@ -83,6 +83,7 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Locati
 
     JsonObjectRequest jsonObjectRequest;
 
+
     public MapaFragment() {
         // Required empty public constructor
     }
@@ -98,15 +99,14 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Locati
         vista = inflater.inflate(R.layout.fragment_mapa, container, false);
         FloatingActionButton fab = vista.findViewById(R.id.fab_mapa);
         instanciarElementos(vista);
+        obtenerPosicionActual();
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 obtenerPosicionActual();
             }
         });
-        if (getArguments()!=null){
-            obtenerParametrosArguments(getArguments());
-        }
+
         return vista;
     }
 
@@ -127,8 +127,13 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Locati
                     devolverPosicionFinca(arguments.getSerializable("finca"));
                     break;
                 case "ubicacionOfertaRecolector":
-                    posicionFincaOfertaRecolector(arguments.getInt("idOferta"),arguments.getString("nombreFinca"),
-                            arguments.getDouble("latitud"),arguments.getDouble("longitud"));
+                    if (currentLocation == null){
+                        imprimirMensaje("Debe activar la ubicacion GPS para ver la ruta hacia la finca de la oferta.");
+                    }else{
+                        posicionFincaOfertaRecolector(arguments.getInt("idOferta"),arguments.getString("nombreFinca"),
+                                arguments.getDouble("latitud"),arguments.getDouble("longitud"));
+                    }
+
                     break;
             }
         }
@@ -165,8 +170,6 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Locati
                     webServiceObtenerRuta(String.valueOf(currentLocation.getLatitude()),String.valueOf(currentLocation.getLongitude()),String.valueOf(latitud),String.valueOf(longitud));
                     dibujarRuta();
                 }catch (Exception e){
-
-
 
                     imprimirMensaje("Actualmente no se puede dibujar la ruta");
                     e.printStackTrace();
@@ -312,48 +315,57 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Locati
                     0,
                     this);//Pide las actualizaciones de la localizacion
 
-        } else {
-            requestPermissions(new String[]{ACCESS_FINE_LOCATION, LOCATION_HARDWARE}, COD_LOCATION);
-        }
-
-
-
-        obtenerPosicionActual();
-
-        if (getArguments()!=null){
-            obtenerParametrosArguments(getArguments());
-        }
-    }
-
-    private void obtenerPosicionActual() {
-        //Cuando haga clic en el FloatingActionButton lanzamos el metodo
-        //SOLICITA GPS
-        if (!this.validarGPS()) {//Si el gps no esta habilitado
-            mostrarInformacionAlerta();
-        } else {
-
-            //Activar el boton para dar la localizacion
-            if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
-                return;
-            }
             Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);//Obtiene la ubicacion del GPS del dispositivo
             if (location == null){ //Si no funciona el proveedor de gps
                 location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);//Obtiene la ubicacion del GPS de la red/wifi
             }
             currentLocation = location;
 
-            if (currentLocation != null){//Si no es nulo tomamos el marcador si existe y lo actualizamos, si no lo creamos
-                createOrUpdateMarkerByLocation(location);
-                zoomToLocation(location);
-            }
+        } else {
+            requestPermissions(new String[]{ACCESS_FINE_LOCATION, LOCATION_HARDWARE}, COD_LOCATION);
         }
+
+
+        if (getArguments()!=null){
+            obtenerParametrosArguments(getArguments());
+        }
+
+    }
+
+    private void obtenerPosicionActual() {
+        try{
+            //Cuando haga clic en el FloatingActionButton lanzamos el metodo
+            //SOLICITA GPS
+            if (!this.validarGPS()) {//Si el gps no esta habilitado
+                mostrarInformacionAlerta();
+            } else {
+
+                //Activar el boton para dar la localizacion
+                if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    // TODO: Consider calling
+                    //    ActivityCompat#requestPermissions
+                    // here to request the missing permissions, and then overriding
+                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                    //                                          int[] grantResults)
+                    // to handle the case where the user grants the permission. See the documentation
+                    // for ActivityCompat#requestPermissions for more details.
+                    return;
+                }
+                Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);//Obtiene la ubicacion del GPS del dispositivo
+                if (location == null){ //Si no funciona el proveedor de gps
+                    location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);//Obtiene la ubicacion del GPS de la red/wifi
+                }
+                currentLocation = location;
+
+                if (currentLocation != null){//Si no es nulo tomamos el marcador si existe y lo actualizamos, si no lo creamos
+                    createOrUpdateMarkerByLocation(location);
+                    zoomToLocation(location);
+                }
+            }
+        }catch (Exception e){
+
+        }
+
     }
 
 
@@ -562,7 +574,6 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Locati
 
     @Override
     public void onLocationChanged(Location location) {
-        Log.i("TAG",marker.getPosition().toString());
     }
 
 

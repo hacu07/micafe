@@ -337,7 +337,6 @@ public class PerfilCaficultorFragment extends Fragment {
             else{
                 miIntent.putExtra(MediaStore.EXTRA_OUTPUT,Uri.fromFile(fileImagen));
             }
-
             startActivityForResult(miIntent,COD_FOTO);
         }
     }
