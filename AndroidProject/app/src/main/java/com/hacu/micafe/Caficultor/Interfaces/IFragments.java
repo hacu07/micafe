@@ -15,6 +15,7 @@ import com.hacu.micafe.Caficultor.FragmentsCaf.PesadasAceptadoFragment;
 import com.hacu.micafe.Caficultor.FragmentsCaf.PostuladosOfertasCafFragment;
 import com.hacu.micafe.Caficultor.FragmentsCaf.RegistroFincaFragment;
 import com.hacu.micafe.Caficultor.FragmentsCaf.RegistroOfertaFragment;
+import com.hacu.micafe.Caficultor.FragmentsCaf.ReportesOfertasCaficultorFragment;
 
 /**
  * Created by hacu1 on 12/11/2018.
@@ -34,5 +35,6 @@ public interface IFragments extends CaficultorFincaFragment.OnFragmentInteractio
         CostosOfertaFragment.OnFragmentInteractionListener,
         CalificarAceptadoFragment.OnFragmentInteractionListener,
         InicioCaficultorFragment.OnFragmentInteractionListener,
-        DetalleFincaCaficultorFragment.OnFragmentInteractionListener{
+        DetalleFincaCaficultorFragment.OnFragmentInteractionListener,
+        ReportesOfertasCaficultorFragment.OnFragmentInteractionListener {
 }

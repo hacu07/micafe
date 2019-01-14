@@ -13,15 +13,21 @@ public class Pesada implements Serializable {
     private int idrecolector;
     private int idoferta;
 
+    //agregadas para mostrar en el reporte de pesadas de la oferta - modulo caficultor 13.01.2018
+    private String cedula;
+    private String nombre;
+
     public Pesada() {
     }
 
-    public Pesada(int id, int kilos, String fecha, int idrecolector, int idoferta) {
+    public Pesada(int id, int kilos, String fecha, int idrecolector, int idoferta, String cedula, String nombre) {
         this.id = id;
         this.kilos = kilos;
         this.fecha = fecha;
         this.idrecolector = idrecolector;
         this.idoferta = idoferta;
+        this.cedula = cedula;
+        this.nombre = nombre;
     }
 
     public int getId() {
@@ -62,5 +68,21 @@ public class Pesada implements Serializable {
 
     public void setIdoferta(int idoferta) {
         this.idoferta = idoferta;
+    }
+
+    public String getCedula() {
+        return cedula;
+    }
+
+    public void setCedula(String cedula) {
+        this.cedula = cedula;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
     }
 }

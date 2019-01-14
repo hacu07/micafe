@@ -43,6 +43,9 @@ if (isset($_GET["opcion"])) {
 		case 'consultarlistadopesadasrecolector':
 			consultarListadoPesadasRecolector($_GET["idoferta"],$_GET["cedula"]);
 			break;
+		case 'consultarlistadoreportepesadasrecolector':
+			consultarListadoReportePesadasRecolector($_GET["idoferta"]);
+		break;
 		case 'consultarcalificacionpostulado':
 		consultarcalificacionpostulado($_GET["cedularecolector"]);
 		break;
@@ -311,6 +314,15 @@ function consultarListadoPesadasRecolector($idOferta, $cedula)
 	$sql = "SELECT pesadas.fecha, pesadas.kilos, ofertas.valorpago as valorkilo, (pesadas.kilos 	* ofertas.valorpago ) as valorpesada 
 			FROM pesadas JOIN ofertas ON pesadas.idoferta = ofertas.id 
 			WHERE pesadas.idoferta = {$idOferta} AND pesadas.idrecolector = (SELECT usuarios.id FROM usuarios WHERE usuarios.cedula = '{$cedula}')";
+	leerRegistro($sql);
+}
+
+
+function consultarListadoReportePesadasRecolector($idOferta)
+{
+	$sql = "SELECT usuarios.cedula, usuarios.nombre, pesadas.fecha, pesadas.kilos, ofertas.valorpago as valorkilo, (pesadas.kilos 	* ofertas.valorpago ) as valorpesada 
+			FROM pesadas JOIN ofertas ON pesadas.idoferta = ofertas.id JOIN usuarios ON pesadas.idrecolector = usuarios.id
+			WHERE pesadas.idoferta = {$idOferta}";
 	leerRegistro($sql);
 }
 
